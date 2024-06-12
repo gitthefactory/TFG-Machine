@@ -9,17 +9,21 @@ import bcrypt from "bcryptjs";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function CrearUsuarios() {
   const [nombreCompleto, setNombreCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [status, setStatus] = useState("Seleccionar");
-  const [typeProfile, setTypeProfile] = useState("Seleccionar");
+  const [typeProfile, setTypeProfile] = useState("660ebaa7b02ce973cad66551");
+  const [status, setStatus] = useState(1); // Estado predeterminado agregado
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (typeProfile === "Seleccionar") {
+    if (nombreCompleto.trim() === "" || email.trim() === "" || password.trim() === "") {
       toast.error("Por favor, completa todos los campos requeridos.");
       return;
     }
@@ -27,10 +31,10 @@ function CrearUsuarios() {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUsuarios = {
-      nombreCompleto,
+      nombreCompleto: capitalizeFirstLetter(nombreCompleto),
       email,
       password: hashedPassword,
-      status,
+      status, // Agregado status al objeto nuevo usuario
       typeProfile,
       id_machine: ""
     };
@@ -47,6 +51,7 @@ function CrearUsuarios() {
     }
     console.log(newUsuarios);
   };
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
