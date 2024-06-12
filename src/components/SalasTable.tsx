@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import { useTable } from "react-table";
+import { FaEdit } from "react-icons/fa";
+import Link from "next/link";
 
 interface SalaData {
   _id: string;
@@ -40,9 +42,20 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
       { Header: "Pais", accessor: "pais", align: 'left' },
       { Header: "Comuna", accessor: "comuna", align: 'left' },
       { Header: "Estado", accessor: "status", align: 'left' },
+      {
+        Header: "Acciones",
+        accessor: "_id",
+        Cell: ({ value }) => (
+          <Link href={`/dashboard/salas/editar/${value}`}>
+            <FaEdit />
+          </Link>
+        ),
+        align: 'left' // Añadido align: 'left' para el encabezado "Acciones"
+      },
     ],
     []
   );
+  
 
   const {
     getTableProps,
