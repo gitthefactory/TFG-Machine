@@ -1,0 +1,407 @@
+[33mcommit c33cc6eee45f2986993eaf789d00ab374bb24c28[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdeveloper[m[33m, [m[1;31morigin/developer[m[33m)[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 30 08:44:05 2024 -0600
+
+    ChatGPT
+    o
+    git commit -m
+
+[33mcommit da9aca40aae652a5c3fd70ca64ab554f44180120[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 30 08:00:45 2024 -0600
+
+    Creacion de Operadores y vinculacion a room con machine, exitoso SOLUCIONADO
+
+[33mcommit 19d6790c86c1332bbbcf8598d0fa9d18c17e3975[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Wed May 29 15:59:45 2024 -0600
+
+    Modificaciones generales para los crud
+
+[33mcommit e2ed7e2b3daa56fc10669145d8dafb62dee633b9[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 15:58:35 2024 -0600
+
+    Se modifica la creacion de maquina (EN PROCESO)
+
+[33mcommit f0a27a1a6b1c722e135ec8c806ea4c3ce14b98fe[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 14:44:50 2024 -0600
+
+    Ahora, los usuarios con el rol '660ebaa7b02ce973cad66550' pueden ver todas las salas, mientras que los demás usuarios solo ven las salas asociadas con su ID de cliente.
+
+[33mcommit aacfafc2871270c92a48e1085636c4cf3edb348c[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 10:36:36 2024 -0600
+
+    Se modifica la creacion de USUARIOS, con status y una contraseña con bcrypt(SOLUCIONADO)
+
+[33mcommit 2b223376c90913f685ea6e3d98d00b5a7bfdad44[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 08:58:21 2024 -0600
+
+    Se modifica post para cliente, se añaden los parametros de NOMBRE, CORREO, CONTRASEÑA, MONEDA. Ademas, permite la creación de clientes con el rol predefinido de typeProfile cliente (SOLUCIONADO)
+
+[33mcommit c3aae4ab862e5eb12109d35af1837ca5f4929228[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 27 12:20:12 2024 -0600
+
+    Modifiqué la función getClients para permitir que los usuarios con un typeProfile específico ('660ebaa7b02ce973cad66550')(MASTER) vean todos los datos sin importar su rol (SOLUCIONADO).
+
+[33mcommit c88780699423cc65d9e4904c9bab109d97ea5ece[m
+Merge: 980a6ab 4cada20
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 14:56:32 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 980a6abc35b7efa6e3c21893de1c057cfba23c34[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 14:55:32 2024 -0600
+
+    Creacion formulario interactivo que permite al usuario seleccionar un proveedor y ver la imagen asociada a ese proveedor en tiempo real (EN PROCESO)
+
+[33mcommit 4cada20d5d5f746448c043dce9f3c73ac4536bc4[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:55:07 2024 -0400
+
+    ajustes del modelo de los proveedores de juegos
+
+[33mcommit bf1217939ed3f78b654262c1f23968eaa59f3f58[m
+Merge: 34569c6 2e27a0d
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:37:59 2024 -0400
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 34569c6e87eb7f27ca9de8f369ea52249e431f35[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:37:44 2024 -0400
+
+    POST para crear proveedores
+
+[33mcommit 2e27a0d1ec6efdad8ba975bb4ed64ef508bb65bb[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 13:33:11 2024 -0600
+
+    Se elimina el código del checkbox en Maquina Interfaz de Juegos y reemplazandolos por los botones con los iconos <FaToggleOn /> y <FaToggleOff />
+
+[33mcommit 63ed3147e4150f94c7da4519c4b1bd67e8475b88[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:59:50 2024 -0600
+
+    Correción de bug, movimiento al iniciar sesión maquina de botones proveedores (SOLUCIONADO)
+
+[33mcommit 8c712b8528c73d3cabee860a208f03086d9907d6[m
+Merge: f23a997 1c581de
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:47:49 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit f23a997112941da9dd907ee6aab6e5a6e22dbcab[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:47:33 2024 -0600
+
+    La session se conecta por getSessionData para que se visualicen los juegos de los proveedores correspondientes por id_machine
+
+[33mcommit 1c581de20eb574c18451aedcf001644224172fae[m
+Merge: cf86bfe 5ae5255
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 11:19:30 2024 -0400
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit cf86bfe12c8df491624c3515b3d0fe271ecbaff8[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 11:19:08 2024 -0400
+
+    la salas tienen direccion
+
+[33mcommit 5ae5255ceff5b9ab4e70ea4c615605503f1684e4[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 08:39:29 2024 -0600
+
+    Se soluciona conflicto de visualizacion datos al inicio de sesión con ID_MACHINE, mostrando infomacion exitosamente
+
+[33mcommit 10ae42fe53cab5c429709695a4dc2a85c7fdc8bf[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 15:28:21 2024 -0600
+
+    Confirmación de datos al ingresar con login id_machine se visualizan exitosamente
+
+[33mcommit 49a4de2e9ca78c0589213143872956d65ce2503e[m
+Merge: 60fd08d 64990e9
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 14:05:16 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 60fd08d696708f0f97ba74e82e9d60bba2a054f0[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 14:04:59 2024 -0600
+
+    Se ingresa a traves del login maquina, con ID_MACHINA y PASSWORD exitosamente. Validacion de de maquina y direcciona segun la maquina con la que se inicia sesion
+
+[33mcommit 64990e97bb580c2301f8f617a3cbc3de26d999b4[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 14:58:54 2024 -0400
+
+    juegos seleccionados
+
+[33mcommit 6c5b1ff306ce5d96755bacc4078f7ad62b35c648[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 11:36:28 2024 -0400
+
+    las salas tienen pais, ciudad y comuna
+
+[33mcommit bd3bf5754362e1ab081b3840722b5ed686b99a33[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 09:51:49 2024 -0400
+
+    model user with id_machine
+
+[33mcommit 05db605c2c25f806e133306bdc9b18ba892c07be[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Wed May 22 13:56:12 2024 -0600
+
+    Los juegos se visualizan segun maquina, funcionando exitosamente. Se cambia el front de login dashboard.
+
+[33mcommit 80afb5ccde187791916cd2bd7989343643458f5d[m
+Merge: 7e4470a 7ef5f58
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 14:27:12 2024 -0600
+
+    trayendo juegos por proveedor y maquina en proceso
+
+[33mcommit 7e4470afdecffbdaa336de0a496a6779ed9fe07f[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 13:19:18 2024 -0600
+
+    test
+
+[33mcommit 7ef5f5861b2033a24bfebb4cd9706d5916ce8067[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Mon May 20 15:14:24 2024 -0400
+
+    muestra todos los juegos y por proveedor
+
+[33mcommit 46cdfac9c019dad61bfcc1267cc398091324dfbf[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Mon May 20 12:19:21 2024 -0400
+
+    ver juegos de maquina con id_machine
+
+[33mcommit c447653c72009ff41b829d5381fb6ea49e7aa4fb[m
+Merge: c2266a6 f661b25
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 08:11:45 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit c2266a6d20921c5f022736f49f7e27dab47ebae0[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 08:1[33mcommit c33cc6eee45f2986993eaf789d00ab374bb24c28[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdeveloper[m[33m, [m[1;31morigin/developer[m[33m)[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 30 08:44:05 2024 -0600
+
+    ChatGPT
+    o
+    git commit -m
+
+[33mcommit da9aca40aae652a5c3fd70ca64ab554f44180120[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 30 08:00:45 2024 -0600
+
+    Creacion de Operadores y vinculacion a room con machine, exitoso SOLUCIONADO
+
+[33mcommit 19d6790c86c1332bbbcf8598d0fa9d18c17e3975[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Wed May 29 15:59:45 2024 -0600
+
+    Modificaciones generales para los crud
+
+[33mcommit e2ed7e2b3daa56fc10669145d8dafb62dee633b9[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 15:58:35 2024 -0600
+
+    Se modifica la creacion de maquina (EN PROCESO)
+
+[33mcommit f0a27a1a6b1c722e135ec8c806ea4c3ce14b98fe[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 14:44:50 2024 -0600
+
+    Ahora, los usuarios con el rol '660ebaa7b02ce973cad66550' pueden ver todas las salas, mientras que los demás usuarios solo ven las salas asociadas con su ID de cliente.
+
+[33mcommit aacfafc2871270c92a48e1085636c4cf3edb348c[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 10:36:36 2024 -0600
+
+    Se modifica la creacion de USUARIOS, con status y una contraseña con bcrypt(SOLUCIONADO)
+
+[33mcommit 2b223376c90913f685ea6e3d98d00b5a7bfdad44[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Tue May 28 08:58:21 2024 -0600
+
+    Se modifica post para cliente, se añaden los parametros de NOMBRE, CORREO, CONTRASEÑA, MONEDA. Ademas, permite la creación de clientes con el rol predefinido de typeProfile cliente (SOLUCIONADO)
+
+[33mcommit c3aae4ab862e5eb12109d35af1837ca5f4929228[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 27 12:20:12 2024 -0600
+
+    Modifiqué la función getClients para permitir que los usuarios con un typeProfile específico ('660ebaa7b02ce973cad66550')(MASTER) vean todos los datos sin importar su rol (SOLUCIONADO).
+
+[33mcommit c88780699423cc65d9e4904c9bab109d97ea5ece[m
+Merge: 980a6ab 4cada20
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 14:56:32 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 980a6abc35b7efa6e3c21893de1c057cfba23c34[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 14:55:32 2024 -0600
+
+    Creacion formulario interactivo que permite al usuario seleccionar un proveedor y ver la imagen asociada a ese proveedor en tiempo real (EN PROCESO)
+
+[33mcommit 4cada20d5d5f746448c043dce9f3c73ac4536bc4[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:55:07 2024 -0400
+
+    ajustes del modelo de los proveedores de juegos
+
+[33mcommit bf1217939ed3f78b654262c1f23968eaa59f3f58[m
+Merge: 34569c6 2e27a0d
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:37:59 2024 -0400
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 34569c6e87eb7f27ca9de8f369ea52249e431f35[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 16:37:44 2024 -0400
+
+    POST para crear proveedores
+
+[33mcommit 2e27a0d1ec6efdad8ba975bb4ed64ef508bb65bb[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 13:33:11 2024 -0600
+
+    Se elimina el código del checkbox en Maquina Interfaz de Juegos y reemplazandolos por los botones con los iconos <FaToggleOn /> y <FaToggleOff />
+
+[33mcommit 63ed3147e4150f94c7da4519c4b1bd67e8475b88[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:59:50 2024 -0600
+
+    Correción de bug, movimiento al iniciar sesión maquina de botones proveedores (SOLUCIONADO)
+
+[33mcommit 8c712b8528c73d3cabee860a208f03086d9907d6[m
+Merge: f23a997 1c581de
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:47:49 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit f23a997112941da9dd907ee6aab6e5a6e22dbcab[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 10:47:33 2024 -0600
+
+    La session se conecta por getSessionData para que se visualicen los juegos de los proveedores correspondientes por id_machine
+
+[33mcommit 1c581de20eb574c18451aedcf001644224172fae[m
+Merge: cf86bfe 5ae5255
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 11:19:30 2024 -0400
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit cf86bfe12c8df491624c3515b3d0fe271ecbaff8[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Fri May 24 11:19:08 2024 -0400
+
+    la salas tienen direccion
+
+[33mcommit 5ae5255ceff5b9ab4e70ea4c615605503f1684e4[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Fri May 24 08:39:29 2024 -0600
+
+    Se soluciona conflicto de visualizacion datos al inicio de sesión con ID_MACHINE, mostrando infomacion exitosamente
+
+[33mcommit 10ae42fe53cab5c429709695a4dc2a85c7fdc8bf[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 15:28:21 2024 -0600
+
+    Confirmación de datos al ingresar con login id_machine se visualizan exitosamente
+
+[33mcommit 49a4de2e9ca78c0589213143872956d65ce2503e[m
+Merge: 60fd08d 64990e9
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 14:05:16 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit 60fd08d696708f0f97ba74e82e9d60bba2a054f0[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Thu May 23 14:04:59 2024 -0600
+
+    Se ingresa a traves del login maquina, con ID_MACHINA y PASSWORD exitosamente. Validacion de de maquina y direcciona segun la maquina con la que se inicia sesion
+
+[33mcommit 64990e97bb580c2301f8f617a3cbc3de26d999b4[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 14:58:54 2024 -0400
+
+    juegos seleccionados
+
+[33mcommit 6c5b1ff306ce5d96755bacc4078f7ad62b35c648[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 11:36:28 2024 -0400
+
+    las salas tienen pais, ciudad y comuna
+
+[33mcommit bd3bf5754362e1ab081b3840722b5ed686b99a33[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Thu May 23 09:51:49 2024 -0400
+
+    model user with id_machine
+
+[33mcommit 05db605c2c25f806e133306bdc9b18ba892c07be[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Wed May 22 13:56:12 2024 -0600
+
+    Los juegos se visualizan segun maquina, funcionando exitosamente. Se cambia el front de login dashboard.
+
+[33mcommit 80afb5ccde187791916cd2bd7989343643458f5d[m
+Merge: 7e4470a 7ef5f58
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 14:27:12 2024 -0600
+
+    trayendo juegos por proveedor y maquina en proceso
+
+[33mcommit 7e4470afdecffbdaa336de0a496a6779ed9fe07f[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 13:19:18 2024 -0600
+
+    test
+
+[33mcommit 7ef5f5861b2033a24bfebb4cd9706d5916ce8067[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Mon May 20 15:14:24 2024 -0400
+
+    muestra todos los juegos y por proveedor
+
+[33mcommit 46cdfac9c019dad61bfcc1267cc398091324dfbf[m
+Author: Eduardo Retamales Rojas <eduardoretamalesrojas@gmail.com>
+Date:   Mon May 20 12:19:21 2024 -0400
+
+    ver juegos de maquina con id_machine
+
+[33mcommit c447653c72009ff41b829d5381fb6ea49e7aa4fb[m
+Merge: c2266a6 f661b25
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 08:11:45 2024 -0600
+
+    Merge branch 'developer' of https://github.com/srpollin1/template-dashboard into developer
+
+[33mcommit c2266a6d20921c5f022736f49f7e27dab47ebae0[m
+Author: Janis Aravena <janisaravenaespinoza@gmail.com>
+Date:   Mon May 20 08:1
