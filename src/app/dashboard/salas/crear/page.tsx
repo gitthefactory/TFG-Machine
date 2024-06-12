@@ -25,8 +25,8 @@ interface Cliente {
 
 export default function CrearSalas() {
   const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [ruta, setRuta] = useState("");
+  //const [descripcion, setDescripcion] = useState("");
+  // const [ruta, setRuta] = useState("");
   const [status, setStatus] = useState("Seleccionar");
   const [pais, setPais] = useState("Seleccionar");
   const [ciudad, setCiudad] = useState();
@@ -68,8 +68,8 @@ export default function CrearSalas() {
       // Crear un objeto con los datos de la nueva sala
       const newSala = {
         nombre,
-        descripcion,
-        ruta,
+       // descripcion,
+        // ruta,
         status,
         pais,
         comuna,
@@ -150,7 +150,7 @@ export default function CrearSalas() {
               </div>
               {/* Descripción */}
               <div className="mb-4">
-                <label
+                {/* <label
                   htmlFor="descripcion"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
@@ -165,9 +165,9 @@ export default function CrearSalas() {
                   placeholder="Ingrese la descripción"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                   required
-                />
+                /> */}
               </div>
-              {/* Ruta */}
+              {/* Ruta
               <div className="mb-4">
                 <label
                   htmlFor="ruta"
@@ -185,7 +185,7 @@ export default function CrearSalas() {
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                   required
                 />
-              </div>
+              </div> */}
               {/* Pais */}
               <div className="mb-4">
                 <label
