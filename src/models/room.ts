@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, model, Types } from "mongoose";
 // Definición de la interfaz de la sala
 interface Room extends Document {
   nombre: string;
-  descripcion: string;
+  //descripcion: string;
   // ruta: string;
   status: number;
   pais: string[];
