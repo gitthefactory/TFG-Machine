@@ -4,59 +4,38 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-// import getOperadores from "@/controllers/getOperators";
+import getUsers from "@/controllers/getUsers";
 import getClientes from "@/controllers/getClients";
-import getUsuarios from "@/controllers/getUsers";
 import AtrasButton from "@/components/AtrasButton";
 
-interface Usuario {
-  _id: string;
-  nombreCompleto: string;
-  typeProfile: {
-    _id: string;
-    typeProfile: string;
-  };
-}
-
-interface Cliente {
-  _id: string;
-  user: string;
-}
-
 export default function CrearSalas() {
-  const [nombre, setNombre] = useState("");
-  //const [descripcion, setDescripcion] = useState("");
-  // const [ruta, setRuta] = useState("");
-  const [status, setStatus] = useState("Seleccionar");
+  const [nombre, setNombre] = useState("");;
+  const [status, setStatus] = useState(1);
   const [pais, setPais] = useState("Seleccionar");
   const [ciudad, setCiudad] = useState();
   const [comuna, setComuna] = useState();
-
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState("");
   const [clientes, setClientes] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
-
   // GET USUARIOS
- 
+  
   useEffect(() => {
     async function fetchData() {
       try {
-        const fetchedUsuarios = await getUsuarios("", 10);
-        const fetchedClientes = await getClientes("", 10);
+        const fetchedUsuarios = await getUsers("", 1);
         setUsuarios(fetchedUsuarios);
+
+        const fetchedClientes = await getClientes("", 10);
         setClientes(fetchedClientes);
+
       } catch (error) {
         console.error("Error al obtener datos:", error);
       }
     }
+
     fetchData();
   }, []);
-
-  // Filtrar usuarios por tipo de perfil cliente
-  const usuariosClientes = usuarios.filter(
-    (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
-  );
 
   const handleClienteChange = (value: string) => {
     setClienteSeleccionado(value);
@@ -75,6 +54,7 @@ export default function CrearSalas() {
         comuna,
         ciudad,
         // operator: operadorSeleccionado,
+        user: usuarioSeleccionado,
         client: clienteSeleccionado,
       };
       // Realizar una solicitud POST al endpoint de creación de salas
@@ -95,6 +75,14 @@ export default function CrearSalas() {
     }
   };
 
+  const usuariosClientes = usuarios.filter(
+    (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
+  );
+
+  const usuariosOperador = usuarios.filter(
+    (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
+  );
+
   return (
     <>
       <DefaultLayout>
@@ -103,32 +91,7 @@ export default function CrearSalas() {
           <AtrasButton href="/dashboard/salas" />
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <form onSubmit={handleSubmit} className="p-6.5">
-            {/* Selección de Cliente */}
-            <div className="mb-4">
-                <label
-                  htmlFor="clientes"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Seleccionar Cliente
-                </label>
-                <select
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setClienteSeleccionado(e.target.value)
-                  }
-                  value={clienteSeleccionado}
-                  id="clientes"
-                  name="clientes"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                >
-                  <option value="">Seleccionar</option>
-                  {usuariosClientes.map((usuario) => (
-                    <option key={usuario._id} value={usuario._id}>
-                      {usuario.nombreCompleto}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
+           
               {/* Nombre */}
               <div className="mb-4">
                 <label
@@ -148,44 +111,6 @@ export default function CrearSalas() {
                   required
                 />
               </div>
-              {/* Descripción */}
-              <div className="mb-4">
-                {/* <label
-                  htmlFor="descripcion"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Descripción Sala
-                </label>
-                <input
-                  onChange={(e) => setDescripcion(e.target.value)}
-                  value={descripcion}
-                  id="descripcion"
-                  name="descripcion"
-                  type="text"
-                  placeholder="Ingrese la descripción"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  required
-                /> */}
-              </div>
-              {/* Ruta
-              <div className="mb-4">
-                <label
-                  htmlFor="ruta"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Ruta
-                </label>
-                <input
-                  onChange={(e) => setRuta(e.target.value)}
-                  value={ruta}
-                  id="ruta"
-                  name="ruta"
-                  type="text"
-                  placeholder="Ingrese la ruta"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  required
-                />
-              </div> */}
               {/* Pais */}
               <div className="mb-4">
                 <label
@@ -250,31 +175,53 @@ export default function CrearSalas() {
                     placeholder="Ingresa ciudad"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                     required
-                  />
+                  />        
                 </div>
-              </div>
-
-              {/* Estado */}
-              <div className="w-full xl:w-1/2">
+               </div>                    
+               <div className="mb-4">
               <label
-                  htmlFor="newStatus"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                  Estado
-                </label>
-                <select
-                  onChange={(e: any) => setStatus(e.target.value)}
-                  value={status}
-                  id="status"
-                  name="status"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  >
-                  <option value="Seleccionar" disabled>Seleccionar</option>
-                  <option value={1}>Activo</option>
-                  <option value={0}>Inactivo</option>
-                </select>
-              </div>
-
+                htmlFor="clientes"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Seleccionar Cliente
+              </label>
+              <select
+                onChange={(e) => setClienteSeleccionado(e.target.value)}
+                value={clienteSeleccionado}
+                id="clientes"
+                name="clientes"
+                className="w-full rounded mt-2 border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+              >
+                <option value="">Seleccionar</option>
+                {usuariosClientes.map((usuario) => (
+                  <option key={usuario._id} value={usuario._id}>
+                    {usuario.nombreCompleto}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="operadores"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Seleccionar Operadores
+              </label>
+              <select
+                onChange={(e) => setUsuarioSeleccionado(e.target.value)}
+                value={usuarioSeleccionado}
+                id="operadores"
+                name="operadores"
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+              >
+                <option value="">Seleccionar</option>
+                {usuariosOperador.map((usuario) => (
+                  <option key={usuario._id} value={usuario._id}>
+                    {usuario.nombreCompleto}
+                  </option>
+                ))}
+              </select>
+            </div>
               {/* Botones */}
               <div className="mt-6 flex justify-end gap-4">
                 <Link
