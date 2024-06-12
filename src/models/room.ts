@@ -4,7 +4,7 @@ import mongoose, { Schema, Document, model, Types } from "mongoose";
 interface Room extends Document {
   nombre: string;
   descripcion: string;
-  ruta: string;
+  // ruta: string;
   status: number;
   pais: string[];
   ciudad: string;
@@ -16,8 +16,8 @@ interface Room extends Document {
 // Definición del esquema de la sala
 const RoomSchema = new Schema<Room>({
   nombre: { type: String, required: true },
-  descripcion: { type: String, required: true },
-  ruta: { type: String, required: true },
+  //descripcion: { type: String, required: false },
+  // ruta: { type: String, required: true },
   status: { type: Number, default: 1 },
   pais: {
     type: [String],

@@ -32,9 +32,9 @@ export async function GET() {
 
 
 //CREAR ROOM
-export async function POST(request: { json: () => PromiseLike<{ nombre: any; descripcion: any; ruta: any; status: any; pais: any; ciudad: any; comuna: any; user: any; operator: any; client: any; }> }) {
+export async function POST(request: { json: () => PromiseLike<{ nombre: any; descripcion: any; status: any; pais: any; ciudad: any; comuna: any; user: any; operator: any; client: any; }> }) {
     try {
-      const { nombre, descripcion, ruta, status, pais, ciudad, comuna, operator, client } = await request.json();
+      const { nombre, status, pais, ciudad, comuna, operator, client } = await request.json();
   
       // Conectar a la base de datos
       await connectDB();
@@ -42,8 +42,8 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: any; des
       // Crea una nueva máquina en base a los datos proporcionados
       const newMachine = await Room.create({
         nombre,
-        descripcion,
-        ruta,
+        //descripcion,
+        // ruta,
         status,
         pais,
         ciudad,
