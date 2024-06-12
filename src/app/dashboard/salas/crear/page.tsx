@@ -27,7 +27,7 @@ export default function CrearSalas() {
   const [nombre, setNombre] = useState("");
   //const [descripcion, setDescripcion] = useState("");
   // const [ruta, setRuta] = useState("");
-  const [status, setStatus] = useState("Seleccionar");
+  const [status, setStatus] = useState(1); // Estado predeterminado agregado
   const [pais, setPais] = useState("Seleccionar");
   const [ciudad, setCiudad] = useState();
   const [comuna, setComuna] = useState();
@@ -103,32 +103,7 @@ export default function CrearSalas() {
           <AtrasButton href="/dashboard/salas" />
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <form onSubmit={handleSubmit} className="p-6.5">
-            {/* Selección de Cliente */}
-            <div className="mb-4">
-                <label
-                  htmlFor="clientes"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Seleccionar Cliente
-                </label>
-                <select
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setClienteSeleccionado(e.target.value)
-                  }
-                  value={clienteSeleccionado}
-                  id="clientes"
-                  name="clientes"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                >
-                  <option value="">Seleccionar</option>
-                  {usuariosClientes.map((usuario) => (
-                    <option key={usuario._id} value={usuario._id}>
-                      {usuario.nombreCompleto}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
+           
               {/* Nombre */}
               <div className="mb-4">
                 <label
@@ -251,11 +226,53 @@ export default function CrearSalas() {
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                     required
                   />
+                  
                 </div>
+
+
+
+                 
+               </div>
+                    
+                {/* Selección de Cliente */}
+            <div className="mb-4">
+                
+                {/*colocar mas abajo para respetar estilo */}
+                
+                 <label
+                  htmlFor="clientes"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Seleccionar Cliente
+                </label>
+                <select
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setClienteSeleccionado(e.target.value)
+                  }
+                  value={clienteSeleccionado}
+                  id="clientes"
+                  name="clientes"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                >
+                  <option value="">Seleccionar</option>
+                  {usuariosClientes.map((usuario) => (
+                    <option key={usuario._id} value={usuario._id}>
+                      {usuario.nombreCompleto}
+                    </option>
+                  ))}
+                </select> 
+
+                  
               </div>
 
+
+
+
+
+              
+
               {/* Estado */}
-              <div className="w-full xl:w-1/2">
+              {/* <div className="w-full xl:w-1/2">
               <label
                   htmlFor="newStatus"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -273,7 +290,7 @@ export default function CrearSalas() {
                   <option value={1}>Activo</option>
                   <option value={0}>Inactivo</option>
                 </select>
-              </div>
+              </div> */}
 
               {/* Botones */}
               <div className="mt-6 flex justify-end gap-4">
