@@ -35,11 +35,11 @@ export async function GET(request: any, { params: { id } }: any) {
 export async function PUT(request: any, { params: { id } }: any) {
     try {
       const {
-        newNombre,
-        newDescripcion,
+        // newNombre,
+        // newDescripcion,
         newStatus,
-        newOperator,
-        newClient,
+        // newOperator,
+        // newClient,
         newRoom,
         games
       } = await request.json();
@@ -49,11 +49,11 @@ export async function PUT(request: any, { params: { id } }: any) {
   
       // Construir el objeto con los datos actualizados de la máquina
       const updatedMachineData = {
-        nombre: newNombre,
-        descripcion: newDescripcion,
+        // nombre: newNombre,
+        // descripcion: newDescripcion,
         status: newStatus,
-        operador: newOperator,
-        cliente: newClient,
+        // operador: newOperator,
+        // cliente: newClient,
         sala: newRoom,
         games: games
       };

@@ -3,32 +3,32 @@ import mongoose, { Schema, Document, model, Types } from "mongoose";
 
 // Definición de la interfaz de la máquina
 interface Machine extends Document {
-  nombre: string;
+  // nombre: string;
   id_machine: string;
-  descripcion: string;
+  // descripcion: string;
   status: number;
   games: any[];
-  operator: Types.ObjectId;
-  client: Types.ObjectId;
+  // operator: Types.ObjectId;
+  // client: Types.ObjectId;
   room: Types.ObjectId;
-  pais: string;
-  direccion: string;
-  ciudad: string;
+  // pais: string;
+  // direccion: string;
+  // ciudad: string;
 }
 
 // Definición del esquema de la máquina
 const MachineSchema = new Schema<Machine>({
-  nombre: { type: String, required: true },
-  id_machine: { type: String }, // El id_machine será generado antes de guardar
-  descripcion: { type: String, required: true },
+  // nombre: { type: String, required: true },
+  id_machine: { type: String }, 
+  // descripcion: { type: String, required: true },
   status: { type: Number, default: 1 },
   games: { type: [{ type: Schema.Types.Mixed }], default: [] },
-  operator: { type: Schema.Types.ObjectId, ref: "Operator" },
-  client: { type: Schema.Types.ObjectId, ref: "Client" },
+  // operator: { type: Schema.Types.ObjectId, ref: "Operator" },
+  // client: { type: Schema.Types.ObjectId, ref: "Client" },
   room: { type: Schema.Types.ObjectId, ref: "Room" },
-  pais: { type: String },
-  direccion: { type: String },
-  ciudad: { type: String }
+  // pais: { type: String },
+  // direccion: { type: String },
+  // ciudad: { type: String }
 }, {
   timestamps: true,
 });
