@@ -213,7 +213,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
                   />
                 </div>
                 {/* Descripción */}
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label
                     htmlFor="newDescripcion"
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -230,9 +230,9 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                     required
                   />
-                </div>
+                </div> */}
                 {/* Ruta */}
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label
                     htmlFor="newRuta"
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -249,7 +249,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                     required
                   />
-                </div>
+                </div> */}
 
                 {/* Pais */}
                 <div className="mb-4">
