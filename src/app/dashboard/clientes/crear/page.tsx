@@ -61,7 +61,7 @@ function CrearUsuarios() {
                     htmlFor="nombreCompleto"
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
                   >
-                    Nombre Completo
+                    Nombre cliente Completo
                   </label>
                   <input
                     onChange={(e) => setNombreCompleto(e.target.value)}
