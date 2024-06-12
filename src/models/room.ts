@@ -26,8 +26,9 @@ const RoomSchema = new Schema<Room>({
   },
   ciudad: { type: String, required: false },
   comuna: { type: String, required: false },
-  operator: { type: Schema.Types.ObjectId, ref: "Operator"},
+  operator: { type: Schema.Types.ObjectId, ref: "Operator", required: false },
   client: { type: Schema.Types.ObjectId, ref: "Client"},
+ 
 },
 {
   timestamps: true,

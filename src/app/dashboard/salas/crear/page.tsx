@@ -53,9 +53,10 @@ export default function CrearSalas() {
         pais,
         comuna,
         ciudad,
-        // operator: operadorSeleccionado,
-        user: usuarioSeleccionado,
+        
+        operator: usuarioSeleccionado,
         client: clienteSeleccionado,
+        
       };
       // Realizar una solicitud POST al endpoint de creación de salas
       const response = await fetch("/api/salas", {
@@ -67,7 +68,7 @@ export default function CrearSalas() {
       });
       // Si la solicitud es exitosa y se crea la sala, redireccionar a la página de salas
       if (typeof window !== "undefined" && response.status === 201) {
-        window.location.href = "/dashboard/salas";
+        window.location.href = "/dashboard/salas/";
       }
       console.log("Sala creada con éxito:", newSala);
     } catch (error) {
@@ -230,6 +231,7 @@ export default function CrearSalas() {
                 >
                   Cancelar
                 </Link>
+
                 <button
                   type="submit"
                   className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"

@@ -36,6 +36,13 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: any; des
     try {
       const { nombre, status, pais, ciudad, comuna, operator, client } = await request.json();
   
+
+
+      const operatorValue = operator === "Seleccionar" ? null : operator;
+
+
+
+
       // Conectar a la base de datos
       await connectDB();
   
@@ -48,7 +55,7 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: any; des
         pais,
         ciudad,
         comuna,
-        operator,
+        operatorValue,
         client,
       
       });
