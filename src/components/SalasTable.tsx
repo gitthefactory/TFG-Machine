@@ -36,26 +36,26 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
     fetchUsuariosClientes();
   }, []);
 
-  const columns = useMemo(
-    () => [
-      { Header: "Nombre Salas", accessor: "nombre", align: 'left' },
-      { Header: "Pais", accessor: "pais", align: 'left' },
-      { Header: "Comuna", accessor: "comuna", align: 'left' },
-      { Header: "Estado", accessor: "status", align: 'left' },
-      {
-        Header: "Acciones",
-        accessor: "_id",
-        Cell: ({ value }) => (
-          <Link href={`/dashboard/salas/editar/${value}`}>
-            <FaEdit />
-          </Link>
-        ),
-        align: 'left' // Añadido align: 'left' para el encabezado "Acciones"
-      },
-    ],
-    []
-  );
-  
+const columns = useMemo(
+  () => [
+    { Header: "Nombre Salas", accessor: "nombre", align: 'left' },
+    { Header: "Pais", accessor: "pais", align: 'left' },
+    { Header: "Comuna", accessor: "comuna", align: 'left' },
+    { Header: "Estado", accessor: "status", align: 'left' },
+    {
+      Header: "Acciones",
+      accessor: "_id",
+      Cell: ({ value }) => (
+        <Link href={`/dashboard/salas/editar/${value}`}>
+          <FaEdit />
+        </Link>
+      ),
+      align: 'left' // Añadido align: 'left' para el encabezado "Acciones"
+    },
+  ],
+  []
+);
+
 
   const {
     getTableProps,

@@ -53,10 +53,9 @@ export default function CrearSalas() {
         pais,
         comuna,
         ciudad,
-        
-        operator: usuarioSeleccionado,
+        // operator: operadorSeleccionado,
+        user: usuarioSeleccionado,
         client: clienteSeleccionado,
-        
       };
       // Realizar una solicitud POST al endpoint de creación de salas
       const response = await fetch("/api/salas", {
@@ -68,7 +67,7 @@ export default function CrearSalas() {
       });
       // Si la solicitud es exitosa y se crea la sala, redireccionar a la página de salas
       if (typeof window !== "undefined" && response.status === 201) {
-        window.location.href = "/dashboard/salas/";
+        window.location.href = "/dashboard/salas";
       }
       console.log("Sala creada con éxito:", newSala);
     } catch (error) {
@@ -92,7 +91,7 @@ export default function CrearSalas() {
           <AtrasButton href="/dashboard/salas" />
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <form onSubmit={handleSubmit} className="p-6.5">
-           
+                <h1>DATOS DE LA SALA</h1>
               {/* Nombre */}
               <div className="mb-4">
                 <label
@@ -178,7 +177,8 @@ export default function CrearSalas() {
                     required
                   />        
                 </div>
-               </div>                    
+               </div>   
+               <h3>DATOS ADMINISTRATIVOS</h3>                 
                <div className="mb-4">
               <label
                 htmlFor="clientes"
@@ -231,7 +231,6 @@ export default function CrearSalas() {
                 >
                   Cancelar
                 </Link>
-
                 <button
                   type="submit"
                   className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"

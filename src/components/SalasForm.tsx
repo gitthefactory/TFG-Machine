@@ -28,14 +28,13 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState(sala.nombre);
   const [newStatus, setNewStatus] = useState(sala.status);
   const [newPais, setNewPais] = useState(sala.pais);
-  // const [newCiudad, setNewCiudad] = useState(sala.ciudad);
-  // const [newComuna, setNewComuna] = useState(sala.comuna);
-
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [operadores, setOperadores] = useState<Operador[]>([]);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState("");
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
+  const [newMachineId, setNewMachineId] = useState<string | null>(null); // Estado para almacenar el id_machine recién creado
+  const [machineCreationError, setMachineCreationError] = useState<string | null>(null); // Estado para manejar errores en la creación de máquina
 
   // GET USUARIOS
   useEffect(() => {
@@ -125,19 +124,21 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         body: JSON.stringify({}),
       });
 
-      const responseData = await response.json();
-      console.log("Response Data:", responseData);
-
       if (response.status === 201) {
+        const responseData = await response.json();
+        console.log("Response Data:", responseData);
         console.log("Máquina creada con éxito");
-        if (typeof window !== "undefined") {
-          window.location.href = "/dashboard/maquinas";
-        }
+        setNewMachineId(responseData.id_machine); // Almacenar el id_machine en el estado local
+        setMachineCreationError(null); // Reiniciar el estado de error
       } else {
-        console.error("Error al crear la máquina:", responseData);
+        const responseData = await response.json();
+        setMachineCreationError(responseData.error || "Error desconocido al crear la máquina");
+        setNewMachineId(null); // Limpiar el id_machine en caso de error
       }
     } catch (error) {
       console.error("Error en el proceso de creación:", error);
+      setMachineCreationError("Error de red al crear la máquina");
+      setNewMachineId(null); // Limpiar el id_machine en caso de error
     }
   };
 
@@ -263,32 +264,54 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
                   ))}
                 </select>
               </div>
-              <div className="mx-auto max-w-270">
-                <form onSubmit={handleCreateMachine} className="p-6.5">
-                  <button
-                    className="mt-5 w-auto rounded bg-gray p-2 font-medium float-left"
-                    type="submit"
-                  >
-                    Crear máquina +
-                  </button>
-                </form>
-              </div>
-              {/* Botones */}
-              <div className="mt-6 flex justify-end gap-4">
-                <Link
-                  href="/dashboard/salas"
-                  className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-                >
-                  Cancelar
-                </Link>
+            </form>    
+            <div className="mt-6">
+              <form onSubmit={handleCreateMachine}>
                 <button
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                   type="submit"
-                  className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
                 >
-                  Guardar Cambios
+                  Crear máquina +
                 </button>
-              </div>
-            </form>
+              </form>
+              {newMachineId && (
+                <div className="mt-4">
+                  <p className="block text-sm font-medium text-black dark:text-black">
+                    Máquina creada con éxito. ID de la máquina: {newMachineId}
+                    <button
+                      className="ml-2 bg-blue-500  px-2 py-1 rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                      onClick={() => {
+                        navigator.clipboard.writeText(newMachineId);
+                        alert("ID de máquina copiado al portapapeles");
+                      }}
+                    >
+                      Copiar ID
+                    </button>
+                  </p>
+                </div>
+              )}
+              {machineCreationError && (
+                <div className="mt-4">
+                  <p className="block text-sm font-medium text-red-600">
+                    Error al crear la máquina: {machineCreationError}
+                  </p>
+                </div>
+              )}
+            </div>    
+            <div className="mt-6 flex justify-end gap-4">
+              <Link
+                href="/dashboard/salas"
+                className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </Link>
+              <button
+                type="submit"
+                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              >
+                Guardar Cambios
+              </button>
+            </div>
           </div>
         </div>
       </div>
