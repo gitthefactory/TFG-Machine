@@ -67,37 +67,41 @@ const DataTable: React.FC = () => {
   }
 
   return (
-    <div>
-      <div style={{ height: 400, width: "100%" }}>
-        <table {...getTableProps()} style={{ borderSpacing: 0, border: '1px solid black', width: '100%' }}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} style={{ borderBottom: '1px solid black', background: 'aliceblue', padding: '8px', textAlign: 'left' }}>
-                    {column.render('Header')}
-                  </th>
+    <div className="mx-auto max-w-270">
+      <div className="flex flex-col gap-9">
+        <div className="rounded-sm bg-white shadow-default dark:bg-boxdark">
+          <div style={{ height: 400, width: "100%" }}>
+            <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps()} style={{ padding: '8px', textAlign: 'left' }}>
+                        {column.render('Header')}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} style={{ borderBottom: '1px solid black' }}>
-                  {row.cells.map(cell => {
-                    return (
-                      <td {...cell.getCellProps()} style={{ padding: '8px' }}>
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#f3f4f6' : 'transparent' }}>
+                      {row.cells.map(cell => {
+                        return (
+                          <td {...cell.getCellProps()} style={{ padding: '8px' }}>
+                            {cell.render('Cell')}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

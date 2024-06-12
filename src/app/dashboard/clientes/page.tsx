@@ -13,7 +13,7 @@ interface RowData {
   empresa: string;
   pais: string;
   ciudad: string;
-  acciones: JSX.Element; // Cambio de string a JSX.Element
+  acciones: JSX.Element; 
 }
 
 const Clientes: React.FC = () => {
@@ -24,7 +24,7 @@ const Clientes: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getClients("", 1); // Llama a la función getClients con la búsqueda vacía y la página 1
+        const data = await getClients("", 1); 
         setRows(data);
         console.log(data);
         setLoading(false);
