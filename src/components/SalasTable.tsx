@@ -1,9 +1,6 @@
-import React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import DeleteButtonRoom from "@/components/DeleteButtonSalas";
-import Link from "next/link";
-import { FaPenToSquare } from "react-icons/fa6";
-
+import React, { useEffect, useMemo, useState } from "react";
+import getUsers from "@/controllers/getUsers";
+import { useTable } from "react-table";
 
 interface SalaData {
   _id: string;
@@ -11,7 +8,6 @@ interface SalaData {
   comuna: string;
   pais: string;
   status: number;
-  acciones: JSX.Element;
 }
 
 interface SalasTableProps {
@@ -19,50 +15,92 @@ interface SalasTableProps {
 }
 
 const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
-  // Agregar un id único a cada fila si no tiene uno
-  const rowsWithIds = salas.map((sala, index) => ({
-    ...sala,
-    id: sala._id || index.toString(), // Si la sala no tiene _id, se usa el índice como id
-  }));
+  const [usuariosClientes, setUsuariosClientes] = useState<SalaData[]>([]);
 
-  const renderAcciones = (sala: SalaData) => (
-    <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-      <div className="flex items-center space-x-3.5">
-       <DeleteButtonRoom id={sala._id} />
-        <Link
-          className="edit"
-          href={`/dashboard/salas/editar/${sala._id}`}
-          title="Edit"
-          style={{ fontSize: '20px' }}
-        >
-      <FaPenToSquare />
-        </Link>
-      </div>
-    </td>
+  useEffect(() => {
+    const fetchUsuariosClientes = async () => {
+      try {
+        const usuarios = await getUsers();
+        const usuariosClientesFiltrados = usuarios.filter(
+          (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
+        );
+        setUsuariosClientes(usuariosClientesFiltrados);
+      } catch (error) {
+        console.error(error);
+        // Manejo de errores
+      }
+    };
+
+    fetchUsuariosClientes();
+  }, []);
+
+  const columns = useMemo(
+    () => [
+      { Header: "Nombre Salas", accessor: "nombre", align: 'left' },
+      { Header: "Pais", accessor: "pais", align: 'left' },
+      { Header: "Comuna", accessor: "comuna", align: 'left' },
+      { Header: "Estado", accessor: "status", align: 'left' },
+    ],
+    []
   );
 
-  const columns: GridColDef[] = [
-    { field: "nombre", headerName: "Nombre Salas", flex: 1 },
-    { field: "pais", headerName: "Pais", flex: 1 },
-    { field: "comuna", headerName: "Comuna", flex: 1 },
-    { field: "status", headerName: "Estado", flex: 1 },
-    {
-      field: "acciones",
-      headerName: "Acciones",
-      width: 150,
-      renderCell: (params) => renderAcciones(params.row as SalaData),
-    },
-  ];
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({
+    columns,
+    data: salas || [],
+  });
+
+  // Asegurarse de que salas sea un array antes de usarlo
+  if (!Array.isArray(salas)) {
+    return <div>No hay datos de salas disponibles.</div>;
+  }
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <DataGrid
-        rows={rowsWithIds}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5, 10, 20]}
-        // checkboxSelection
-      />
+    <div className="mx-auto max-w-270">
+      <div className="flex flex-col gap-9">
+        <div className="rounded-sm bg-white shadow-default dark:bg-boxdark">
+          <div style={{ height: 400, width: "100%" }}>
+            <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column, index) => (
+                      <th
+                        {...column.getHeaderProps()}
+                        className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                      >
+                        {column.render('Header')}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#f3f4f6' : 'transparent' }}>
+                      {row.cells.map(cell => (
+                        <td
+                          {...cell.getCellProps()}
+                          className="border-b border-[#eee] px-4 py-2 text-left"
+                        >
+                          {cell.render('Cell')}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
