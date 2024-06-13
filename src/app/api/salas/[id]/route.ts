@@ -32,62 +32,51 @@ export async function GET(request: any, { params: { id } }: any) {
 
 
 
-export async function PUT(request: any, { params: { id } }: any) {
-  try {
-    const {
-      newNombre,
-      // newDescripcion,
-      // newRuta,
-      newStatus,
-      newPais,
-      // newCiudad,
-      // newComuna,
-      newOperator,
-      newClient,
-      juegos, // Agregamos los juegos aquí
-      newMachineId,
-
-    } = await request.json();
-
-    // Conectar a la base de datos
-    await connectDB();
-
-    // Construir el objeto con los datos actualizados de la máquina
-    const updatedMachineData = {
-      nombre: newNombre,
-      // descripcion: newDescripcion,
-      // ruta: newRuta,
-      status: newStatus,
-      pais: newPais,
-      // ciudad: newCiudad,
-      // comuna: newComuna,
-      operador: newOperator,
-      cliente: newClient,
-      games: juegos, 
-      machine: newMachineId,
-    };
-
-    // Actualizar la máquina en la base de datos
-    const updatedMachine = await Room.findByIdAndUpdate(id, updatedMachineData, { new: true });
-
-    // Si el usuario asociado ha cambiado, puedes realizar una acción adicional aquí
-
-    return NextResponse.json(
-      {
-        message: "Sala Actualizada con Éxito",
-        data: updatedMachine,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Error al actualizar Sala",
-        error,
-      },
-      {
-        status: 500,
-      }
-    );
+  export async function PUT(request: any, { params: { id } }: any) {
+    try {
+      const {
+        newNombre,
+        newStatus,
+        newPais,
+        newCiudad,
+        newComuna,
+        newClient,
+        id_machine,
+      } = await request.json();
+  
+      await connectDB();
+  
+      const updatedMachineData = {
+        nombre: newNombre,
+        status: newStatus,
+        pais: newPais,
+        ciudad: newCiudad,
+        comuna: newComuna,
+        client: newClient,
+        id_machine: id_machine,
+      };
+  
+      const updatedMachine = await Room.findByIdAndUpdate(id, updatedMachineData, { new: true });
+  
+      // Asegúrate de que id_machine esté incluido en la respuesta
+      updatedMachine.id_machine = id_machine;
+  
+      return NextResponse.json(
+        {
+          message: "Sala Actualizada con Éxito",
+          data: updatedMachine,
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      return NextResponse.json(
+        {
+          message: "Error al actualizar Sala",
+          error,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
   }
-}

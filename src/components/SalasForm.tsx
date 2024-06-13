@@ -16,13 +16,13 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState(sala.nombre);
   const [newStatus, setNewStatus] = useState(sala.status);
   const [newPais, setNewPais] = useState(sala.pais);
-  const [operadorSeleccionado, setOperadorSeleccionado] = useState("");
+  const [operadorSeleccionado, setOperadorSeleccionado] = useState(sala.operator);
   const [newClient, setNewClient] = useState(sala.client);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [newMachineId, setNewMachineId] = useState<string | null>(null);
+  const [id_machine, setid_machine] = useState<string | null>(null);
   const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
   const [maquinasCreadas, setMaquinasCreadas] = useState<any[]>([]);
-  
+
   // GET USUARIOS
   useEffect(() => {
     async function fetchUsuarios() {
@@ -44,7 +44,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
       newStatus,
       newOperator: operadorSeleccionado,
       newClient,
-      newMachineId,
+      id_machine: maquinasCreadas.map((maquina) => maquina.data.id_machine),
     };
 
     // Enviar los datos actualizados al servidor
@@ -67,7 +67,8 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
     }
   };
 
-  const handleCreateMachine = async () => {
+  const handleCreateMachine = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     try {
       const response = await fetch("/api/maquinas", {
         method: "POST",
@@ -93,7 +94,6 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
     }
   };
 
-
   const usuariosOperador = usuarios.filter(
     (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
   );
@@ -104,174 +104,171 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         <Breadcrumb pageName="Editar Sala" />
         <AtrasButton href="/dashboard/salas" />
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <form onSubmit={handleSubmit} className="p-6.5">
+          <form onSubmit={handleSubmit} className="p-6.5">
             <h1 className="mb-6">DATOS DE LA SALA</h1>
-              {/* Formulario de edición de sala */}
-              <div className="mb-4">
+            {/* Formulario de edición de sala */}
+            <div className="mb-4">
+              <label
+                htmlFor="newNombre"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Nombre Sala
+              </label>
+              <input
+                onChange={(e) => setNewNombre(e.target.value)}
+                value={newNombre}
+                id="newNombre"
+                name="newNombre"
+                type="text"
+                placeholder="Ingresa el nombre.."
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                required
+              />
+            </div>
+            <div className="mb-4 flex flex-row">
+              <div className="flex-grow mr-4">
                 <label
-                  htmlFor="newNombre"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                  Nombre Sala
-                </label>
-                <input
-                  onChange={(e) => setNewNombre(e.target.value)}
-                  value={newNombre}
-                  id="newNombre"
-                  name="newNombre"
-                  type="text"
-                  placeholder="Ingresa el nombre.."
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  required
-                />
-              </div>
-              <div className="mb-4 flex flex-row">
-                <div className="flex-grow mr-4">
-                  <label
-                    htmlFor="pais"
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                    Cambiar país
-                  </label>
-                  <select
-                    onChange={(e) => setNewPais(e.target.value)}
-                    value={newPais}
-                    id="pais"
-                    name="pais"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  >
-                    <option value={"Brazil"}>Brazil</option>
-                    <option value={"Chile"}>Chile</option>
-                    <option value={"Estados Unidos"}>Estados Unidos</option>
-                    <option value={"Mexico"}>Mexico</option>
-                    <option value={"Perú"}>Perú</option>
-                  </select>
-                </div>
-                <div className="flex-grow">
-                  <label
-                    htmlFor="newStatus"
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                    Estado
-                  </label>
-                  <select
-                    onChange={(e: any) => setNewStatus(e.target.value)}
-                    value={newStatus}
-                    id="newStatus"
-                    name="newStatus"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  >
-                    <option value={1}>Activo</option>
-                    <option value={0}>Inactivo</option>
-                  </select>
-                </div>
-              </div>
-              {/* Otras campos de edición */}
-              {/* ... */}
-              <div className="mb-4 flex flex-row">
-                {/* Otros elementos en la misma línea */}
-              </div>
-
-
-              {/* Selección de Operador */}
-              <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="operadores"
+                  htmlFor="pais"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Seleccionar Operadores
+                  Cambiar país
                 </label>
                 <select
-                  onChange={(e) => setOperadorSeleccionado(e.target.value)}
-                  value={operadorSeleccionado}
-                  id="operadores"
-                  name="operadores"
+                  onChange={(e) => setNewPais(e.target.value)}
+                  value={newPais}
+                  id="pais"
+                  name="pais"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                 >
-                  <option value="">Seleccionar</option>
-                  {usuariosOperador.map((usuario) => (
-                    <option key={usuario._id} value={usuario._id}>
-                      {usuario.nombreCompleto}
-                    </option>
-                  ))}
+                  <option value={"Brazil"}>Brazil</option>
+                  <option value={"Chile"}>Chile</option>
+                  <option value={"Estados Unidos"}>Estados Unidos</option>
+                  <option value={"Mexico"}>Mexico</option>
+                  <option value={"Perú"}>Perú</option>
                 </select>
               </div>
-              {/* Selección de Cliente */}
-              <div className="mb-4">
+              <div className="flex-grow">
                 <label
-                  htmlFor="NewClient"
+                  htmlFor="newStatus"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Cliente
+                  Estado
                 </label>
-                <input
-                  onChange={(e) => setNewClient(e.target.value)}
-                  value={newClient}
-                  id="client"
-                  name="client"
-                  type="text"
-                  placeholder="Ingresa el nombre"
+                <select
+                  onChange={(e: any) => setNewStatus(e.target.value)}
+                  value={newStatus}
+                  id="newStatus"
+                  name="newStatus"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  required
-                />
+                >
+                  <option value={1}>Activo</option>
+                  <option value={0}>Inactivo</option>
+                </select>
               </div>
-               {/* Botón de creación de máquina */}
-        <div className="mt-6">
-          <button
-            className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-            onClick={handleCreateMachine}
-          >
-            Crear máquina +
-          </button>
-          {maquinasCreadas.length > 0 && (
-            <div className="mt-4">
-              <h2>Máquinas creadas:</h2>
-              <div className="flex mt-2">
-                {maquinasCreadas.map((maquina, index) => (
-                  <button
-                    key={index}
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
-                    onClick={() => {
-                      // Aquí puedes agregar la lógica que desees al hacer clic en un botón de máquina
-                    }}
-                  >
-                    {maquina.data.id_machine}
-                  </button>
+            </div>
+            {/* Otras campos de edición */}
+            {/* ... */}
+            <div className="mb-4 flex flex-row">
+              {/* Otros elementos en la misma línea */}
+            </div>
+
+            {/* Selección de Operador */}
+            <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
+
+            <div className="mb-4">
+              <label
+                htmlFor="operadores"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Seleccionar Operadores
+              </label>
+              <select
+                onChange={(e) => setOperadorSeleccionado(e.target.value)}
+                value={operadorSeleccionado}
+                id="operadores"
+                name="operadores"
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+              >
+                <option value="">Seleccionar</option>
+                {usuariosOperador.map((usuario) => (
+                  <option key={usuario._id} value={usuario._id}>
+                    {usuario.nombreCompleto}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
-          )}
-          {machineCreationError && (
-            <div className="mt-4">
-              <p className="block text-sm font-medium text-red">
-                Error al crear la máquina: {machineCreationError}
-              </p>
+            {/* Selección de Cliente */}
+            <div className="mb-4">
+              <label
+                htmlFor="NewClient"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Cliente
+              </label>
+              <input
+                onChange={(e) => setNewClient(e.target.value)}
+                value={newClient}
+                id="client"
+                name="client"
+                type="text"
+                placeholder="Ingresa el nombre"
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                required
+              />
             </div>
-          )}
-     </div>
-              <div className="mt-6 flex justify-end gap-4">
-                <Link
-                  href="/dashboard/salas"
-                  className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-                >
-                  Cancelar
-                </Link>
-                <button
-                  type="submit"
-                  className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-                >
-                  Guardar Cambios
-                </button>
-              </div>
-            </form>
-           </div>
+            {/* Botón de creación de máquina */}
+            <div className="mt-6">
+              <button
+                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                onClick={handleCreateMachine}
+              >
+                Crear máquina +
+              </button>
+              {maquinasCreadas.length > 0 && (
+                <div className="mt-4">
+                  <h2>Máquinas creadas:</h2>
+                  <div className="flex mt-2">
+                    {maquinasCreadas.map((maquina, index) => (
+                      <button
+                        key={index}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
+                        onClick={() => {
+                          // Aquí puedes agregar la lógica que desees al hacer clic en un botón de máquina
+                        }}
+                      >
+                        {maquina.data.id_machine}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {machineCreationError && (
+                <div className="mt-4">
+                  <p className="block text-sm font-medium text-red">
+                    Error al crear la máquina: {machineCreationError}
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end gap-4">
+              <Link
+                href="/dashboard/salas"
+                className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </Link>
+              <button
+                type="submit"
+                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              >
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
         </div>
-        
+      </div>
     </DefaultLayout>
   );
 };
 
 export default EditarSala;
-
