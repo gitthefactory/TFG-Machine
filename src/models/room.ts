@@ -7,7 +7,8 @@ interface Room extends Document {
   ciudad: string;
   comuna: string;
   client: Types.ObjectId;
-  id_machine?: string[]; // Hacer id_machine un array opcional
+  id_machine?: string[];
+  operator?: Types.ObjectId;
 }
 
 const RoomSchema = new Schema<Room>({
@@ -21,6 +22,7 @@ const RoomSchema = new Schema<Room>({
   ciudad: { type: String, required: false },
   comuna: { type: String, required: false },
   client: { type: Schema.Types.ObjectId, ref: "Client" },
+  operator: { type: Schema.Types.ObjectId, ref: "Operator", required: false },
   id_machine: { type: [String], required: false }, // Hacer id_machine un array opcional
 },
 {

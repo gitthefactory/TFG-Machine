@@ -19,9 +19,10 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(sala.operator);
   const [newClient, setNewClient] = useState(sala.client);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [id_machine, setid_machine] = useState<string | null>(null);
+  const [id_machine, setid_machine] = useState<string | null>(sala.id_machine);
   const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
   const [maquinasCreadas, setMaquinasCreadas] = useState<any[]>([]);
+
 
   // GET USUARIOS
   useEffect(() => {
@@ -217,6 +218,28 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               />
             </div>
             {/* Botón de creación de máquina */}
+            <h3 className="mb-4">ID MAQUINAS</h3>
+        
+             <div className="mb-4">
+              <label
+                // htmlFor="id_machine"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Maquinas asignadas
+              </label>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+  {id_machine.map((id, index) => (
+    <div key={index} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
+>
+      {id}
+    </div>
+  ))}
+</div>
+
+
+
+
+            </div>
             <div className="mt-6">
               <button
                 className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
@@ -226,7 +249,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               </button>
               {maquinasCreadas.length > 0 && (
                 <div className="mt-4">
-                  <h2>Máquinas creadas:</h2>
+                  {/* <h2>:</h2> */}
                   <div className="flex mt-2">
                     {maquinasCreadas.map((maquina, index) => (
                       <button
