@@ -9,7 +9,7 @@ interface Room extends Document {
   pais: string[];
   ciudad: string;
   comuna: string;
-  operator: Types.ObjectId;
+  operator?: Types.ObjectId;
   client: Types.ObjectId;
 }
 
