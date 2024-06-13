@@ -71,12 +71,23 @@ export default function CrearSalas() {
       },
       body: JSON.stringify(newSala),
     });
+
+    
     // Si la solicitud es exitosa y se crea la sala, redireccionar a la página de salas
-    if (typeof window !== "undefined" && response.status === 201) {
-      window.location.href = "/dashboard/salas";
+    if (response.status === 201) {
+      // Obtener los datos de la respuesta en formato JSON
+      const responseData = await response.json();
+      // Obtener la ID de la nueva sala creada desde la respuesta
+      const nuevaSalaId = responseData.data._id; // Asegúrate de acceder a la ID según la estructura de tu respuesta
+
+      // Redirigir a la página de edición de la sala con la nueva ID
+      window.location.href = `/dashboard/salas/editar/${nuevaSalaId}`;
+    } else {
+      // Manejar errores si la solicitud no fue exitosa
+      console.error("Error al crear la sala:", response.statusText);
     }
-    console.log("Sala creada con éxito:", newSala);
   } catch (error) {
+    // Manejar errores de JavaScript o de red
     console.error("Error al crear la sala:", error);
   }
 };
