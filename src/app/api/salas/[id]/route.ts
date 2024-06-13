@@ -42,6 +42,7 @@ export async function GET(request: any, { params: { id } }: any) {
         newComuna,
         newClient,
         id_machine,
+        newOperator,
       } = await request.json();
   
       await connectDB();
@@ -54,6 +55,7 @@ export async function GET(request: any, { params: { id } }: any) {
         comuna: newComuna,
         client: newClient,
         id_machine: id_machine,
+        operator: newOperator, // Corregir el nombre del campo
       };
   
       const updatedMachine = await Room.findByIdAndUpdate(id, updatedMachineData, { new: true });
@@ -80,3 +82,4 @@ export async function GET(request: any, { params: { id } }: any) {
       );
     }
   }
+  
