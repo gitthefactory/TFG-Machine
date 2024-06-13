@@ -17,7 +17,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newStatus, setNewStatus] = useState(sala.status);
   const [newPais, setNewPais] = useState(sala.pais);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(sala.operator);
-  const [newClient, setNewClient] = useState(sala.client);
+  const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({ _id: sala.client, nombreCompleto: '' });
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [id_machine, setid_machine] = useState<string | null>(null);
   const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
@@ -43,7 +43,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
       newPais,
       newStatus,
       newOperator: operadorSeleccionado,
-      newClient,
+      newClient: newClient._id,
       id_machine: maquinasCreadas.map((maquina) => maquina.data.id_machine),
     };
 
@@ -205,16 +205,25 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               >
                 Cliente
               </label>
-              <input
-                onChange={(e) => setNewClient(e.target.value)}
-                value={newClient}
+              <select
+                onChange={(e) => {
+                  const selectedClient = usuarios.find(user => user._id === e.target.value);
+                  if (selectedClient) {
+                    setNewClient(selectedClient);
+                  }
+                }}
+                value={newClient._id}
                 id="client"
                 name="client"
-                type="text"
-                placeholder="Ingresa el nombre"
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                required
-              />
+              >
+                <option value="">Seleccionar</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario._id} value={usuario._id}>
+                    {usuario.nombreCompleto}
+                  </option>
+                ))}
+              </select>
             </div>
             {/* Botón de creación de máquina */}
             <div className="mt-6">
