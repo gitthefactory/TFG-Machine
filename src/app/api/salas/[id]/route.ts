@@ -36,15 +36,17 @@ export async function PUT(request: any, { params: { id } }: any) {
   try {
     const {
       newNombre,
-      newDescripcion,
-      newRuta,
+      // newDescripcion,
+      // newRuta,
       newStatus,
       newPais,
-      newCiudad,
-      newComuna,
+      // newCiudad,
+      // newComuna,
       newOperator,
       newClient,
-      juegos // Agregamos los juegos aquí
+      juegos, // Agregamos los juegos aquí
+      newMachineId,
+
     } = await request.json();
 
     // Conectar a la base de datos
@@ -53,15 +55,16 @@ export async function PUT(request: any, { params: { id } }: any) {
     // Construir el objeto con los datos actualizados de la máquina
     const updatedMachineData = {
       nombre: newNombre,
-      descripcion: newDescripcion,
-      ruta: newRuta,
+      // descripcion: newDescripcion,
+      // ruta: newRuta,
       status: newStatus,
       pais: newPais,
-      ciudad: newCiudad,
-      comuna: newComuna,
+      // ciudad: newCiudad,
+      // comuna: newComuna,
       operador: newOperator,
       cliente: newClient,
-      games: juegos // Agregamos los juegos aquí
+      games: juegos, 
+      machine: newMachineId,
     };
 
     // Actualizar la máquina en la base de datos

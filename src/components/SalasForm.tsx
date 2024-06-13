@@ -5,8 +5,6 @@ import Link from "next/link";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import getOperadores from "@/controllers/getOperators";
-import getClientes from "@/controllers/getClients";
 import getUsuarios from "@/controllers/getUsers";
 
 interface Usuario {
@@ -14,28 +12,17 @@ interface Usuario {
   nombreCompleto: string;
 }
 
-interface Operador {
-  _id: string;
-  user: string;
-}
-
-interface Cliente {
-  _id: string;
-  user: string;
-}
-
 const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState(sala.nombre);
   const [newStatus, setNewStatus] = useState(sala.status);
   const [newPais, setNewPais] = useState(sala.pais);
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [operadores, setOperadores] = useState<Operador[]>([]);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState("");
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [clienteSeleccionado, setClienteSeleccionado] = useState("");
-  const [newMachineId, setNewMachineId] = useState<string | null>(null); // Estado para almacenar el id_machine recién creado
-  const [machineCreationError, setMachineCreationError] = useState<string | null>(null); // Estado para manejar errores en la creación de máquina
-
+  const [newClient, setNewClient] = useState(sala.client);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [newMachineId, setNewMachineId] = useState<string | null>(null);
+  const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
+  const [maquinasCreadas, setMaquinasCreadas] = useState<any[]>([]);
+  
   // GET USUARIOS
   useEffect(() => {
     async function fetchUsuarios() {
@@ -49,48 +36,15 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
     fetchUsuarios();
   }, []);
 
-  // GET OPERADORES
-  useEffect(() => {
-    async function fetchOperadores() {
-      try {
-        const fetchedOperadores = await getOperadores("", 10);
-        setOperadores(fetchedOperadores);
-      } catch (error) {
-        console.error("Error al obtener operadores:", error);
-      }
-    }
-    fetchOperadores();
-  }, []);
-
-  // GET CLIENTES
-  useEffect(() => {
-    async function fetchClientes() {
-      try {
-        const fetchedClientes = await getClientes("", 10);
-        setClientes(fetchedClientes);
-      } catch (error) {
-        console.error("Error al obtener clientes:", error);
-      }
-    }
-    fetchClientes();
-  }, []);
-
-  // Función para manejar cambios en la selección de usuario
-  const handleOperadorChange = (value: string) => {
-    setOperadorSeleccionado(value);
-  };
-
-  const handleClienteChange = (value: string) => {
-    setClienteSeleccionado(value);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const updatedSala = {
       newNombre,
+      newPais,
       newStatus,
-      operator: operadorSeleccionado,
-      client: clienteSeleccionado,
+      newOperator: operadorSeleccionado,
+      newClient,
+      newMachineId,
     };
 
     // Enviar los datos actualizados al servidor
@@ -113,8 +67,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
     }
   };
 
-  const handleCreateMachine = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleCreateMachine = async () => {
     try {
       const response = await fetch("/api/maquinas", {
         method: "POST",
@@ -128,35 +81,38 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         const responseData = await response.json();
         console.log("Response Data:", responseData);
         console.log("Máquina creada con éxito");
-        setNewMachineId(responseData.id_machine); // Almacenar el id_machine en el estado local
+        setMaquinasCreadas([...maquinasCreadas, responseData]); // Agregar la máquina creada al array
         setMachineCreationError(null); // Reiniciar el estado de error
       } else {
         const responseData = await response.json();
         setMachineCreationError(responseData.error || "Error desconocido al crear la máquina");
-        setNewMachineId(null); // Limpiar el id_machine en caso de error
       }
     } catch (error) {
       console.error("Error en el proceso de creación:", error);
       setMachineCreationError("Error de red al crear la máquina");
-      setNewMachineId(null); // Limpiar el id_machine en caso de error
     }
   };
+
+
+  const usuariosOperador = usuarios.filter(
+    (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
+  );
 
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
         <Breadcrumb pageName="Editar Sala" />
         <AtrasButton href="/dashboard/salas" />
-        <div className="flex flex-col gap-9">
-          <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <form onSubmit={handleSubmit} className="p-6.5">
+            <h1 className="mb-6">DATOS DE LA SALA</h1>
               {/* Formulario de edición de sala */}
               <div className="mb-4">
                 <label
                   htmlFor="newNombre"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Nombre
+                  >
+                  Nombre Sala
                 </label>
                 <input
                   onChange={(e) => setNewNombre(e.target.value)}
@@ -169,70 +125,75 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="pais"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Cambiar país
-                </label>
-                <select
-                  onChange={(e) => setNewPais(e.target.value)}
-                  value={newPais}
-                  id="pais"
-                  name="pais"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                >
-                  <option value={"Brazil"}>Brazil</option>
-                  <option value={"Chile"}>Chile</option>
-                  <option value={"Estados Unidos"}>Estados Unidos</option>
-                  <option value={"Mexico"}>Mexico</option>
-                  <option value={"Perú"}>Perú</option>
-                </select>
+              <div className="mb-4 flex flex-row">
+                <div className="flex-grow mr-4">
+                  <label
+                    htmlFor="pais"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Cambiar país
+                  </label>
+                  <select
+                    onChange={(e) => setNewPais(e.target.value)}
+                    value={newPais}
+                    id="pais"
+                    name="pais"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  >
+                    <option value={"Brazil"}>Brazil</option>
+                    <option value={"Chile"}>Chile</option>
+                    <option value={"Estados Unidos"}>Estados Unidos</option>
+                    <option value={"Mexico"}>Mexico</option>
+                    <option value={"Perú"}>Perú</option>
+                  </select>
+                </div>
+                <div className="flex-grow">
+                  <label
+                    htmlFor="newStatus"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Estado
+                  </label>
+                  <select
+                    onChange={(e: any) => setNewStatus(e.target.value)}
+                    value={newStatus}
+                    id="newStatus"
+                    name="newStatus"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  >
+                    <option value={1}>Activo</option>
+                    <option value={0}>Inactivo</option>
+                  </select>
+                </div>
               </div>
               {/* Otras campos de edición */}
               {/* ... */}
-              <div className="mb-4">
-                <label
-                  htmlFor="newStatus"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  Estado
-                </label>
-                <select
-                  onChange={(e: any) => setNewStatus(e.target.value)}
-                  value={newStatus}
-                  id="newStatus"
-                  name="newStatus"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                >
-                  <option value={1}>Activo</option>
-                  <option value={0}>Inactivo</option>
-                </select>
+              <div className="mb-4 flex flex-row">
+                {/* Otros elementos en la misma línea */}
               </div>
+
+
               {/* Selección de Operador */}
+              <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
+
               <div className="mb-4">
                 <label
                   htmlFor="operadores"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Seleccionar Operador
+                  Seleccionar Operadores
                 </label>
                 <select
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    handleOperadorChange(e.target.value)
-                  }
+                  onChange={(e) => setOperadorSeleccionado(e.target.value)}
                   value={operadorSeleccionado}
                   id="operadores"
                   name="operadores"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                 >
-                  {operadores.map((operador: Operador) => (
-                    <option key={operador._id} value={operador._id}>
-                      {/* Busca el usuario correspondiente y muestra su nombreCompleto */}
-                      {usuarios.find(
-                        (usuario: Usuario) => usuario._id === operador.user
-                      )?.nombreCompleto || "Usuario no encontrado"}
+                  <option value="">Seleccionar</option>
+                  {usuariosOperador.map((usuario) => (
+                    <option key={usuario._id} value={usuario._id}>
+                      {usuario.nombreCompleto}
                     </option>
                   ))}
                 </select>
@@ -240,83 +201,77 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               {/* Selección de Cliente */}
               <div className="mb-4">
                 <label
-                  htmlFor="clientes"
+                  htmlFor="NewClient"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Seleccionar Cliente
+                  Cliente
                 </label>
-                <select
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    handleClienteChange(e.target.value)
-                  }
-                  value={clienteSeleccionado}
-                  id="clientes"
-                  name="clientes"
+                <input
+                  onChange={(e) => setNewClient(e.target.value)}
+                  value={newClient}
+                  id="client"
+                  name="client"
+                  type="text"
+                  placeholder="Ingresa el nombre"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                >
-                  {clientes.map((cliente: Cliente) => (
-                    <option key={cliente._id} value={cliente._id}>
-                      {/* Muestra el nombre completo del cliente */}
-                      {usuarios.find(
-                        (usuario: Usuario) => usuario._id === cliente.user
-                      )?.nombreCompleto || "Usuario no encontrado"}
-                    </option>
-                  ))}
-                </select>
+                  required
+                />
               </div>
-            </form>    
-            <div className="mt-6">
-              <form onSubmit={handleCreateMachine}>
-                <button
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  type="submit"
-                >
-                  Crear máquina +
-                </button>
-              </form>
-              {newMachineId && (
-                <div className="mt-4">
-                  <p className="block text-sm font-medium text-black dark:text-black">
-                    Máquina creada con éxito. ID de la máquina: {newMachineId}
-                    <button
-                      className="ml-2 bg-blue-500  px-2 py-1 rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-                      onClick={() => {
-                        navigator.clipboard.writeText(newMachineId);
-                        alert("ID de máquina copiado al portapapeles");
-                      }}
-                    >
-                      Copiar ID
-                    </button>
-                  </p>
-                </div>
-              )}
-              {machineCreationError && (
-                <div className="mt-4">
-                  <p className="block text-sm font-medium text-red-600">
-                    Error al crear la máquina: {machineCreationError}
-                  </p>
-                </div>
-              )}
-            </div>    
-            <div className="mt-6 flex justify-end gap-4">
-              <Link
-                href="/dashboard/salas"
-                className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-              >
-                Cancelar
-              </Link>
-              <button
-                type="submit"
-                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-              >
-                Guardar Cambios
-              </button>
+               {/* Botón de creación de máquina */}
+        <div className="mt-6">
+          <button
+            className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+            onClick={handleCreateMachine}
+          >
+            Crear máquina +
+          </button>
+          {maquinasCreadas.length > 0 && (
+            <div className="mt-4">
+              <h2>Máquinas creadas:</h2>
+              <div className="flex mt-2">
+                {maquinasCreadas.map((maquina, index) => (
+                  <button
+                    key={index}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
+                    onClick={() => {
+                      // Aquí puedes agregar la lógica que desees al hacer clic en un botón de máquina
+                    }}
+                  >
+                    {maquina.data.id_machine}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+          {machineCreationError && (
+            <div className="mt-4">
+              <p className="block text-sm font-medium text-red">
+                Error al crear la máquina: {machineCreationError}
+              </p>
+            </div>
+          )}
+     </div>
+              <div className="mt-6 flex justify-end gap-4">
+                <Link
+                  href="/dashboard/salas"
+                  className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+                >
+                  Cancelar
+                </Link>
+                <button
+                  type="submit"
+                  className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+           </div>
         </div>
-      </div>
+        
     </DefaultLayout>
   );
 };
 
 export default EditarSala;
+
