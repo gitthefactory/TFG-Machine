@@ -31,37 +31,43 @@ export async function GET(request: any, { params: { id } }: any) {
     }
   }
 
-//Update/EDITING a MACHINE
-export async function PUT(request: any, { params: { id } }: any) {
+
+  export async function PUT(request: any, { params: { id } }: any) {
     try {
-      const {
-        // newNombre,
-        // newDescripcion,
-        newStatus,
-        // newOperator,
-        // newClient,
-        newRoom,
-        games
-      } = await request.json();
+      const { newStatus, newOperator, newClient, games } = await request.json();
   
       // Conectar a la base de datos
       await connectDB();
   
       // Construir el objeto con los datos actualizados de la máquina
-      const updatedMachineData = {
-        // nombre: newNombre,
-        // descripcion: newDescripcion,
+      const updatedMachineData: any = {
         status: newStatus,
-        // operador: newOperator,
-        // cliente: newClient,
-        sala: newRoom,
-        games: games
+        client: newClient,
+        games: games,
+        updatedAt: new Date(), // Actualizar el campo updatedAt
       };
+  
+      // Agregar newOperator solo si está definido
+      if (newOperator !== undefined) {
+        updatedMachineData.operator = newOperator;
+      }
+  
+      console.log("Datos a actualizar:", updatedMachineData);
   
       // Actualizar la máquina en la base de datos
       const updatedMachine = await Machine.findByIdAndUpdate(id, updatedMachineData, { new: true });
   
-      // Si el usuario asociado ha cambiado, puedes realizar una acción adicional aquí
+      console.log("Máquina actualizada:", updatedMachine);
+  
+      // Verificar si la máquina se actualizó correctamente
+      if (!updatedMachine) {
+        return NextResponse.json(
+          {
+            message: "Máquina no encontrada",
+          },
+          { status: 404 }
+        );
+      }
   
       return NextResponse.json(
         {
@@ -71,10 +77,11 @@ export async function PUT(request: any, { params: { id } }: any) {
         { status: 200 }
       );
     } catch (error) {
+      console.error("Error al actualizar la máquina:", error);
       return NextResponse.json(
         {
           message: "Error al actualizar la máquina",
-          error,
+          error: error.message,
         },
         {
           status: 500,
@@ -82,5 +89,3 @@ export async function PUT(request: any, { params: { id } }: any) {
       );
     }
   }
-  
-  

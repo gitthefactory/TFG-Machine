@@ -27,7 +27,7 @@ interface Games {
 
 
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
-  const [newNombre, setNewNombre] = useState(maquina.nombre);
+  const [newNombre, setNewNombre] = React.useState(maquina.id_machine);
   const [newStatus, setNewStatus] = useState(maquina.status);
 
   const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({ _id: maquina.client, nombreCompleto: '' });
@@ -55,7 +55,6 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       newStatus,
       newOperator: operadorSeleccionado,
       newClient: newClient._id,
-      id_machine,
     };
 
     // Enviar los datos actualizados al servidor
@@ -119,6 +118,10 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     fetchProviders();
   }, []);
 
+  const handleStatusChange = (e, providerId, newStatus) => {
+    e.preventDefault(); // Evitar el comportamiento predeterminado del botón
+    // Lógica para cambiar el estado del proveedor...
+  };
   
 
   return (
@@ -132,25 +135,22 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
               <form onSubmit={handleSubmit} className="p-6.5">
                 <h1 className="mb-6">DATOS MÁQUINA</h1>
                 <div className="flex mb-4 gap-4">
-                  {/* Nombre */}
-                  <div className="flex-1">
-                    <label
-                      htmlFor="newNombre"
-                      className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    >
-                      ID Máquina
-                    </label>
-                    <input
-                      onChange={(e) => setNewNombre(e.target.value)}
-                      value={newNombre}
-                      id="newNombre"
-                      name="newNombre"
-                      type="text"
-                      placeholder="Ingresa el nombre.."
-                      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                      required
-                    />
-                  </div>
+                  {/* MAQUINA */}
+              <div className="flex-1">
+                <label
+                  htmlFor="newNombre"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  ID Máquina
+                </label>
+                <input
+                  onChange={(e) => setNewNombre(e.target.value)}
+                  value={newNombre}
+                  className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                  readOnly 
+                  disabled 
+                />
+              </div>
                   {/* Estado */}
                   <div className="flex-1">
                     <label
@@ -238,12 +238,22 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
               <tbody>
                 {providers.map((provider, index) => (
                   <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
-                     <td className="px-4 py-2 ">{provider.status > 0 ? <FaToggleOn /> : <FaToggleOff />}</td>
-                    <td className="px-4 py-2 ">{provider.id}</td>
-                    <td className="px-4 py-2 ">{provider.provider_name}</td>
-                    <td className="px-4 py-2 ">{provider.quantity}</td>
                     <td className="px-4 py-2">
-                    <Link href={`/editar/${provider.id}`}>
+                      {provider.status === 1 ? (
+                        <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
+                          <FaToggleOn />
+                        </button>
+                      ) : (
+                        <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
+                          <FaToggleOff />
+                        </button>
+                      )}
+                    </td>
+                    <td className="px-4 py-2">{provider.id}</td>
+                    <td className="px-4 py-2">{provider.provider_name}</td>
+                    <td className="px-4 py-2">{provider.quantity}</td>
+                    <td className="px-4 py-2">
+                      <Link href={`/editar/${provider.id}`}>
                         <div>
                           <FaPenToSquare />
                         </div>
