@@ -7,9 +7,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
 import getGames from "@/controllers/getGames";
-import { FaToggleOn, FaToggleOff, FaPenToSquare} from "react-icons/fa6";
-
-
+import { FaToggleOn, FaToggleOff, FaPenToSquare } from "react-icons/fa6";
 
 interface Usuario {
   _id: string;
@@ -24,16 +22,17 @@ interface Games {
   status: number;
 }
 
-
-
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
-  const [newNombre, setNewNombre] = React.useState(maquina.id_machine);
+  const [newNombre, setNewNombre] = useState(maquina.id_machine);
   const [newStatus, setNewStatus] = useState(maquina.status);
-
-  const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({ _id: maquina.client, nombreCompleto: '' });
+  const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({
+    _id: maquina.client,
+    nombreCompleto: '',
+  });
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(maquina.operator);
   const [providers, setProviders] = useState<Games[]>([]);
+  const [machineProviders, setMachineProviders] = useState<Games[]>([]);
 
   // GET USUARIOS
   useEffect(() => {
@@ -48,6 +47,47 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     fetchUsuarios();
   }, []);
 
+  // GET GAMES
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const gamesData = await getGames("", 1); // ajusta la consulta y la página según tus necesidades
+
+        const providerMap: Map<number, Games> = new Map();
+
+        gamesData.games.forEach((game: any) => {
+          if (!providerMap.has(game.provider)) {
+            providerMap.set(game.provider, {
+              id: game.provider,
+              provider_name: game.provider_name,
+              quantity: 1,
+              provider: game.provider,
+              status: game.status,
+            });
+          } else {
+            const existingProvider = providerMap.get(game.provider);
+            if (existingProvider) {
+              existingProvider.quantity++;
+              providerMap.set(game.provider, existingProvider);
+            }
+          }
+        });
+
+        const uniqueProviders = Array.from(providerMap.values());
+        setProviders(uniqueProviders);
+
+        // Filtrar los proveedores según la máquina
+        const machineProviders = uniqueProviders.filter((provider) => {
+          return maquina.games.some((game: any) => game.provider === provider.id);
+        });
+        setMachineProviders(machineProviders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProviders();
+  }, [maquina]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +95,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       newStatus,
       newOperator: operadorSeleccionado,
       newClient: newClient._id,
+      games: machineProviders,
     };
 
     // Enviar los datos actualizados al servidor
@@ -83,46 +124,14 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
   );
 
-  useEffect(() => {
-    const fetchProviders = async () => {
-      try {
-        const gamesData = await getGames("", 1); // ajusta la consulta y la página según tus necesidades
-
-        const providerMap: Map<number, Games> = new Map();
-
-        gamesData.games.forEach((game: any) => {
-          if (!providerMap.has(game.provider)) {
-            providerMap.set(game.provider, {
-              id: game.provider,
-              provider_name: game.provider_name,
-              quantity: 1,
-              provider: game.provider,
-              status: game.status,
-            });
-          } else {
-            const existingProvider = providerMap.get(game.provider);
-            if (existingProvider) {
-              existingProvider.quantity++;
-              providerMap.set(game.provider, existingProvider);
-            }
-          }
-        });
-
-        const uniqueProviders = Array.from(providerMap.values());
-        setProviders(uniqueProviders);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchProviders();
-  }, []);
-
-  const handleStatusChange = (e, providerId, newStatus) => {
+  const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, providerId: number, newStatus: number) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del botón
-    // Lógica para cambiar el estado del proveedor...
+    setMachineProviders((prevProviders) =>
+      prevProviders.map((provider) =>
+        provider.id === providerId ? { ...provider, status: newStatus } : provider
+      )
+    );
   };
-  
 
   return (
     <>
@@ -136,21 +145,21 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                 <h1 className="mb-6">DATOS MÁQUINA</h1>
                 <div className="flex mb-4 gap-4">
                   {/* MAQUINA */}
-              <div className="flex-1">
-                <label
-                  htmlFor="newNombre"
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                >
-                  ID Máquina
-                </label>
-                <input
-                  onChange={(e) => setNewNombre(e.target.value)}
-                  value={newNombre}
-                  className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
-                  readOnly 
-                  disabled 
-                />
-              </div>
+                  <div className="flex-1">
+                    <label
+                      htmlFor="newNombre"
+                      className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    >
+                      ID Máquina
+                    </label>
+                    <input
+                      onChange={(e) => setNewNombre(e.target.value)}
+                      value={newNombre}
+                      className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                      readOnly
+                      disabled
+                    />
+                  </div>
                   {/* Estado */}
                   <div className="flex-1">
                     <label
@@ -205,7 +214,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                   </label>
                   <select
                     onChange={(e) => {
-                      const selectedClient = usuarios.find(user => user._id === e.target.value);
+                      const selectedClient = usuarios.find((user) => user._id === e.target.value);
                       if (selectedClient) {
                         setNewClient(selectedClient);
                       }
@@ -225,44 +234,49 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                 </div>
                 <h3 className="mb-4">PROVEEDORES</h3>
                 <table className="table-auto w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-left">Estado</th>
-                  <th className="px-4 py-2 text-left">ID Proveedor</th>
-                  <th className="px-4 py-2 text-left">Nombre Proveedor</th>
-                  <th className="px-4 py-2 text-left">Cantidad Juegos</th>
-                  <th className="px-4 py-2 text-left">Acciones</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                {providers.map((provider, index) => (
-                  <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
-                    <td className="px-4 py-2">
-                      {provider.status === 1 ? (
-                        <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-                          <FaToggleOn />
-                        </button>
-                      ) : (
-                        <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-                          <FaToggleOff />
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-4 py-2">{provider.id}</td>
-                    <td className="px-4 py-2">{provider.provider_name}</td>
-                    <td className="px-4 py-2">{provider.quantity}</td>
-                    <td className="px-4 py-2">
-                      <Link href={`/editar/${provider.id}`}>
-                        <div>
-                          <FaPenToSquare />
-                        </div>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 text-left">Estado</th>
+                      <th className="px-4 py-2 text-left">ID Proveedor</th>
+                      <th className="px-4 py-2 text-left">Nombre Proveedor</th>
+                      <th className="px-4 py-2 text-left">Cantidad Juegos</th>
+                      <th className="px-4 py-2 text-left">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {machineProviders.map((provider, index) => (
+                      <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
+                        <td className="px-4 py-2">
+                          {provider.status === 1 ? (
+                            <button
+                              className="text-green-500 focus:outline-none"
+                              onClick={(e) => handleStatusChange(e, provider.id, 0)}
+                            >
+                              <FaToggleOn />
+                            </button>
+                          ) : (
+                            <button
+                              className="text-red focus:outline-none"
+                              onClick={(e) => handleStatusChange(e, provider.id, 1)}
+                            >
+                              <FaToggleOff />
+                            </button>
+                          )}
+                        </td>
+                        <td className="px-4 py-2">{provider.id}</td>
+                        <td className="px-4 py-2">{provider.provider_name}</td>
+                        <td className="px-4 py-2">{provider.quantity}</td>
+                        <td className="px-4 py-2">
+                          <Link href={`/editar/${provider.id}`}>
+                            <div>
+                              <FaPenToSquare />
+                            </div>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
                 {/* Botones */}
                 <div className="mt-6 flex justify-end gap-4">
                   <Link
@@ -288,3 +302,4 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 };
 
 export default EditarMaquina;
+
