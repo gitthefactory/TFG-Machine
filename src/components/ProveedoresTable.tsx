@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import getGames from "@/controllers/getGames";
-import Swal from "sweetalert2";
 import { FaPenToSquare, FaDeleteLeft, FaToggleOn, FaToggleOff } from "react-icons/fa6";
 import { useTable } from "react-table";
 
@@ -91,49 +90,16 @@ export default function ProveedoresTable({
       {
         Header: "Acciones",
         Cell: ({ row }) => (
-          <>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <Link href={`/dashboard/proveedores/ver/${row.original.id}`}>
-                <button>
-                  <FaPenToSquare/>
-                </button>
-              </Link>
-              <button
-                className="hover:text-primary"
-                onClick={() => {
-                  Swal.fire({
-                    text: `¿Estás seguro que deseas ${
-                      row.original.status === 0 ? "activar" : "deshabilitar"
-                    } al proveedor?`,
-                    showCancelButton: true,
-                    confirmButtonColor: "green",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: `Sí, ${
-                      row.original.status === 0 ? "activar" : "deshabilitar"
-                    }`,
-                    cancelButtonText: "No, me equivoqué",
-                    imageUrl: row.original.image,
-                    imageWidth: 200,
-                    imageHeight: 200,
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      handleButtonToggle(row.original.id); 
-                      disableProvider(row.original.id); 
-                      Swal.fire(
-                        `${row.original.status === 0 ? "Activado" : "Deshabilitado"}!`,
-                        `El proveedor ha sido ${
-                          row.original.status === 0 ? "activado" : "deshabilitado"
-                        }.`,
-                        "success",
-                      );
-                    }
-                  });
-                }}
-              >
-                <FaDeleteLeft/>
+          <div>
+            <Link href={`/dashboard/proveedores/ver/${row.original.id}`}>
+              <button>
+                <FaPenToSquare />
               </button>
-            </div>
-          </>
+            </Link>
+            <button onClick={() => handleButtonToggle(row.original.id)}>
+              <FaDeleteLeft />
+            </button>
+          </div>
         ),
       },
     ],
@@ -152,30 +118,19 @@ export default function ProveedoresTable({
     <div>
       <div style={{ marginBottom: "20px" }}>
         <Link href="/dashboard/gamesClientes">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded shadow hover:bg-blue-600 focus:outline-none flex items-center gap-1"     
-          >
+          <button>
             Asignar proveedores
           </button>
         </Link>
       </div>
 
-      <div style={{ height: 400, width: "100%" }}>
-        <table {...getTableProps()} style={{ borderSpacing: "0", width: "100%" }}>
+      <div>
+        <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    style={{
-                      borderBottom: "1px solid black",
-                      background: "aliceblue",
-                      color: "black",
-                      fontWeight: "bold",
-                      padding: "8px",
-                    }}
-                  >
+                  <th {...column.getHeaderProps()}>
                     {column.render("Header")}
                   </th>
                 ))}
@@ -187,20 +142,11 @@ export default function ProveedoresTable({
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        style={{
-                          padding: "8px",
-                          border: "1px solid gray",
-                          background: "",
-                        }}
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
+                  {row.cells.map((cell) => (
+                    <td {...cell.getCellProps()}>
+                      {cell.render("Cell")}
+                    </td>
+                  ))}
                 </tr>
               );
             })}

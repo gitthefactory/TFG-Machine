@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import { useTable } from "react-table";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaPenToSquare} from "react-icons/fa6";
 import Link from "next/link";
 
 interface MaquinaData {
   _id: string;
   id_machine: string;
-  nombre: string;
-  descripcion: string;
+  // games: number;
+  // descripcion: string;
   status: number;
 }
 
@@ -20,15 +20,15 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
   const columns = useMemo(
     () => [
       { Header: "ID Máquina", accessor: "id_machine", align: 'left' },
-      { Header: "Nombre", accessor: "nombre", align: 'left' },
-      { Header: "Descripción", accessor: "descripcion", align: 'left' },
+      // { Header: "Games", accessor: "games", align: 'left' },
+      // { Header: "Descripción", accessor: "descripcion", align: 'left' },
       { Header: "Estado", accessor: "status", align: 'left' },
       {
         Header: "Acciones",
         accessor: "_id",
         Cell: ({ value }) => (
           <Link href={`/dashboard/maquinas/editar/${value}`}>
-            <FaEdit />
+            <FaPenToSquare />
           </Link>
         ),
         align: 'left'
