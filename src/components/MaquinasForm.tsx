@@ -22,6 +22,7 @@ interface Games {
   status: number;
 }
 
+
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   const [newNombre, setNewNombre] = useState(maquina.id_machine);
   const [newStatus, setNewStatus] = useState(maquina.status);
@@ -31,7 +32,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   });
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(maquina.operator);
-  const [providers, setProviders] = useState<Games[]>([]);
+  const [providers, setProviders] = useState<Games[]>(maquina.games);
 
   // GET USUARIOS
   useEffect(() => {
@@ -125,6 +126,19 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       )
     );
   };
+  
+
+  function getStatusClass(status) {
+    if (status === 0) {
+      return "bg-gray-100";
+    } else if (status === 1) {
+      return "bg-green-100";
+    } else {
+      return "bg-red-700";
+    }
+  }
+  
+  
 
   return (
     <>
@@ -135,6 +149,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
           <div className="flex flex-col gap-9">
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <form onSubmit={handleSubmit} className="p-6.5">
+                
                 <h1 className="mb-6">DATOS MÁQUINA</h1>
                 <div className="flex mb-4 gap-4">
                   {/* MAQUINA */}
@@ -237,32 +252,36 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {providers.map((provider, index) => (
-                      <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
-                        <td className="px-4 py-2">
-                          {provider.status === 1 ? (
-                            <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-                              <FaToggleOn />
-                            </button>
-                          ) : (
-                            <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-                              <FaToggleOff />
-                            </button>
-                          )}
-                        </td>
-                        <td className="px-4 py-2">{provider.id}</td>
-                        <td className="px-4 py-2">{provider.provider_name}</td>
-                        <td className="px-4 py-2">{provider.quantity}</td>
-                        <td className="px-4 py-2">
-                          <Link href={`/editar/${provider.id}`}>
-                            <div>
-                              <FaPenToSquare />
-                            </div>
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+                      {providers.map((provider, index) => (
+                        <tr key={provider.id} className={getStatusClass(provider.status)}>
+                         <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
+                            {provider.status === 0 ? (
+                              <button className="text-gray-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
+                                <FaToggleOn />
+                              </button>
+                            ) : provider.status === 1 ? (
+                              <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 2)}>
+                                <FaToggleOff />
+                              </button>
+                            ) : (
+                              <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
+                                <FaToggleOff />
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-2">{provider.id}</td>
+                          <td className="px-4 py-2">{provider.provider_name}</td>
+                          <td className="px-4 py-2">{provider.quantity}</td>
+                          <td className="px-4 py-2">
+                          <Link href={`/dashboard/maquinas/editar/${maquina._id}/${provider.id}`}>                              
+                          <div>
+                                <FaPenToSquare />
+                              </div>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                 </table>
                 {/* Botones */}
                 <div className="mt-6 flex justify-end gap-4">
