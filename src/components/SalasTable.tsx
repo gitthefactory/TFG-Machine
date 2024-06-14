@@ -36,26 +36,25 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
     fetchUsuariosClientes();
   }, []);
 
-const columns = useMemo(
-  () => [
-    { Header: "Nombre Salas", accessor: "nombre", align: 'left' },
-    { Header: "Pais", accessor: "pais", align: 'left' },
-    { Header: "Comuna", accessor: "comuna", align: 'left' },
-    { Header: "Estado", accessor: "status", align: 'left' },
-    {
-      Header: "Acciones",
-      accessor: "_id",
-      Cell: ({ value }) => (
-        <Link href={`/dashboard/salas/editar/${value}`}>
-          <FaEdit />
-        </Link>
-      ),
-      align: 'left' // Añadido align: 'left' para el encabezado "Acciones"
-    },
-  ],
-  []
-);
-
+  const columns = useMemo(
+    () => [
+      { Header: "Nombre Salas", accessor: "nombre", align: 'left' },
+      { Header: "Pais", accessor: "pais", align: 'left' },
+      { Header: "Comuna", accessor: "comuna", align: 'left' },
+      { Header: "Estado", accessor: "status", align: 'left' },
+      {
+        Header: "Acciones",
+        accessor: "_id",
+        Cell: ({ value }) => (
+          <Link href={`/dashboard/salas/editar/${value}`}>
+            <FaEdit />
+          </Link>
+        ),
+        align: 'left' // Añadido align: 'left' para el encabezado "Acciones"
+      },
+    ],
+    []
+  );
 
   const {
     getTableProps,
@@ -74,46 +73,43 @@ const columns = useMemo(
   }
 
   return (
-    <div className="mx-auto max-w-270">
-      <div className="flex flex-col gap-9">
-        <div className="rounded-sm bg-white shadow-default dark:bg-boxdark">
-          <div style={{ height: 400, width: "100%" }}>
-            <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
-              <thead>
-                {headerGroups.map(headerGroup => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column, index) => (
-                      <th
-                        {...column.getHeaderProps()}
-                        className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
-                      >
-                        {column.render('Header')}
-                      </th>
-                    ))}
-                  </tr>
+    <div>
+      <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, index) => (
+                <th
+                  {...column.getHeaderProps()}
+                  className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                >
+                  {column.render('Header')}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row, index) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                style={{ backgroundColor: index % 2 === 0 ? '#D2D8D8' : 'transparent' }}
+              >
+                {row.cells.map(cell => (
+                  <td
+                    {...cell.getCellProps()}
+                    className="border-b border-[#eee] px-4 py-2 text-left"
+                  >
+                    {cell.render('Cell')}
+                  </td>
                 ))}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {rows.map((row, index) => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#f3f4f6' : 'transparent' }}>
-                      {row.cells.map(cell => (
-                        <td
-                          {...cell.getCellProps()}
-                          className="border-b border-[#eee] px-4 py-2 text-left"
-                        >
-                          {cell.render('Cell')}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

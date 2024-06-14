@@ -69,12 +69,12 @@ const DataTable: React.FC = () => {
   return (
     <div>
       <div style={{ height: 400, width: "100%" }}>
-        <table {...getTableProps()} style={{ borderSpacing: 0, border: '1px solid black', width: '100%' }}>
+        <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} style={{ borderBottom: '1px solid black', background: 'aliceblue', padding: '8px', textAlign: 'left' }}>
+                  <th {...column.getHeaderProps()} style={{ background: 'aliceblue', padding: '8px', textAlign: 'left' }}>
                     {column.render('Header')}
                   </th>
                 ))}
@@ -82,10 +82,10 @@ const DataTable: React.FC = () => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
+            {rows.map((row, index) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} style={{ borderBottom: '1px solid black' }}>
+                <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#D2D8D8' : 'transparent' }}>
                   {row.cells.map(cell => {
                     return (
                       <td {...cell.getCellProps()} style={{ padding: '8px' }}>
@@ -104,3 +104,4 @@ const DataTable: React.FC = () => {
 };
 
 export default DataTable;
+

@@ -10,23 +10,27 @@ interface User {
   };
   games: { provider: string }[];
   id_machine: string;
-  cantidadMaquinas: number; 
-  status: number; 
+  cantidadMaquinas: number;
+  status: number;
 }
 
-const DataTable: React.FC = () => {
+const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
-        const usuariosClientesFiltrados = usuarios.filter(
-          (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
-        ).map((usuario) => ({
-          ...usuario,
-          cantidadMaquinas: usuarios.filter((u) => u.id_machine === usuario.id_machine).length,
-        }));
+        const usuariosClientesFiltrados = usuarios
+          .filter(
+            (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
+          )
+          .map((usuario) => ({
+            ...usuario,
+            cantidadMaquinas: usuarios.filter(
+              (u) => u.id_machine === usuario.id_machine
+            ).length,
+          }));
         setUsuariosClientes(usuariosClientesFiltrados);
       } catch (error) {
         console.error(error);
@@ -46,7 +50,6 @@ const DataTable: React.FC = () => {
         accessor: "cantidadMaquinas",
       },
       { Header: "Estado", accessor: "status" },
-
     ],
     []
   );
@@ -69,27 +72,49 @@ const DataTable: React.FC = () => {
   return (
     <div>
       <div style={{ height: 400, width: "100%" }}>
-        <table {...getTableProps()} style={{ borderSpacing: 0, border: '1px solid black', width: '100%' }}>
+        <table
+          {...getTableProps()}
+          style={{
+            borderSpacing: 0,
+            width: "100%",
+          }}
+        >
           <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} style={{ borderBottom: '1px solid black', background: 'aliceblue', padding: '8px', textAlign: 'left' }}>
-                    {column.render('Header')}
+            {headerGroups.map((headerGroup) => (
+              <tr
+                {...headerGroup.getHeaderGroupProps()}
+                style={{ background: "aliceblue" }}
+              >
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps()}
+                    style={{
+                      padding: "8px",
+                      textAlign: "left",
+                    }}
+                  >
+                    {column.render("Header")}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
+            {rows.map((row, index) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} style={{ borderBottom: '1px solid black' }}>
-                  {row.cells.map(cell => {
+                <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#D2D8D8' : 'transparent', borderBottom: '1px solid black' }}>
+
+                  {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()} style={{ padding: '8px' }}>
-                        {cell.render('Cell')}
+                      <td
+                        {...cell.getCellProps()}
+                        style={{
+                          padding: "8px",
+                          textAlign: "left",
+                        }}
+                      >
+                        {cell.render("Cell")}
                       </td>
                     );
                   })}
@@ -103,4 +128,4 @@ const DataTable: React.FC = () => {
   );
 };
 
-export default DataTable;
+export default OperadoresTable;
