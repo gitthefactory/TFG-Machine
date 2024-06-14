@@ -39,15 +39,15 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+  
     const updatedSala = {
       newNombre,
       newPais,
       newStatus,
       newOperator: operadorSeleccionado,
       newClient: newClient._id,
-      id_machine: maquinasCreadas.map((maquina) => maquina.data.id_machine),
+      id_machine: [...maquinasCreadas.map((maquina) => maquina.data.id_machine), ...id_machine],
     };
-
     // Enviar los datos actualizados al servidor
     try {
       const response = await fetch(`/api/salas/${sala._id}`, {
@@ -78,12 +78,12 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         },
         body: JSON.stringify({}),
       });
-
+  
       if (response.status === 201) {
         const responseData = await response.json();
         console.log("Response Data:", responseData);
         console.log("Máquina creada con éxito");
-        setMaquinasCreadas([...maquinasCreadas, responseData]); // Agregar la máquina creada al array
+        setMaquinasCreadas((prevMaquinas) => [...prevMaquinas, responseData]); // Agregar la máquina creada al array
         setMachineCreationError(null); // Reiniciar el estado de error
       } else {
         const responseData = await response.json();
@@ -94,7 +94,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
       setMachineCreationError("Error de red al crear la máquina");
     }
   };
-
+  
   const usuariosOperador = usuarios.filter(
     (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
   );
