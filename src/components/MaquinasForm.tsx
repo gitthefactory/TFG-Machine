@@ -32,7 +32,6 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(maquina.operator);
   const [providers, setProviders] = useState<Games[]>([]);
-  const [machineProviders, setMachineProviders] = useState<Games[]>([]);
 
   // GET USUARIOS
   useEffect(() => {
@@ -75,19 +74,13 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 
         const uniqueProviders = Array.from(providerMap.values());
         setProviders(uniqueProviders);
-
-        // Filtrar los proveedores según la máquina
-        const machineProviders = uniqueProviders.filter((provider) => {
-          return maquina.games.some((game: any) => game.provider === provider.id);
-        });
-        setMachineProviders(machineProviders);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchProviders();
-  }, [maquina]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +88,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       newStatus,
       newOperator: operadorSeleccionado,
       newClient: newClient._id,
-      games: machineProviders,
+      games: providers,
     };
 
     // Enviar los datos actualizados al servidor
@@ -126,7 +119,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 
   const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, providerId: number, newStatus: number) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del botón
-    setMachineProviders((prevProviders) =>
+    setProviders((prevProviders) =>
       prevProviders.map((provider) =>
         provider.id === providerId ? { ...provider, status: newStatus } : provider
       )
@@ -244,21 +237,15 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {machineProviders.map((provider, index) => (
+                    {providers.map((provider, index) => (
                       <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
                         <td className="px-4 py-2">
                           {provider.status === 1 ? (
-                            <button
-                              className="text-green-500 focus:outline-none"
-                              onClick={(e) => handleStatusChange(e, provider.id, 0)}
-                            >
+                            <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
                               <FaToggleOn />
                             </button>
                           ) : (
-                            <button
-                              className="text-red focus:outline-none"
-                              onClick={(e) => handleStatusChange(e, provider.id, 1)}
-                            >
+                            <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
                               <FaToggleOff />
                             </button>
                           )}
@@ -302,4 +289,3 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 };
 
 export default EditarMaquina;
-
