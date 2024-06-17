@@ -6,6 +6,7 @@ import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
+import getRooms from "@/controllers/getRooms"
 import getGames from "@/controllers/getGames";
 import { FaToggleOn, FaToggleOff, FaPenToSquare } from "react-icons/fa6";
 
@@ -22,29 +23,62 @@ interface Games {
   status: number;
 }
 
+interface Room {
+  _id: string;
+  nombre: string;
+}
+
+
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   const [newNombre, setNewNombre] = useState(maquina.id_machine);
   const [newStatus, setNewStatus] = useState(maquina.status);
+
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({
     _id: maquina.client,
     nombreCompleto: '',
   });
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [operadorSeleccionado, setOperadorSeleccionado] = useState(maquina.operator);
-  const [providers, setProviders] = useState<Games[]>([]);
 
-  // GET USUARIOS
-  useEffect(() => {
-    async function fetchUsuarios() {
-      try {
-        const fetchedUsuarios = await getUsuarios("", 10);
-        setUsuarios(fetchedUsuarios);
-      } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [newRoom, setNewRoom] = useState<{ _id: string; nombre: string }>({
+    _id: maquina.room,
+    nombre: '',
+  });
+  const [providers, setProviders] = useState<Games[]>(maquina.games);
+
+ // GET USUARIOS
+ useEffect(() => {
+  async function fetchUsuarios() {
+    try {
+      const fetchedUsuarios  = await getUsuarios("", 10);
+      setUsuarios(fetchedUsuarios );
+      const usuario = fetchedUsuarios .find(usuario => usuario._id === maquina.client);
+      if (usuario) {
+        setNewClient(usuario);
       }
+    } catch (error) {
+      console.error("Error al obtener Cliente:", error);
     }
-    fetchUsuarios();
-  }, []);
+  }
+  fetchUsuarios();
+}, [maquina.client]);
+
+    // GET ROOMS
+    useEffect(() => {
+      async function fetchRooms() {
+        try {
+          const fetchedRooms = await getRooms("", 10);
+          setRooms(fetchedRooms);
+          const room = fetchedRooms.find(room => room._id === maquina.room);
+          if (room) {
+            setNewRoom(room);
+          }
+        } catch (error) {
+          console.error("Error al obtener salas:", error);
+        }
+      }
+      fetchRooms();
+    }, [maquina.room]);
 
   // GET GAMES
   useEffect(() => {
@@ -86,7 +120,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     e.preventDefault();
     const updatedMaquina = {
       newStatus,
-      newOperator: operadorSeleccionado,
+      newRoom,
       newClient: newClient._id,
       games: providers,
     };
@@ -113,9 +147,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   };
 
-  const usuariosOperador = usuarios.filter(
-    (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
-  );
+  // const usuariosOperador = usuarios.filter(
+  //   (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
+  // );
 
   const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, providerId: number, newStatus: number) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del botón
@@ -125,6 +159,19 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       )
     );
   };
+  
+
+  function getStatusClass(status) {
+    // if (status === 0) {
+    //   return "bg-gray-100";
+    // } else if (status === 1) {
+    //   return "bg-green-100";
+    // } else {
+    //   return "bg-red-700";
+    // }
+  }
+  
+  
 
   return (
     <>
@@ -135,6 +182,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
           <div className="flex flex-col gap-9">
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <form onSubmit={handleSubmit} className="p-6.5">
+                
                 <h1 className="mb-6">DATOS MÁQUINA</h1>
                 <div className="flex mb-4 gap-4">
                   {/* MAQUINA */}
@@ -173,58 +221,44 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </select>
                   </div>
                 </div>
-                {/* Selección de Operador */}
+                {/* Selección de Maquina */}
                 <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
-                <div className="mb-4">
-                  <label
-                    htmlFor="operadores"
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                    Seleccionar Operadores
-                  </label>
-                  <select
-                    onChange={(e) => setOperadorSeleccionado(e.target.value)}
-                    value={operadorSeleccionado}
-                    id="operadores"
-                    name="operadores"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  >
-                    <option value="">Seleccionar</option>
-                    {usuariosOperador.map((usuario) => (
-                      <option key={usuario._id} value={usuario._id}>
-                        {usuario.nombreCompleto}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {/* Selección de Cliente */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="NewClient"
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  >
-                    Cliente
-                  </label>
-                  <select
-                    onChange={(e) => {
-                      const selectedClient = usuarios.find((user) => user._id === e.target.value);
-                      if (selectedClient) {
-                        setNewClient(selectedClient);
-                      }
-                    }}
-                    value={newClient._id}
-                    id="client"
-                    name="client"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                  >
-                    <option value="">Seleccionar</option>
-                    {usuarios.map((usuario) => (
-                      <option key={usuario._id} value={usuario._id}>
-                        {usuario.nombreCompleto}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <div className="flex">
+                    {/* Selección de Maquina */}
+                    <div className="flex-1 mr-4">
+                      <label
+                        htmlFor="newRoom"
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                      >
+                        Nombre Sala
+                      </label>
+                      <input
+                        value={newRoom.nombre}
+                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                        readOnly
+                        disabled
+                      />
+                    </div>
+
+                    {/* Selección de Cliente */}
+                    <div className="flex-1">
+                    <div className="flex-1 mr-4">
+                      <label
+                        htmlFor="newClient"
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                      >
+                        Nombre Cliente
+                      </label>
+                      <input
+                        value={newClient.nombreCompleto}
+                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                        readOnly
+                        disabled
+                      />
+                    </div>
+                    </div>
+                  </div>
+
                 <h3 className="mb-4">PROVEEDORES</h3>
                 <table className="table-auto w-full">
                   <thead>
@@ -237,32 +271,32 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {providers.map((provider, index) => (
-                      <tr key={provider.id} className={index % 2 === 0 ? "bg-gray-100" : ""}>
-                        <td className="px-4 py-2">
-                          {provider.status === 1 ? (
-                            <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-                              <FaToggleOn />
-                            </button>
-                          ) : (
-                            <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-                              <FaToggleOff />
-                            </button>
-                          )}
-                        </td>
-                        <td className="px-4 py-2">{provider.id}</td>
-                        <td className="px-4 py-2">{provider.provider_name}</td>
-                        <td className="px-4 py-2">{provider.quantity}</td>
-                        <td className="px-4 py-2">
-                          <Link href={`/editar/${provider.id}`}>
-                            <div>
-                              <FaPenToSquare />
-                            </div>
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
+                      {providers.map((provider, index) => (
+        <tr key={provider.id} className={getStatusClass(provider.status)}>
+            <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
+                {provider.status === 0 ? (
+                    <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
+                        <FaToggleOn />
+                    </button>
+                ) : (
+                    <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
+                        <FaToggleOff />
+                    </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-2">{provider.id}</td>
+                          <td className="px-4 py-2">{provider.provider_name}</td>
+                          <td className="px-4 py-2">{provider.quantity}</td>
+                          <td className="px-4 py-2">
+                          <Link href={`/dashboard/maquinas/editar/${maquina._id}/${provider.id}`}>                              
+                          <div>
+                                <FaPenToSquare />
+                              </div>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                 </table>
                 {/* Botones */}
                 <div className="mt-6 flex justify-end gap-4">
