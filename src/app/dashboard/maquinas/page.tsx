@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import AddButton from "@/components/AddButton";
+// import Link from "next/link";
+// import AddButton from "@/components/AddButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import MaquinasTable from "@/components/MaquinasTable";
@@ -45,13 +45,13 @@ const Maquinas: React.FC = () => {
         <Breadcrumb pageName="Maquinas" />
         <div className="flex justify-between items-center mb-4">
         {/* Botón de agregar */}
-        <AddButton href="/dashboard/maquinas/crear" />
+        {/* <AddButton href="/dashboard/maquinas/crear" /> */}
         {/* Botón para asignar juegos */}
-        <Link href="/dashboard/maquinas/assignMachine">
+        {/* <Link href="/dashboard/maquinas/assignMachine">
             <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
               Asignar Juegos
             </button>
-          </Link>
+          </Link> */}
           </div>
         <MaquinasTable maquinas={maquinas} />
       </DefaultLayout>

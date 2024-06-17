@@ -288,7 +288,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                           <td className="px-4 py-2">{provider.provider_name}</td>
                           <td className="px-4 py-2">{provider.quantity}</td>
                           <td className="px-4 py-2">
-                          <Link href={`/dashboard/maquinas/editar/${maquina._id}/${provider.id}`}>                              
+                          <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}`}>                              
                           <div>
                                 <FaPenToSquare />
                               </div>
