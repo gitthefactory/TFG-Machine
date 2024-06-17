@@ -61,7 +61,7 @@ export async function PUT(request: any, { params: { id } }: any) {
       password: password,
       status: status,
       profileType: profileType,
-      id_machine: id_machine
+      id_machine: id_machine,
       telefono: telefono,
       empresa: empresa,
       pais: pais,
@@ -80,7 +80,7 @@ export async function PUT(request: any, { params: { id } }: any) {
           profileType: profileType,
           password: password,
           status: status,
-          id_machine: id_machine
+          id_machine: id_machine,
           telefono: telefono,
           empresa: empresa,
           pais: pais,

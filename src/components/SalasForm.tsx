@@ -19,10 +19,9 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [operadorSeleccionado, setOperadorSeleccionado] = useState(sala.operator);
   const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({ _id: sala.client, nombreCompleto: '' });
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [id_machine, setid_machine] = useState<string | null>(sala.id_machine);
+  const [id_machine, setid_machine] = useState<string[]>(sala.id_machine || []);
   const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
   const [maquinasCreadas, setMaquinasCreadas] = useState<any[]>([]);
-
 
   // GET USUARIOS
   useEffect(() => {
@@ -48,7 +47,7 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
       newClient: newClient._id,
       id_machine: [...maquinasCreadas.map((maquina) => maquina.data.id_machine), ...id_machine],
     };
-    // Enviar los datos actualizados al servidor
+
     try {
       const response = await fetch(`/api/salas/${sala._id}`, {
         method: "PUT",
@@ -83,8 +82,8 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         const responseData = await response.json();
         console.log("Response Data:", responseData);
         console.log("Máquina creada con éxito");
-        setMaquinasCreadas((prevMaquinas) => [...prevMaquinas, responseData]); // Agregar la máquina creada al array
-        setMachineCreationError(null); // Reiniciar el estado de error
+        setMaquinasCreadas((prevMaquinas) => [...prevMaquinas, responseData]);
+        setMachineCreationError(null);
       } else {
         const responseData = await response.json();
         setMachineCreationError(responseData.error || "Error desconocido al crear la máquina");
@@ -94,7 +93,17 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
       setMachineCreationError("Error de red al crear la máquina");
     }
   };
-  
+
+  const handleDeleteMachine = (id: string) => {
+    const isConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta máquina?');
+    if (isConfirmed) {
+      // Realizar la eliminación de la máquina
+      setMaquinasCreadas(prevMaquinas => prevMaquinas.filter(maquina => maquina.data.id_machine !== id));
+      setid_machine(prevIds => prevIds.filter(machineId => machineId !== id));
+    }
+    // No es necesario un else aquí, porque si cancela, no hacemos cambios
+  };
+
   const usuariosOperador = usuarios.filter(
     (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
   );
@@ -227,28 +236,44 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               </select>
             </div>
             {/* Botón de creación de máquina */}
-            <h3 className="mb-4">ID MAQUINAS</h3>
+            <h3 className="mb-4">ID MÁQUINAS</h3>
         
-             <div className="mb-4">
-              <label
-                // htmlFor="id_machine"
-                className="mb-3 block text-sm font-medium text-black dark:text-white"
-              >
-                Maquinas asignadas
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-  {id_machine.map((id, index) => (
-    <div key={index} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
->
-      {id}
-    </div>
-  ))}
+            <div className="mb-4">
+  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+    Máquinas asignadas
+  </label>
+  <div style={{ display: 'flex', flexDirection: 'row' }}>
+    {id_machine.map((id, index) => (
+      <a
+        key={index}
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          const isConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta máquina?');
+          if (isConfirmed) {
+            setMaquinasCreadas(prevMaquinas => prevMaquinas.filter(maquina => maquina.data.id_machine !== id));
+            setid_machine(prevIds => prevIds.filter(machineId => machineId !== id));
+          }
+        }}
+        className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2 cursor-pointer transition-colors relative overflow-hidden"
+        style={{
+          transition: 'background-color 0.3s',
+          // Aquí puedes agregar otros estilos personalizados si lo deseas
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 1)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+        }}
+      >
+        {id}
+      </a>
+    ))}
+  </div>
 </div>
 
 
-
-
-            </div>
             <div className="mt-6">
               <button
                 className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
@@ -258,14 +283,13 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
               </button>
               {maquinasCreadas.length > 0 && (
                 <div className="mt-4">
-                  {/* <h2>:</h2> */}
                   <div className="flex mt-2">
                     {maquinasCreadas.map((maquina, index) => (
                       <button
                         key={index}
                         className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
                         onClick={() => {
-                          // Aquí puedes agregar la lógica que desees al hacer clic en un botón de máquina
+                          // Lógica opcional al hacer clic en una máquina
                         }}
                       >
                         {maquina.data.id_machine}
