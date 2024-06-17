@@ -24,11 +24,11 @@ interface Game {
   image: string;
 }
 
-interface GameCardProps {
-  usuario: {
-    games: Game[];
-  };
-}
+// interface GameCardProps {
+//   usuario: {
+//     games: Game[];
+//   };
+// }
 
 
 
@@ -53,7 +53,12 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     _id: maquina.room,
     nombre: '',
   });
-  const [providers, setProviders] = useState<Games[]>(maquina.games);
+
+  const [providers, setProviders] = useState<Game[]>(maquina.games);
+  const [newProvider, setNewProvider] = useState<{ _id: string; provider_name: string }>({
+    _id: maquina.games,
+    provider_name: '',
+  });
 
 
  // GET USUARIOS
@@ -182,7 +187,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     <>
       <DefaultLayout>
         <div className="mx-auto max-w-270">
-          <Breadcrumb pageName="Editar Máquina" />
+          <Breadcrumb pageName="Máquina con Juegos"/>
           <AtrasButton href="/dashboard/maquinas" />
           <div className="flex flex-col gap-9">
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -228,13 +233,13 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                    <div className="flex-1">
                     <div className="flex-1 mr-4">
                       <label
-                        htmlFor="newRoom"
+                        htmlFor="newProvider"
                         className="mb-3 block text-sm font-medium text-black dark:text-white"
                       >
                         Proveedor
                       </label>
                       <input
-                        value={newRoom.nombre}
+                        value={newProvider.provider_name}                  
                         className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
                         readOnly
                         disabled
