@@ -240,43 +240,40 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
             </div>
             {/* Botón de creación de máquina */}
             <h3 className="mb-4">ID MÁQUINAS</h3>
-        
             <div className="mb-4">
-  <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-    Máquinas asignadas
-  </label>
-  <div style={{ display: 'flex', flexDirection: 'row' }}>
-    {id_machine.map((id, index) => (
-      <a
-        key={index}
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          const isConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta máquina?');
-          if (isConfirmed) {
-            setMaquinasCreadas(prevMaquinas => prevMaquinas.filter(maquina => maquina.data.id_machine !== id));
-            setid_machine(prevIds => prevIds.filter(machineId => machineId !== id));
-          }
-        }}
-        className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2 cursor-pointer transition-colors relative overflow-hidden"
-        style={{
-          transition: 'background-color 0.3s',
-          // Aquí puedes agregar otros estilos personalizados si lo deseas
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 1)';
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-        }}
-      >
-        {id}
-      </a>
-    ))}
-  </div>
-</div>
-
-
+                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                  Máquinas asignadas
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                  {id_machine.map((id, index) => (
+                    <a
+                      key={index}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const isConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta máquina?');
+                        if (isConfirmed) {
+                          setMaquinasCreadas(prevMaquinas => prevMaquinas.filter(maquina => maquina.data.id_machine !== id));
+                          setid_machine(prevIds => prevIds.filter(machineId => machineId !== id));
+                        }
+                      }}
+                      className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2 cursor-pointer transition-colors relative overflow-hidden"
+                      style={{
+                        transition: 'background-color 0.3s',
+                        // Aquí puedes agregar otros estilos personalizados si lo deseas
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 1)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                      }}
+                    >
+                      {id}
+                    </a>
+                  ))}
+                </div>
+              </div>
             <div className="mt-6">
               <button
                 className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"

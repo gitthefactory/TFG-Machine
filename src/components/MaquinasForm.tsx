@@ -272,31 +272,31 @@ useEffect(() => {
                   </thead>
                   <tbody>
                       
-{providers.map((provider, index) => (
-  <tr key={provider.id} className={getStatusClass(provider.status)}>
-    <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
-      {provider.status === 0 ? (
-        <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-          <FaToggleOn />
-        </button>
-      ) : (
-        <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-          <FaToggleOff />
-        </button>
-      )}
-    </td>
-    <td className="px-4 py-2">{provider.id}</td>
-    <td className="px-4 py-2">{provider.provider_name}</td>
-    <td className="px-4 py-2">{provider.quantity}</td>
-    <td className="px-4 py-2">
-      <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}`}>
-        <div>
-          <FaPenToSquare />
-        </div>
-      </Link>
-    </td>
-  </tr>
-))}
+                  {providers.map((provider, index) => (
+                    <tr key={provider.id} className={getStatusClass(provider.status)}>
+                      <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
+                        {provider.status === 0 ? (
+                          <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
+                            <FaToggleOn />
+                          </button>
+                        ) : (
+                          <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
+                            <FaToggleOff />
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-4 py-2">{provider.id}</td>
+                      <td className="px-4 py-2">{provider.provider_name}</td>
+                      <td className="px-4 py-2">{provider.quantity}</td>
+                      <td className="px-4 py-2">
+                      <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}?providerId=${provider.id}`}>
+                              <div>
+                                <FaPenToSquare />
+                              </div>
+                            </Link>
+                      </td>
+                    </tr>
+                  ))}
                     </tbody>
                 </table>
                 {/* Botones */}

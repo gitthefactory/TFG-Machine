@@ -168,6 +168,14 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   };
 
+  // Suponiendo que tienes acceso al URL actual
+const urlParams = new URLSearchParams(window.location.search);
+const providerId = urlParams.get('providerId');
+
+// Ahora puedes usar providerId donde lo necesites en tu vista
+console.log(providerId); // Esto mostrará '29' en la consola
+
+
   const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, providerId: number, newStatus: number) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del botón
     setProviders((prevProviders) =>
@@ -230,23 +238,23 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </div>
                     
                      {/* PROVEEDOR */}
-                   <div className="flex-1">
-                    <div className="flex-1 mr-4">
-                      <label
-                        htmlFor="newProvider"
-                        className="mb-3 block text-sm font-medium text-black dark:text-white"
-                      >
-                        Proveedor
-                      </label>
-                      <input
-                        value={newProvider.provider_name}                  
-                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
-                        readOnly
-                        disabled
-                      />
+                     <div className="flex-1">
+                      <div className="flex-1 mr-4">
+                        <label
+                          htmlFor="newProvider"
+                          className="mb-3 block text-sm font-medium text-black dark:text-white"
+                        >
+                          Proveedor
+                        </label>
+                        <input
+                          value={providerId}                  
+                          className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                          readOnly
+                          disabled
+                        />
+                      </div>
                     </div>
                     </div>
-                </div>
                 <h3 className="mb-4">SELECCION DE JUEGOS</h3>
                 <table className="table-auto w-full">
                     <thead>
