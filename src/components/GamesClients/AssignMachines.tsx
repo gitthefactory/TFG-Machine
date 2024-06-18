@@ -15,7 +15,6 @@ interface Usuario {
   nombreCompleto: string;
 }
 
-
 interface Game {
   id: number;
   name: string;
@@ -24,19 +23,10 @@ interface Game {
   image: string;
 }
 
-// interface GameCardProps {
-//   usuario: {
-//     games: Game[];
-//   };
-// }
-
-
-
 interface Room {
   _id: string;
   nombre: string;
 }
-
 
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   const [newNombre, setNewNombre] = useState(maquina.id_machine);
@@ -60,6 +50,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     provider_name: '',
   });
 
+    // Obtener providerId desde la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const providerId = urlParams.get('providerId');
 
  // GET USUARIOS
  useEffect(() => {
@@ -95,47 +88,50 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       fetchRooms();
     }, [maquina.room]);
 
-   // GET GAMES
-   useEffect(() => {
-    const fetchProviders = async () => {
-      try {
-        const gamesData = await getGames("", 1);
+    // GET GAMES
+  useEffect(() => {
+    if (providerId) {
+      const fetchProviders = async () => {
+        try {
+          const gamesData = await getGames("", 1);
 
-        const providerMap: Map<number, Games> = new Map();
-
-        gamesData.games.forEach((game: any) => {
-          if (!providerMap.has(game.id)) {
-            providerMap.set(game.id, {
-              id: game.id,
-              provider_name: game.provider_name,
-              quantity: 1,
-              provider: game.provider,
-              status: game.status,
-              name: game.name,
-              maker: game.maker,
-              category: game.category,
-              image: game.image,
-              cdn_image: game.cdn_image,
-              image_name: game.image_name,
-            });
-          } else {
-            const existingProvider = providerMap.get(game.id);
-            if (existingProvider) {
-              existingProvider.quantity++;
-              providerMap.set(game.id, existingProvider);
+          const providerMap = new Map();
+          gamesData.games.forEach((game: any) => {
+            if (game.provider === parseInt(providerId)) {
+              if (!providerMap.has(game.id)) {
+                providerMap.set(game.id, {
+                  id: game.id,
+                  provider_name: game.provider_name,
+                  quantity: 1,
+                  provider: game.provider,
+                  status: game.status,
+                  name: game.name,
+                  maker: game.maker,
+                  category: game.category,
+                  image: game.image,
+                  cdn_image: game.cdn_image,
+                  image_name: game.image_name,
+                });
+              } else {
+                const existingProvider = providerMap.get(game.id);
+                if (existingProvider) {
+                  existingProvider.quantity++;
+                  providerMap.set(game.id, existingProvider);
+                }
+              }
             }
-          }
-        });
+          });
 
-        const uniqueProviders = Array.from(providerMap.values());
-        setProviders(uniqueProviders);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+          const uniqueProviders = Array.from(providerMap.values());
+          setProviders(uniqueProviders);
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
-    fetchProviders();
-  }, []);
+      fetchProviders();
+    }
+  }, [providerId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -168,28 +164,18 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   };
 
-  // Suponiendo que tienes acceso al URL actual
-const urlParams = new URLSearchParams(window.location.search);
-const providerId = urlParams.get('providerId');
-
-// Ahora puedes usar providerId donde lo necesites en tu vista
-console.log(providerId); // Esto mostrará '29' en la consola
-
-
-  const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, providerId: number, newStatus: number) => {
+  const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, gameId: number, newStatus: number) => {
     e.preventDefault(); // Evitar el comportamiento predeterminado del botón
     setProviders((prevProviders) =>
       prevProviders.map((provider) =>
-        provider.id === providerId ? { ...provider, status: newStatus } : provider
+        provider.id === gameId ? { ...provider, status: newStatus } : provider
       )
     );
   };
   
 
   function getStatusClass(status) {
-  }
-  
-  
+  } 
 
   return (
     <>
@@ -270,30 +256,29 @@ console.log(providerId); // Esto mostrará '29' en la consola
                       </tr>
                     </thead>
                     <tbody>
-                      {providers.map((game) => (
-                        <tr key={game.id} className={getStatusClass(game.status)}>
-                          <td className={`px-4 py-2 ${getStatusClass(game.status)}`}>
-                            {game.status === 0 ? (
-                              <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 1)}>
-                                <FaToggleOn />
-                              </button>
-                            ) : (
-                              <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 0)}>
-                                <FaToggleOff />
-                              </button>
-                            )}
-                          </td>
-                          <td className="px-4 py-2">{game.id}</td>
-                          <td className="px-4 py-2">{game.category}</td>
-                          <td className="px-4 py-2">
-                            <img src={game.image} alt={game.name} width="50" height="50" />
-                          </td>
-                          <td className="px-4 py-2">{game.provider_name}</td>
-                          <td className="px-4 py-2">{game.name}</td>
-                         
-                        </tr>
-                      ))}
-                    </tbody>
+                    {providers.map((game) => (
+                      <tr key={game.id} className={getStatusClass(game.status)}>
+                        <td className={`px-4 py-2 ${getStatusClass(game.status)}`}>
+                          {game.status === 0 ? (
+                            <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 1)}>
+                              <FaToggleOn />
+                            </button>
+                          ) : (
+                            <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 0)}>
+                              <FaToggleOff />
+                            </button>
+                          )}
+                        </td>
+                        <td className="px-4 py-2">{game.id}</td>
+                        <td className="px-4 py-2">{game.category}</td>
+                        <td className="px-4 py-2">
+                          <img src={game.image} alt={game.name} width="50" height="50" />
+                        </td>
+                        <td className="px-4 py-2">{game.provider_name}</td>
+                        <td className="px-4 py-2">{game.name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
                   </table>
 
                 {/* Botones */}
