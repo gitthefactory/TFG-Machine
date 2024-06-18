@@ -75,7 +75,10 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          room: sala._id, // Pasar el ID de la sala seleccionada
+          client: newClient._id, // Pasar el ID del cliente seleccionado
+        }),
       });
   
       if (response.status === 201) {

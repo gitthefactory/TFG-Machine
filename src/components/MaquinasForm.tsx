@@ -257,6 +257,8 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                       />
                     </div>
                     </div>
+                        
+                    
                   </div>
 
                 <h3 className="mb-4">PROVEEDORES</h3>
