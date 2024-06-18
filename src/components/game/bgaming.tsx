@@ -25,7 +25,7 @@ const Bgaming: React.FC = () => {
 
           // Ensure the structure is as expected before accessing properties
           if (data.data && Array.isArray(data.data.games)) {
-            const bGamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming');
+            const bGamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming' && game.status === 0);
             setGames(bGamingGames);
           } else {
             console.error("Unexpected data structure:", data);
@@ -56,58 +56,58 @@ const Bgaming: React.FC = () => {
   };
 
   return (
-    <div className="bgaming-container">
-      <div className="navigation-buttons">
-        <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
-        <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
-      </div>
-      <Swiper
-        slidesPerView={1}
-        spaceBetween={10}
-        ref={swiperRef}
-        navigation={true}
-      >
-        {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
-          <SwiperSlide key={pageIndex}>
-            <div className="swiper-slide-content">
-              <div className="row">
-                {games.slice(pageIndex * 8, (pageIndex * 8) + 4).map((game: any, index: number) => (
-                  <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
-                    <a className="btn-game" href="#">
-                      <img 
-                        src={game.image} 
-                        alt={game.name} 
-                        style={{ width: "100%", height: "250px" }} 
-                      />
-                      <div className="subtitle">
-                        {game.name}
-                      </div>
-                    </a>
-                  </div>
-                ))}
-              </div>
-              <div className="row">
-                {games.slice((pageIndex * 8) + 4, (pageIndex * 8) + 8).map((game: any, index: number) => (
-                  <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
-                    <a className="btn-game" href="#">
-                      <img 
-                        src={game.image} 
-                        alt={game.name} 
-                        style={{ width: "100%", height: "250px" }} 
-                      />
-                      <div className="subtitle">
-                        {game.name}
-                      </div>
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+    <div className="belatra-container">
+    <div className="navigation-buttons">
+      <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
+      <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
     </div>
-  );
+    <Swiper
+      slidesPerView={1}
+      spaceBetween={10}
+      ref={swiperRef}
+      navigation={true}
+    >
+      {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
+        <SwiperSlide key={pageIndex}>
+          <div className="swiper-slide-content">
+            <div className="row">
+              {games.slice(pageIndex * 8, (pageIndex * 8) + 4).map((game: any, index: number) => (
+                <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
+                  <a className="btn-game" href="#">
+                    <img 
+                      src={game.image} 
+                      alt={game.name} 
+                      style={{ width: "100%", height: "250px" }} 
+                    />
+                    <div className="subtitle">
+                      {game.name}
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+            <div className="row">
+              {games.slice((pageIndex * 8) + 4, (pageIndex * 8) + 8).map((game: any, index: number) => (
+                <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
+                  <a className="btn-game" href="#">
+                    <img 
+                      src={game.image} 
+                      alt={game.name} 
+                      style={{ width: "100%", height: "250px" }} 
+                    />
+                    <div className="subtitle">
+                      {game.name}
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
+);
 }
 
 export default Bgaming;

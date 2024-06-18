@@ -8,7 +8,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
 import getRooms from "@/controllers/getRooms"
 import getGames from "@/controllers/getGames";
-import { FaToggleOn, FaToggleOff} from "react-icons/fa6";
+import { FaRectangleXmark, FaSquareCheck, FaSquare} from "react-icons/fa6";
 
 interface Usuario {
   _id: string;
@@ -88,50 +88,52 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       fetchRooms();
     }, [maquina.room]);
 
-    // GET GAMES
-  useEffect(() => {
-    if (providerId) {
-      const fetchProviders = async () => {
-        try {
-          const gamesData = await getGames("", 1);
+  // GET GAMES
+useEffect(() => {
+  if (providerId) {
+    const fetchProviders = async () => {
+      try {
+        const gamesData = await getGames("", 1);
 
-          const providerMap = new Map();
-          gamesData.games.forEach((game: any) => {
-            if (game.provider === parseInt(providerId)) {
-              if (!providerMap.has(game.id)) {
-                providerMap.set(game.id, {
-                  id: game.id,
-                  provider_name: game.provider_name,
-                  quantity: 1,
-                  provider: game.provider,
-                  status: game.status,
-                  name: game.name,
-                  maker: game.maker,
-                  category: game.category,
-                  image: game.image,
-                  cdn_image: game.cdn_image,
-                  image_name: game.image_name,
-                });
-              } else {
-                const existingProvider = providerMap.get(game.id);
-                if (existingProvider) {
-                  existingProvider.quantity++;
-                  providerMap.set(game.id, existingProvider);
-                }
+        const providerMap = new Map();
+        gamesData.games.forEach((game: any) => {
+          if (game.provider === parseInt(providerId)) {
+            if (!providerMap.has(game.id)) {
+              const gameStatus = maquina.games.find((maqGame: any) => maqGame.id === game.id)?.status || 0;
+              providerMap.set(game.id, {
+                id: game.id,
+                provider_name: game.provider_name,
+                quantity: 1,
+                provider: game.provider,
+                status: gameStatus,
+                name: game.name,
+                maker: game.maker,
+                category: game.category,
+                image: game.image,
+                cdn_image: game.cdn_image,
+                image_name: game.image_name,
+              });
+            } else {
+              const existingProvider = providerMap.get(game.id);
+              if (existingProvider) {
+                existingProvider.quantity++;
+                providerMap.set(game.id, existingProvider);
               }
             }
-          });
+          }
+        });
 
-          const uniqueProviders = Array.from(providerMap.values());
-          setProviders(uniqueProviders);
-        } catch (error) {
-          console.error(error);
-        }
-      };
+        const uniqueProviders = Array.from(providerMap.values());
+        setProviders(uniqueProviders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      fetchProviders();
-    }
-  }, [providerId]);
+    fetchProviders();
+  }
+}, [providerId, maquina.games]);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -256,29 +258,33 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                       </tr>
                     </thead>
                     <tbody>
-                    {providers.map((game) => (
-                      <tr key={game.id} className={getStatusClass(game.status)}>
-                        <td className={`px-4 py-2 ${getStatusClass(game.status)}`}>
-                          {game.status === 0 ? (
-                            <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 1)}>
-                              <FaToggleOn />
-                            </button>
-                          ) : (
-                            <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, game.id, 0)}>
-                              <FaToggleOff />
-                            </button>
-                          )}
-                        </td>
-                        <td className="px-4 py-2">{game.id}</td>
-                        <td className="px-4 py-2">{game.category}</td>
-                        <td className="px-4 py-2">
-                          <img src={game.image} alt={game.name} width="50" height="50" />
-                        </td>
-                        <td className="px-4 py-2">{game.provider_name}</td>
-                        <td className="px-4 py-2">{game.name}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+                      {providers.map((game) => (
+                        <tr key={game.id} className={getStatusClass(game.status)}>
+                          <td className={`px-4 py-2 ${getStatusClass(game.status)}`}>
+                            {game.status === 0 ? (
+                              <button className="text-green-500 focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 1)}>
+                                <FaSquareCheck  className="text-xl"/>
+                              </button>
+                            ) : game.status === 1 ? (
+                              <button className="text-red focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 2)}>
+                                <FaRectangleXmark  className="text-lg"/>
+                              </button>
+                            ) : (
+                              <button className="text-yellow-500 focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 0)}>
+                                <FaSquare className="text-xl"/> 
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-2">{game.id}</td>
+                          <td className="px-4 py-2">{game.category}</td>
+                          <td className="px-4 py-2">
+                            <img src={game.image} alt={game.name} width="50" height="50" />
+                          </td>
+                          <td className="px-4 py-2">{game.provider_name}</td>
+                          <td className="px-4 py-2">{game.name}</td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
 
                 {/* Botones */}

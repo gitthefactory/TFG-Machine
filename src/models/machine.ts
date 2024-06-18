@@ -8,6 +8,7 @@ interface Machine extends Document {
   operator?: Types.ObjectId;
   client: Types.ObjectId;
   room: Types.ObjectId;
+  providers: any[];
 }
 
 // Definición del esquema de la máquina
@@ -18,6 +19,7 @@ const MachineSchema = new Schema<Machine>({
   operator: { type: Schema.Types.ObjectId, ref: "Operator", required: false }, // Campo opcional
   client: { type: Schema.Types.ObjectId, ref: "Client" },
   room: { type: Schema.Types.ObjectId, ref: "Room" },
+  providers: { type: [{ type: Schema.Types.Mixed }], default: [] }, // Array de tipo any[] similar a games
 }, {
   timestamps: true,
 });

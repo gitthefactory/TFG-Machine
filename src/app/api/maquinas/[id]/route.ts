@@ -34,7 +34,7 @@ export async function GET(request: any, { params: { id } }: any) {
 
   export async function PUT(request: any, { params: { id } }: any) {
     try {
-      const { newStatus, newOperator, newClient, games } = await request.json();
+      const { newStatus, newOperator, newClient, games, providers } = await request.json();
   
       // Conectar a la base de datos
       await connectDB();
@@ -44,6 +44,7 @@ export async function GET(request: any, { params: { id } }: any) {
         status: newStatus,
         client: newClient,
         games: games,
+        providers: providers, // Agregar el campo providers
         updatedAt: new Date(), // Actualizar el campo updatedAt
       };
   

@@ -84,19 +84,19 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 useEffect(() => {
   const fetchProviders = async () => {
     try {
-      const gamesData = await getGames("", 1); // ajusta la consulta y la página según tus necesidades
+      const gamesData = await getGames("", 1);
 
       const providerMap: Map<number, Games> = new Map();
 
       gamesData.games.forEach((game: any) => {
         if (!providerMap.has(game.provider)) {
-          const gameStatus = maquina.games.find((g) => g.provider === game.provider)?.status || 0; // Obtener el estado del juego de la máquina
+          const providersStatus = maquina.providers.find((g) => g.provider === game.provider)?.status || 0; 
           providerMap.set(game.provider, {
             id: game.provider,
             provider_name: game.provider_name,
             quantity: 1,
             provider: game.provider,
-            status: gameStatus === 1 ? 1 : 0, // Convertir el estado del juego a 1 o 0 según la relación
+            status: providersStatus === 1 ? 1 : 0, 
           });
         } else {
           const existingProvider = providerMap.get(game.provider);
@@ -115,7 +115,7 @@ useEffect(() => {
   };
 
   fetchProviders();
-}, [maquina.games]);
+}, [maquina.providers]);
 
 
 
@@ -128,7 +128,7 @@ useEffect(() => {
       newStatus,
       newRoom,
       newClient: newClient._id,
-      games: providers,
+      providers,
     };
 
     // Enviar los datos actualizados al servidor
@@ -290,10 +290,11 @@ useEffect(() => {
                       <td className="px-4 py-2">{provider.quantity}</td>
                       <td className="px-4 py-2">
                       <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}?providerId=${provider.id}`}>
-                              <div>
-                                <FaPenToSquare />
-                              </div>
-                            </Link>
+                        <div>
+                          <FaPenToSquare />
+                        </div>
+                      </Link>
+
                       </td>
                     </tr>
                   ))}
