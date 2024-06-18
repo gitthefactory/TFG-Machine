@@ -80,41 +80,47 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       fetchRooms();
     }, [maquina.room]);
 
-  // GET GAMES
-  useEffect(() => {
-    const fetchProviders = async () => {
-      try {
-        const gamesData = await getGames("", 1); // ajusta la consulta y la página según tus necesidades
+// GET GAMES
+useEffect(() => {
+  const fetchProviders = async () => {
+    try {
+      const gamesData = await getGames("", 1); // ajusta la consulta y la página según tus necesidades
 
-        const providerMap: Map<number, Games> = new Map();
+      const providerMap: Map<number, Games> = new Map();
 
-        gamesData.games.forEach((game: any) => {
-          if (!providerMap.has(game.provider)) {
-            providerMap.set(game.provider, {
-              id: game.provider,
-              provider_name: game.provider_name,
-              quantity: 1,
-              provider: game.provider,
-              status: game.status,
-            });
-          } else {
-            const existingProvider = providerMap.get(game.provider);
-            if (existingProvider) {
-              existingProvider.quantity++;
-              providerMap.set(game.provider, existingProvider);
-            }
+      gamesData.games.forEach((game: any) => {
+        if (!providerMap.has(game.provider)) {
+          const gameStatus = maquina.games.find((g) => g.provider === game.provider)?.status || 0; // Obtener el estado del juego de la máquina
+          providerMap.set(game.provider, {
+            id: game.provider,
+            provider_name: game.provider_name,
+            quantity: 1,
+            provider: game.provider,
+            status: gameStatus === 1 ? 1 : 0, // Convertir el estado del juego a 1 o 0 según la relación
+          });
+        } else {
+          const existingProvider = providerMap.get(game.provider);
+          if (existingProvider) {
+            existingProvider.quantity++;
+            providerMap.set(game.provider, existingProvider);
           }
-        });
+        }
+      });
 
-        const uniqueProviders = Array.from(providerMap.values());
-        setProviders(uniqueProviders);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      const uniqueProviders = Array.from(providerMap.values());
+      setProviders(uniqueProviders);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    fetchProviders();
-  }, []);
+  fetchProviders();
+}, [maquina.games]);
+
+
+
+
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -160,17 +166,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     );
   };
   
-
   function getStatusClass(status) {
-    // if (status === 0) {
-    //   return "bg-gray-100";
-    // } else if (status === 1) {
-    //   return "bg-green-100";
-    // } else {
-    //   return "bg-red-700";
-    // }
+    return status === 0 ? "bg-red-100" : "bg-green";
   }
-  
   
 
   return (
@@ -273,31 +271,32 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                     </tr>
                   </thead>
                   <tbody>
-                      {providers.map((provider, index) => (
-        <tr key={provider.id} className={getStatusClass(provider.status)}>
-            <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
-                {provider.status === 0 ? (
-                    <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-                        <FaToggleOn />
-                    </button>
-                ) : (
-                    <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-                        <FaToggleOff />
-                    </button>
-                            )}
-                          </td>
-                          <td className="px-4 py-2">{provider.id}</td>
-                          <td className="px-4 py-2">{provider.provider_name}</td>
-                          <td className="px-4 py-2">{provider.quantity}</td>
-                          <td className="px-4 py-2">
-                          <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}`}>                              
-                          <div>
-                                <FaPenToSquare />
-                              </div>
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
+                      
+{providers.map((provider, index) => (
+  <tr key={provider.id} className={getStatusClass(provider.status)}>
+    <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
+      {provider.status === 0 ? (
+        <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
+          <FaToggleOn />
+        </button>
+      ) : (
+        <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
+          <FaToggleOff />
+        </button>
+      )}
+    </td>
+    <td className="px-4 py-2">{provider.id}</td>
+    <td className="px-4 py-2">{provider.provider_name}</td>
+    <td className="px-4 py-2">{provider.quantity}</td>
+    <td className="px-4 py-2">
+      <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}`}>
+        <div>
+          <FaPenToSquare />
+        </div>
+      </Link>
+    </td>
+  </tr>
+))}
                     </tbody>
                 </table>
                 {/* Botones */}
