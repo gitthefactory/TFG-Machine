@@ -1,172 +1,107 @@
 import React, { useEffect, useState } from "react";
-import getUsers from "@/controllers/getUsers";
-import getJuegos from "@/controllers/juegos/getJuegos";
-import { FaToggleOn, FaToggleOff } from "react-icons/fa6";
-import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import getGames from "@/controllers/getGames";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import Select from "react-select";
 
-// Definir la interfaz del juego
-interface Juego {
+interface Game {
   id: number;
   name: string;
-  maker: string;
+  provider: number;
   category: string;
   image: string;
-  cdn_image: string;
-  provider: number;
-  provider_name: string;
-  image_name: string;
-  checked: boolean;
+  selected: boolean;
 }
 
-const AssignClients: React.FC = () => {
-  const [usuariosClientes, setUsuariosClientes] = useState([]);
-  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState("");
-  const [newGames, setNewGames] = useState<Juego[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [allGamesAssigned, setAllGamesAssigned] = useState(false);
+enum LoadingState {
+  Loading,
+  Loaded,
+  Error,
+}
 
-  const gamesPerPage = 6;
+const providers: { [key: number]: string } = {
+  29: "Belatra Gaming",
+  68: "Bgaming",
+};
+
+export default function DetalleProveedores({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) {
+  const [games, setGames] = useState<Game[]>([]);
+  const [loadingState, setLoadingState] = useState<LoadingState>(
+    LoadingState.Loading
+  );
+  const [selectedProviderId, setSelectedProviderId] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
-    const fetchUsuariosClientes = async () => {
+    const fetchGames = async () => {
       try {
-        const usuarios = await getUsers();
-        const usuariosClientesFiltrados = usuarios.filter(
-          (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
+        const gamesData = await getGames(query, currentPage);
+        const storedGames = JSON.parse(
+          localStorage.getItem("selectedGames") || "{}"
         );
-        setUsuariosClientes(usuariosClientesFiltrados);
+        const updatedGames = gamesData.games.map((game: Game) => ({
+          ...game,
+          selected: storedGames[game.id] || false,
+        }));
+        setGames(updatedGames);
+        setLoadingState(LoadingState.Loaded);
       } catch (error) {
         console.error(error);
+        setLoadingState(LoadingState.Error);
       }
     };
 
-    fetchUsuariosClientes();
-  }, []);
+    fetchGames();
+  }, [query, currentPage]);
 
   useEffect(() => {
-    const fetchJuegos = async () => {
-      try {
-        setLoading(true);
-        const fetchedJuegos = await getJuegos("", 1);
-        setNewGames(fetchedJuegos);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener juegos:", error);
-        setLoading(false);
-      }
-    };
+    const pathArray = window.location.pathname.split("/");
+    const providerId = parseInt(pathArray[pathArray.length - 1]);
+    setSelectedProviderId(providerId);
+  }, [window.location.pathname]);
 
-    fetchJuegos();
-  }, []);
-
-  const handleUsuarioChange = (event) => {
-    setUsuarioSeleccionado(event.target.value);
-  };
-
-  const handleToggleChange = (id: number, checked: boolean) => {
-    setNewGames((prevJuegos) =>
-      prevJuegos.map((juego) =>
-        juego.games.some((game) => game.id === id)
-          ? {
-              ...juego,
-              games: juego.games.map((game) =>
-                game.id === id ? { ...game, checked } : game
-              ),
-            }
-          : juego
-      )
-    );
-  };
-
-  const isGameChecked = (userId: string, gameId: number): boolean => {
-    // Buscar el usuario por su ID
-    const usuario = usuariosClientes.find((usuario) => usuario._id === userId);
-  
-    // Verificar si el usuario existe y tiene juegos asignados
-    if (usuario && usuario.games && usuario.games.length > 0) {
-      // Buscar el juego por su ID en los juegos del usuario
-      const juego = usuario.games.find((juego) => juego.id === gameId);
-      
-      // Si el juego existe y está marcado como verdadero, devolver true
-      return juego ? juego.checked : false;
-    }
-  
-    // Si el usuario no tiene juegos asignados o el juego no existe, devolver false
-    return false;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const selectedGames = newGames.flatMap((juego) =>
-      juego.games.filter((game) => game.checked)
-    );
-
-    const updatedMaquina = {
-      games: selectedGames.map((game) => ({
-        id: game.id,
-        name: game.name,
-        maker: game.maker,
-        category: game.category,
-        image: game.image,
-        cdn_image: game.cdn_image,
-        provider: game.provider,
-        provider_name: game.provider_name,
-        image_name: game.image_name,
-        checked: game.checked,
-      })),
-    };
-
-    console.log("Submitting data:", JSON.stringify(updatedMaquina));
-
-    try {
-      const response = await fetch(`/api/usuarios/${usuarioSeleccionado}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedMaquina),
-      });
-
-      if (response.ok) {
-        console.log("Juegos asignados correctamente");
-        window.location.href = "/dashboard/juegos";
-      } else {
-        console.error(
-          "Hubo un error al asignar juegos al cliente seleccionado"
+  const handleCheckboxChange = (params) => {
+    const updatedGames = games.map((game) => {
+      if (game.id === params.row.id) {
+        const newSelectedStatus = game.selected ? 0 : 1;
+        const updatedGame = { ...game, selected: newSelectedStatus };
+        localStorage.setItem(
+          "selectedGames",
+          JSON.stringify({
+            ...JSON.parse(localStorage.getItem("selectedGames") || "{}"),
+            [game.id]: newSelectedStatus,
+          })
         );
-        const errorData = await response.json();
-        console.error("Error details:", errorData);
+
+        // Make a PUT request to update the status in your backend
+        // Example:
+        // fetch(`http://localhost:3000/api/maquinas/${game.id}`, {
+        //   method: 'PUT',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({ selected: newSelectedStatus }),
+        // })
+        //   .then(response => response.json())
+        //   .then(data => console.log('Success:', data))
+        //   .catch((error) => console.error('Error:', error));
+
+        return updatedGame;
       }
-    } catch (error) {
-      console.error("Error de red:", error);
-    }
+      return game;
+    });
+    setGames(updatedGames);
   };
 
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => (prevPage > 1 ? prevPage - 1 : prevPage));
-  };
-
-  const indexOfLastGame = currentPage * gamesPerPage;
-  const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-  const currentGames = newGames.flatMap((juego) => juego.games).slice(indexOfFirstGame, indexOfLastGame);
-
-  const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Nombre", width: 200 },
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "N°", flex: 1 },
+    { field: "name", headerName: "Nombre Juego", flex: 1 },
     { field: "category", headerName: "Categoría", flex: 1 },
     {
       field: "image",
@@ -182,151 +117,59 @@ const AssignClients: React.FC = () => {
     },
     { field: "provider_name", headerName: "Proveedor", flex: 1 },
     {
-      field: "checked",
-      headerName: "Status",
-      flex: 1,
+      field: "selected",
+      headerName: "Seleccionar",
+      width: 150,
       renderCell: (params) => (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <div
-            className="h-8 w-8 flex items-center justify-center rounded dark:bg-transparent"
-            onClick={() =>
-              handleToggleChange(params.row.id, !params.row.checked)
-            }
-            style={{ cursor: "pointer" }}
-          >
-            {params.row.checked ? (
-              <FaToggleOn className="text-green-500 text-2xl" />
-            ) : (
-              <FaToggleOff className="text-red-400 text-2xl" />
-            )}
-          </div>
-        </div>
+        <input
+          type="checkbox"
+          checked={params.value === 1}
+          onChange={() => handleCheckboxChange(params)}
+        />
       ),
     },
   ];
 
-  const handleAssignAll = () => {
-    if (allGamesAssigned) {
-      const updatedGames = newGames.map((juego) => ({
-        ...juego,
-        games: juego.games.map((game) => ({
-          ...game,
-          checked: false,
-        })),
-      }));
-      setNewGames(updatedGames);
-      setAllGamesAssigned(false);
-    } else {
-      const updatedGames = newGames.map((juego) => ({
-        ...juego,
-        games: juego.games.map((game) => ({
-          ...game,
-          checked: true,
-        })),
-      }));
-      setNewGames(updatedGames);
-      setAllGamesAssigned(true);
-    }
-  };
+  const filteredGames = selectedProviderId
+    ? games.filter((game) => game.provider === selectedProviderId)
+    : games;
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="usuarios">Seleccionar usuario:</label>
-        <select
-          id="usuarios"
-          value={usuarioSeleccionado}
-          onChange={handleUsuarioChange}
-        >
-          <option value="">Seleccionar usuario</option>
-          {usuariosClientes.map((usuario) => (
-            <option key={usuario._id} value={usuario._id}>
-              {usuario.nombreCompleto}
-            </option>
-          ))}
-        </select>
-        <div className="mt-4 flex justify-end">
-          <button
-            type="button"
-            onClick={handleAssignAll}
-            className={`flex items-center rounded-lg px-4 text-sm font-medium transition-colors ${
-              allGamesAssigned
-                ? "bg-red-600 text-black border border-black hover:bg-red-700"
-                : "bg-green-500 text-white hover:bg-red-700"
-            }`}
-          >
-            <span>
-              {allGamesAssigned ? "Desasignar Todos" : "Asignar Todos"}
-            </span>
-          </button>
-        </div>
-
-        <div style={{ overflowX: "auto" }}>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell key={column.field}>
-                      {column.headerName}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {currentGames.map((game) => (
-                  <TableRow key={game.id}>
-                    {columns.map((column) => (
-                      <TableCell key={column.field}>
-                        {column.renderCell
-                          ? column.renderCell({ row: game })
-                          : game[column.field]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-
-        <div className="mt-6 flex justify-between">
-          <button
-            type="button"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-          >
-            Anterior
-          </button>
-          <button
-            type="button"
-            onClick={handleNextPage}
-            disabled={indexOfLastGame >= newGames.flatMap((juego) => juego.games.length)}
-            className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-          >
-            Siguiente
-          </button>
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Confirmar
-          </button>
-        </div>
-      </form>
+    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mx-auto max-w-screen-lg p-4 bg-white">
+      <div className="mb-4">
+        <Select
+          value={
+            selectedProviderId
+              ? {
+                  value: selectedProviderId,
+                  label:
+                    providers[selectedProviderId] ||
+                    `Proveedor ${selectedProviderId}`,
+                }
+              : null
+          }
+          onChange={(selectedOption) =>
+            setSelectedProviderId(selectedOption ? selectedOption.value : null)
+          }
+          options={[
+            ...Array.from(new Set(games.map((game) => game.provider))).map(
+              (providerId) => ({
+                value: providerId,
+                label: providers[providerId] || `Proveedor ${providerId}`,
+              })
+            ),
+          ]}
+        />
+      </div>
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={filteredGames}
+          columns={columns}
+          loading={loadingState === LoadingState.Loading}
+          pageSize={5}
+          rowsPerPageOptions={[5, 10, 20]}
+        />
+      </div>
     </div>
   );
-};
-
-export default AssignClients;
+}

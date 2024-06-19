@@ -19,8 +19,8 @@ enum LoadingState {
 }
 
 const providers = {
-  29: "Belatra Gaming",
-  68: "Bgaming",
+  // 29: "Belatra Gaming",
+  // 68: "Bgaming",
 };
 
 export default function DetalleProveedores({

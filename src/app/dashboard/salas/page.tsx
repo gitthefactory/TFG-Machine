@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+// import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import SalasTable from "@/components/SalasTable";
@@ -38,11 +38,11 @@ const Salas: React.FC = () => {
           {/* Botón de agregar */}
           <AddButton href="/dashboard/salas/crear" />
           {/* Botón para asignar juegos */}
-          <Link href="/dashboard/salas/assign">
+          {/* <Link href="/dashboard/salas/assign">
             <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
               Asignar Juegos
             </button>
-          </Link>
+          </Link> */}
         </div>
         <SalasTable salas={salas} />
       </DefaultLayout>

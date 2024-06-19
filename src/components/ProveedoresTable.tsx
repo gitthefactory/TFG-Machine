@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import getGames from "@/controllers/getGames";
-import { FaPenToSquare, FaDeleteLeft, FaToggleOn, FaToggleOff } from "react-icons/fa6";
+import { FaPenToSquare, FaToggleOn, FaToggleOff } from "react-icons/fa6";
 import { useTable } from "react-table";
 
 interface Games {
@@ -77,31 +77,49 @@ export default function ProveedoresTable({
     fetchProviders();
   }, [query, currentPage]);
 
+  const handleToggleStatus = (providerId: number) => {
+    setProviders(prevProviders =>
+      prevProviders.map(provider =>
+        provider.id === providerId
+          ? { ...provider, status: provider.status === 0 ? 1 : 0 }
+          : provider
+      )
+    );
+  };
+
   const columns = React.useMemo(
     () => [
-      { Header: "N°", accessor: "id" },
+      { Header: "N°", accessor: "id", align: 'left' },
       {
         Header: "Estado",
+        align: 'left',
         accessor: "status",
-        Cell: ({ value }) => (value > 0 ? <FaToggleOn /> : <FaToggleOff />),
-      },
-      { Header: "Nombre Proveedor", accessor: "provider_name" },
-      { Header: "Cantidad Juegos", accessor: "quantity" },
-      {
-        Header: "Acciones",
-        Cell: ({ row }) => (
-          <div>
-            <Link href={`/dashboard/proveedores/ver/${row.original.id}`}>
-              <button>
-                <FaPenToSquare />
-              </button>
-            </Link>
-            <button onClick={() => handleButtonToggle(row.original.id)}>
-              <FaDeleteLeft />
-            </button>
-          </div>
+        Cell: ({ value, row }) => (
+          value === 1 ? (
+            <FaToggleOn style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleToggleStatus(row.original.id)} />
+          ) : (
+            <FaToggleOff style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleToggleStatus(row.original.id)} />
+          )
         ),
       },
+      { Header: "Nombre Proveedor", accessor: "provider_name", align: 'left' },
+      { Header: "Cantidad Juegos", accessor: "quantity", align: 'left' },
+      // {
+      //   Header: "Acciones",
+      //   align: 'left',
+      //   Cell: ({ row }) => (
+      //     <div>
+      //       <Link href={`/dashboard/proveedores/ver/${row.original.id}`}>
+      //         <button>
+      //           <FaPenToSquare />
+      //         </button>
+      //       </Link>
+      //       {/* <button onClick={() => handleButtonToggle(row.original.id)}>
+      //         <FaDeleteLeft />
+      //       </button> */}
+      //     </div>
+      //   ),
+      // },
     ],
     []
   );
@@ -115,43 +133,48 @@ export default function ProveedoresTable({
   } = useTable({ columns, data: providers });
 
   return (
-    <div>
-      <div style={{ marginBottom: "20px" }}>
-        <Link href="/dashboard/gamesClientes">
-          <button>
-            Asignar proveedores
-          </button>
-        </Link>
-      </div>
-
-      <div>
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
+    <div className="mx-auto max-w-270">
+      <div className="flex flex-col gap-9">
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+          <div>
+            <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column, index) => (
+                      <th
+                        {...column.getHeaderProps()}
+                        className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                      >
+                        {column.render('Header')}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()}>
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map((row, index) => {
+                  prepareRow(row);
+                  return (
+                    <tr
+                      {...row.getRowProps()}
+                      style={{ backgroundColor: index % 2 === 0 ? '#E8EDED' : 'transparent' }}
+                    >
+                      {row.cells.map(cell => (
+                        <td
+                          {...cell.getCellProps()}
+                          className="border-b border-[#eee] px-4 py-2 text-left"
+                        >
+                          {cell.render('Cell')}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

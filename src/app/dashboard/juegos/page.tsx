@@ -40,7 +40,7 @@ const Maquinas: React.FC = () => {
   return (
     <>
       <DefaultLayout>
-        <Breadcrumb pageName="Asignación Juegos a Clientes" />
+        <Breadcrumb pageName="Control de Juegos" />
         <AssignClients maquinas={maquinas} />
       </DefaultLayout>
     </>

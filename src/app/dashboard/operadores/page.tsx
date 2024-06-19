@@ -42,11 +42,11 @@ const Operadores: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
 
         {/* Botón de agregar */}
-        <AddButton href="/dashboard/operadores/crear" />
+        {/* <AddButton href="/dashboard/operadores/crear" /> */}
           {/* Botón de crear operador*/}
         <Link href="/dashboard/operadores/createOperator">
             <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-             Crear Operador
+             Crear Operador +
             </button>
           </Link>
           </div>
