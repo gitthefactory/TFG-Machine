@@ -15,18 +15,24 @@ const Belatra: React.FC = () => {
       try {
         const sessionData = await getSessionData();
         console.log("Session Data:", sessionData);
-
+  
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
           const provider = 29;
           const response = await fetch(`http://localhost:3000/api/juegosApi/${id_machine}/${provider}`);
           const data = await response.json();
           console.log("API Data:", data);
-
-          // Ensure the structure is as expected before accessing properties
-          if (data.data && Array.isArray(data.data.games)) {
-            const belatraGames = data.data.games.filter((game: any) => game.maker === 'belatra');
-            setGames(belatraGames);
+  
+          if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
+            const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
+            if (belatraProvider && belatraProvider.status === 0) {
+              // If Belatra provider status is 0, set empty array for games
+              setGames([]);
+            } else if (belatraProvider && belatraProvider.status === 1) {
+              // If Belatra provider status is 1, filter games with status 1
+              const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 0);
+              setGames(bGamingGames);
+            }
           } else {
             console.error("Unexpected data structure:", data);
           }
@@ -39,9 +45,10 @@ const Belatra: React.FC = () => {
         // Handle error fetching session data
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
