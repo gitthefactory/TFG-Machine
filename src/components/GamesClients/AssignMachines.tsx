@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
-import getRooms from "@/controllers/getRooms"
+import getRooms from "@/controllers/getRooms";
 import getGames from "@/controllers/getGames";
-import { FaRectangleXmark, FaSquareCheck, FaSquare} from "react-icons/fa6";
+import { FaCheckSquare, FaTimes } from 'react-icons/fa';
 
 interface Usuario {
   _id: string;
@@ -50,101 +51,104 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     provider_name: '',
   });
 
-    // Obtener providerId desde la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const providerId = urlParams.get('providerId');
+  // Obtener providerId desde la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const providerId = urlParams.get('providerId');
 
- // GET USUARIOS
- useEffect(() => {
-  async function fetchUsuarios() {
-    try {
-      const fetchedUsuarios  = await getUsuarios("", 10);
-      setUsuarios(fetchedUsuarios );
-      const usuario = fetchedUsuarios .find(usuario => usuario._id === maquina.client);
-      if (usuario) {
-        setNewClient(usuario);
-      }
-    } catch (error) {
-      console.error("Error al obtener Cliente:", error);
-    }
-  }
-  fetchUsuarios();
-}, [maquina.client]);
-
-    // GET ROOMS
-    useEffect(() => {
-      async function fetchRooms() {
-        try {
-          const fetchedRooms = await getRooms("", 10);
-          setRooms(fetchedRooms);
-          const room = fetchedRooms.find(room => room._id === maquina.room);
-          if (room) {
-            setNewRoom(room);
-          }
-        } catch (error) {
-          console.error("Error al obtener salas:", error);
+  // GET USUARIOS
+  useEffect(() => {
+    async function fetchUsuarios() {
+      try {
+        const fetchedUsuarios = await getUsuarios("", 10);
+        setUsuarios(fetchedUsuarios);
+        const usuario = fetchedUsuarios.find(usuario => usuario._id === maquina.client);
+        if (usuario) {
+          setNewClient(usuario);
         }
+      } catch (error) {
+        console.error("Error al obtener Cliente:", error);
       }
-      fetchRooms();
-    }, [maquina.room]);
+    }
+    fetchUsuarios();
+  }, [maquina.client]);
+
+  // GET ROOMS
+  useEffect(() => {
+    async function fetchRooms() {
+      try {
+        const fetchedRooms = await getRooms("", 10);
+        setRooms(fetchedRooms);
+        const room = fetchedRooms.find(room => room._id === maquina.room);
+        if (room) {
+          setNewRoom(room);
+        }
+      } catch (error) {
+        console.error("Error al obtener salas:", error);
+      }
+    }
+    fetchRooms();
+  }, [maquina.room]);
 
   // GET GAMES
-useEffect(() => {
-  if (providerId) {
-    const fetchProviders = async () => {
-      try {
-        const gamesData = await getGames("", 1);
+  useEffect(() => {
+    if (providerId) {
+      const fetchProviders = async () => {
+        try {
+          const gamesData = await getGames("", 1);
 
-        const providerMap = new Map();
-        gamesData.games.forEach((game: any) => {
-          if (game.provider === parseInt(providerId)) {
-            if (!providerMap.has(game.id)) {
-              const gameStatus = maquina.games.find((maqGame: any) => maqGame.id === game.id)?.status || 0;
-              providerMap.set(game.id, {
-                id: game.id,
-                provider_name: game.provider_name,
-                quantity: 1,
-                provider: game.provider,
-                status: gameStatus,
-                name: game.name,
-                maker: game.maker,
-                category: game.category,
-                image: game.image,
-                cdn_image: game.cdn_image,
-                image_name: game.image_name,
-              });
-            } else {
-              const existingProvider = providerMap.get(game.id);
-              if (existingProvider) {
-                existingProvider.quantity++;
-                providerMap.set(game.id, existingProvider);
+          const providerMap = new Map();
+          gamesData.games.forEach((game: any) => {
+            if (game.provider === parseInt(providerId)) {
+              if (!providerMap.has(game.id)) {
+                const gameStatus = maquina.games.find((maqGame: any) => maqGame.id === game.id)?.status || 0;
+                providerMap.set(game.id, {
+                  id: game.id,
+                  provider_name: game.provider_name,
+                  quantity: 1,
+                  provider: game.provider,
+                  status: gameStatus,
+                  name: game.name,
+                  maker: game.maker,
+                  category: game.category,
+                  image: game.image,
+                  cdn_image: game.cdn_image,
+                  image_name: game.image_name,
+                });
+              } else {
+                const existingProvider = providerMap.get(game.id);
+                if (existingProvider) {
+                  existingProvider.quantity++;
+                  providerMap.set(game.id, existingProvider);
+                }
               }
             }
-          }
-        });
+          });
 
-        const uniqueProviders = Array.from(providerMap.values());
-        setProviders(uniqueProviders);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+          const uniqueProviders = Array.from(providerMap.values());
+          setProviders(uniqueProviders);
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
-    fetchProviders();
-  }
-}, [providerId, maquina.games]);
+      fetchProviders();
+    }
+  }, [providerId, maquina.games]);
 
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleStatusChange = async (e: React.MouseEvent<HTMLButtonElement>, gameId: number, newStatus: number) => {
     e.preventDefault();
+    const updatedProviders = providers.map((provider) =>
+      provider.id === gameId ? { ...provider, status: newStatus } : provider
+    );
+    setProviders(updatedProviders);
+
     const updatedMaquina = {
       newStatus,
       newRoom,
       newClient: newClient._id,
-      games: providers,
+      games: updatedProviders,
     };
 
-    // Enviar los datos actualizados al servidor
     try {
       const response = await fetch(`/api/maquinas/${maquina._id}`, {
         method: "PUT",
@@ -155,10 +159,12 @@ useEffect(() => {
       });
 
       if (response.ok) {
-        // Redireccionar a la página de máquinas si la actualización fue exitosa
-        window.location.href = "/dashboard/maquinas";
+        if (newStatus === 0) {
+          toast.success("Juego enviado exitosamente");
+        } else if (newStatus === 1) {
+          toast.error("Juego quitado exitosamente");
+        }
       } else {
-        // Manejar el caso en que la actualización falla
         console.error("Hubo un error al actualizar la máquina.");
       }
     } catch (error) {
@@ -166,29 +172,19 @@ useEffect(() => {
     }
   };
 
-  const handleStatusChange = (e: React.MouseEvent<HTMLButtonElement>, gameId: number, newStatus: number) => {
-    e.preventDefault(); // Evitar el comportamiento predeterminado del botón
-    setProviders((prevProviders) =>
-      prevProviders.map((provider) =>
-        provider.id === gameId ? { ...provider, status: newStatus } : provider
-      )
-    );
-  };
-  
-
   function getStatusClass(status) {
-  } 
+    // Implementar lógica de clases si es necesario
+  }
 
   return (
     <>
       <DefaultLayout>
         <div className="mx-auto max-w-270">
-          <Breadcrumb pageName="Máquina con Juegos"/>
+          <Breadcrumb pageName="Máquina con Juegos" />
           <AtrasButton href="/dashboard/maquinas" />
           <div className="flex flex-col gap-9">
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-              <form onSubmit={handleSubmit} className="p-6.5">
-                
+              <form className="p-6.5">
                 <h1 className="mb-6">DATOS MÁQUINA SELECCIONADA</h1>
                 <div className="flex mb-4 gap-4">
                   {/* MAQUINA */}
@@ -207,8 +203,8 @@ useEffect(() => {
                       disabled
                     />
                   </div>
-                   {/* SALA */}
-                   <div className="flex-1">
+                  {/* SALA */}
+                  <div className="flex-1">
                     <div className="flex-1 mr-4">
                       <label
                         htmlFor="newRoom"
@@ -223,90 +219,77 @@ useEffect(() => {
                         disabled
                       />
                     </div>
+                  </div>
+
+                  {/* PROVEEDOR */}
+                  <div className="flex-1">
+                    <div className="flex-1 mr-4">
+                      <label
+                        htmlFor="newProvider"
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                      >
+                        Proveedor
+                      </label>
+                      <input
+                        value={providerId}
+                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                        readOnly
+                        disabled
+                      />
                     </div>
-                    
-                     {/* PROVEEDOR */}
-                     <div className="flex-1">
-                      <div className="flex-1 mr-4">
-                        <label
-                          htmlFor="newProvider"
-                          className="mb-3 block text-sm font-medium text-black dark:text-white"
-                        >
-                          Proveedor
-                        </label>
-                        <input
-                          value={providerId}                  
-                          className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
-                          readOnly
-                          disabled
-                        />
-                      </div>
-                    </div>
-                    </div>
+                  </div>
+                </div>
                 <h3 className="mb-4">SELECCION DE JUEGOS</h3>
                 <table className="table-auto w-full">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-left">Estado</th>
-                        <th className="px-4 py-2 text-left">ID Juegos</th> 
-                        <th className="px-4 py-2 text-left">Categoría</th>
-                        <th className="px-4 py-2 text-left">Imagen</th>   
-                        <th className="px-4 py-2 text-left">Proveedor</th>             
-                        <th className="px-4 py-2 text-left">Nombre Juegos</th>
-                    
-                        {/* Añade más columnas según sea necesario */}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {providers.map((game) => (
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 text-left">Estado</th>
+                      <th className="px-4 py-2 text-left">ID Juegos</th>
+                      <th className="px-4 py-2 text-left">Categoría</th>
+                      <th className="px-4 py-2 text-left">Imagen</th>
+                      <th className="px-4 py-2 text-left">Proveedor</th>
+                      <th className="px-4 py-2 text-left">Nombre Juegos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {providers
+                      .filter(game => game.status === 0 || game.status === 1)
+                      .map(game => (
                         <tr key={game.id} className={getStatusClass(game.status)}>
-                          <td className={`px-4 py-2 ${getStatusClass(game.status)}`}>
-                            {game.status === 0 ? (
-                              <button className="text-green-500 focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 1)}>
-                                <FaSquareCheck  className="text-xl"/>
-                              </button>
-                            ) : game.status === 1 ? (
-                              <button className="text-red focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 2)}>
-                                <FaRectangleXmark  className="text-lg"/>
+                                                   <td className={`px-4 py-2`}>
+                            {game.status === 1 ? (
+                              <button
+                                onClick={(e) => handleStatusChange(e, game.id, 0)}
+                                className="text-red-500"
+                              >
+                                <FaTimes />
                               </button>
                             ) : (
-                              <button className="text-yellow-500 focus:outline-none p-3" onClick={(e) => handleStatusChange(e, game.id, 0)}>
-                                <FaSquare className="text-xl"/> 
+                              <button
+                                onClick={(e) => handleStatusChange(e, game.id, 1)}
+                                className="text-green-500"
+                              >
+                                <FaCheckSquare />
                               </button>
                             )}
                           </td>
                           <td className="px-4 py-2">{game.id}</td>
                           <td className="px-4 py-2">{game.category}</td>
                           <td className="px-4 py-2">
-                            <img src={game.image} alt={game.name} width="50" height="50" />
+                            <img src={game.image} alt={game.name} className="w-16 h-16 object-cover" />
                           </td>
                           <td className="px-4 py-2">{game.provider_name}</td>
                           <td className="px-4 py-2">{game.name}</td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-
-                {/* Botones */}
-                <div className="mt-6 flex justify-end gap-4">
-                  <Link
-                    href="/dashboard/maquinas"
-                    className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-                  >
-                    Cancelar
-                  </Link>
-                  <button
-                    type="submit"
-                    className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-                  >
-                    Guardar Cambios
-                  </button>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </form>
             </div>
           </div>
         </div>
       </DefaultLayout>
+      <ToastContainer />
     </>
   );
 };
