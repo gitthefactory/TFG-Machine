@@ -53,6 +53,9 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
   }
 
   return (
+    <div className="mx-auto max-w-270">
+    <div className="flex flex-col gap-9">
+    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
     <div>
       <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
         <thead>
@@ -75,7 +78,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
             return (
               <tr
                 {...row.getRowProps()}
-                style={{ backgroundColor: index % 2 === 0 ? '#D2D8D8' : 'transparent' }}
+                style={{ backgroundColor: index % 2 === 0 ? '#E8EDED' : 'transparent' }}
               >
                 {row.cells.map(cell => (
                   <td
@@ -90,6 +93,9 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
           })}
         </tbody>
       </table>
+    </div>
+    </div>
+    </div>
     </div>
   );
 };

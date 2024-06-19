@@ -9,7 +9,6 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
 import getRooms from "@/controllers/getRooms";
 import getGames from "@/controllers/getGames";
-import { FaCheckSquare, FaTimes } from 'react-icons/fa';
 
 interface Usuario {
   _id: string;
@@ -135,8 +134,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   }, [providerId, maquina.games]);
 
-  const handleStatusChange = async (e: React.MouseEvent<HTMLButtonElement>, gameId: number, newStatus: number) => {
-    e.preventDefault();
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>, gameId: number, newStatus: number) => {
     const updatedProviders = providers.map((provider) =>
       provider.id === gameId ? { ...provider, status: newStatus } : provider
     );
@@ -159,9 +157,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       });
 
       if (response.ok) {
-        if (newStatus === 0) {
+        if (newStatus === 1) {
           toast.success("Juego enviado exitosamente");
-        } else if (newStatus === 1) {
+        } else if (newStatus === 0) {
           toast.error("Juego quitado exitosamente");
         }
       } else {
@@ -256,22 +254,13 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                       .filter(game => game.status === 0 || game.status === 1)
                       .map(game => (
                         <tr key={game.id} className={getStatusClass(game.status)}>
-                                                   <td className={`px-4 py-2`}>
-                            {game.status === 1 ? (
-                              <button
-                                onClick={(e) => handleStatusChange(e, game.id, 0)}
-                                className="text-red-500"
-                              >
-                                <FaTimes />
-                              </button>
-                            ) : (
-                              <button
-                                onClick={(e) => handleStatusChange(e, game.id, 1)}
-                                className="text-green-500"
-                              >
-                                <FaCheckSquare />
-                              </button>
-                            )}
+                          <td className={`px-4 py-2`}>
+                            <input
+                              type="checkbox"
+                              checked={game.status === 1}
+                              onChange={(e) => handleStatusChange(e, game.id, game.status === 1 ? 0 : 1)}
+                              className="form-checkbox h-5 w-5 text-green-500 dark:text-green-400"
+                            />
                           </td>
                           <td className="px-4 py-2">{game.id}</td>
                           <td className="px-4 py-2">{game.category}</td>

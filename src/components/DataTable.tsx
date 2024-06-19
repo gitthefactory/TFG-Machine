@@ -34,15 +34,15 @@ const DataTable: React.FC = () => {
 
   const columns = useMemo(
     () => [
-      { Header: "ID", accessor: "_id" },
-      { Header: "Nombre Completo", accessor: "nombreCompleto" },
+      { Header: "ID", accessor: "_id", align: 'left' },
+      { Header: "Nombre Completo", accessor: "nombreCompleto", align: 'left'},
       {
-        Header: "Proveedor",
+        Header: "Proveedor", align: 'left',
         accessor: "games",
         Cell: ({ value }) => (value.length > 0 ? "Sí" : "No"),
       },
       {
-        Header: "ID de Máquina",
+        Header: "ID de Máquina", align: 'left',
         accessor: "id_machine",
         Cell: ({ value }) => (value ? value : "Sin Máquina"),
       },
@@ -67,38 +67,49 @@ const DataTable: React.FC = () => {
   }
 
   return (
+    <div className="mx-auto max-w-270">
+    <div className="flex flex-col gap-9">
+    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
     <div>
-      <div style={{ height: 400, width: "100%" }}>
-        <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} style={{ background: 'aliceblue', padding: '8px', textAlign: 'left' }}>
-                    {column.render('Header')}
-                  </th>
+      <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, index) => (
+                <th
+                  {...column.getHeaderProps()}
+                  className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                >
+                  {column.render('Header')}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row, index) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                style={{ backgroundColor: index % 2 === 0 ? '#E8EDED' : 'transparent' }}
+              >
+                {row.cells.map(cell => (
+                  <td
+                    {...cell.getCellProps()}
+                    className="border-b border-[#eee] px-4 py-2 text-left"
+                  >
+                    {cell.render('Cell')}
+                  </td>
                 ))}
               </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, index) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} style={{ backgroundColor: index % 2 === 0 ? '#D2D8D8' : 'transparent' }}>
-                  {row.cells.map(cell => {
-                    return (
-                      <td {...cell.getCellProps()} style={{ padding: '8px' }}>
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+    </div>
+    </div>
     </div>
   );
 };

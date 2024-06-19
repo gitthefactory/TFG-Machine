@@ -30,7 +30,7 @@ const Belatra: React.FC = () => {
               setGames([]);
             } else if (belatraProvider && belatraProvider.status === 1) {
               // If Belatra provider status is 1, filter games with status 1
-              const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 0);
+              const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
               setGames(bGamingGames);
             }
           } else {
