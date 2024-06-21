@@ -1,18 +1,28 @@
 "use client";
 
-// EditarSala.tsx
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
+import DeleteButtonMachine from "@/components/DeleteButtonMaquinas";
 
 interface Usuario {
   _id: string;
   nombreCompleto: string;
 }
+
+interface MaquinaData {
+  _id: string;
+  id_machine: string;
+  status: number;
+}
+
+interface MaquinasTableProps {
+  maquinas: MaquinaData[];
+}
+
 
 const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState(sala.nombre);
@@ -37,74 +47,14 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
     }
     fetchUsuarios();
   }, []);
+  
 
-  const handleDeleteMachine = async (idMachine: string) => {
-    const isConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta máquina?');
-    if (isConfirmed) {
-      try {
-        // Encontrar la máquina a eliminar en maquinasCreadas
-        const machineToDelete = maquinasCreadas.find((maquina) => maquina.id_machine === idMachine);
-  
-        if (!machineToDelete) {
-          console.error(`No se encontró ninguna máquina con id_machine ${idMachine}`);
-          return;
-        }
-  
-        // Eliminar la máquina de la colección 'machines' (API DELETE)
-        const response = await fetch(`/api/maquinas/${machineToDelete._id}`, {
-          method: "DELETE",
-        });
-  
-        if (response.ok) {
-          // Eliminar la máquina del estado local (maquinasCreadas e id_machine)
-          setMaquinasCreadas(prevMaquinas => prevMaquinas.filter(maquina => maquina.id_machine !== idMachine));
-          setid_machine(prevIds => prevIds.filter(machineId => machineId !== idMachine));
-  
-          // Actualizar la sala en la base de datos para reflejar los cambios en id_machine (API PUT)
-          const updatedSala = {
-            newNombre,
-            newPais,
-            newStatus,
-            newOperator: operadorSeleccionado,
-            newClient: newClient._id,
-            id_machine: [...maquinasCreadas.map((maquina) => maquina.data.id_machine)],
-            
-          };
-  
-          const responseSala = await fetch(`/api/salas/${sala._id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedSala),
-          });
-  
-          if (responseSala.ok) {
-            console.log("Sala actualizada exitosamente");
-            // Opcional: Puedes redirigir o actualizar el estado de tu componente después de una actualización exitosa.
-          } else {
-            console.error("Error al actualizar la sala.");
-          }
-        } else {
-          const responseData = await response.json();
-          console.error("Error al eliminar la máquina:", responseData.message);
-        }
-      } catch (error) {
-        console.error("Error de red al eliminar la máquina:", error);
-      }
-    }
-  };
-  
-  
-  
- // Función para manejar la creación de máquinas
 // Función para manejar la creación de máquinas
 const handleCreateMachine = async () => {
   try {
-    // Objeto con los datos que se enviarán en la solicitud POST
     const requestData = {
-      room: sala._id, // Pasar el ID de la sala seleccionada
-      client: newClient._id, // Pasar el ID del cliente seleccionado
+      room: sala._id,
+      client: newClient._id,
     };
 
     console.log("Datos enviados en la solicitud POST:", requestData);
@@ -132,7 +82,6 @@ const handleCreateMachine = async () => {
     setMachineCreationError("Error de red al crear la máquina");
   }
 };
-
 
   // Función para manejar la presentación del formulario
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -170,6 +119,16 @@ const handleCreateMachine = async () => {
   const usuariosOperador = usuarios.filter(
     (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
   );
+
+  const handleDeleteMachine = (idMachineToDelete) => {
+    setMaquinasCreadas(prevMaquinas =>
+      prevMaquinas.filter(maquina => maquina.data.id_machine!== idMachineToDelete)
+    );
+    setid_machine(prevIds =>
+      prevIds.filter(id => id !== idMachineToDelete)
+    );
+  };
+  
 
   return (
     <DefaultLayout>
@@ -289,73 +248,62 @@ const handleCreateMachine = async () => {
                 ))}
               </select>
             </div>
-            <h3 className="mb-4">ID MÁQUINAS</h3>
-            <div className="mb-4">
-              <label
-                className="mb-3 block text-sm font-medium text-black dark:text-white"
-              >
-                Máquinas asignadas
-              </label>
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                {id_machine.map((id_machine, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleDeleteMachine(maquinasCreadas._id);
-                    }}
-                    className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2 cursor-pointer transition-colors relative overflow-hidden"
-                    style={{
-                      transition: "background-color 0.3s",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        "rgba(239, 68, 68, 1)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        "rgba(0, 0, 0, 0)";
-                    }}
-                  >
-                    {id_machine}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div className="mt-6">
-              <button
-                type="button"
-                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-                onClick={handleCreateMachine}
-              >
-                Crear máquina +
-              </button>
-              {maquinasCreadas.length > 0 && (
-                <div className="mt-4">
-                  <div className="flex mt-2">
-                    {maquinasCreadas.map((maquina, index) => (
-                      <button
-                        key={index}
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
-                        onClick={() => {
-                          // Lógica opcional al hacer clic en una máquina
-                        }}
-                      >
-                        {maquina.data.id_machine}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {machineCreationError && (
-                <div className="mt-4">
-                  <p className="block text-sm font-medium text-red">
-                    Error al crear la máquina: {machineCreationError}
-                  </p>
-                </div>
-              )}
-            </div>
+            <h3 className="mb-4">ID MAQUINAS</h3>
+
+<div className="mb-4">
+  <label
+    // htmlFor="id_machine"
+    className="mb-3 block text-sm font-medium text-black dark:text-white"
+  >
+    Maquinas asignadas
+  </label>
+  <div style={{ display: 'flex', flexDirection: 'row' }}>
+    {id_machine.map((id, index) => (
+  <div key={index} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2">
+  {id}
+  <button
+    onClick={() => handleDeleteMachine(id) }
+    type="button"
+    className="focus:outline-none"
+  >
+   <DeleteButtonMachine />
+  </button>
+</div>
+
+
+    ))}
+  </div>
+</div>
+<div className="mt-6">
+  <button
+    type="button"
+    className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+    onClick={handleCreateMachine}
+  >
+    Crear máquina +
+  </button>
+  {maquinasCreadas.length > 0 && (
+    <div className="mt-4">
+      <div className="flex mt-2">
+        {maquinasCreadas.map((maquina, index) => (
+          <div key={index} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2">
+            {maquina.data.id_machine}
+            <DeleteButtonMachine
+              onClick={() => handleDeleteMachine(maquina.data.id_machine)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  {machineCreationError && (
+    <div className="mt-4">
+      <p className="block text-sm font-medium text-red">
+        Error al crear la máquina: {machineCreationError}
+      </p>
+    </div>
+  )}
+</div>
             <div className="mt-6 flex justify-end gap-4">
               <Link
                 href="/dashboard/salas"

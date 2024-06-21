@@ -1,25 +1,51 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { FaTrashCan } from "react-icons/fa6";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function DeleteBtn(params: { id: any }) {
+export default function DeleteBtn({ id }) {
   const router = useRouter();
 
   async function handleDeleteMachine() {
-    const confirmed = confirm("Are you sure?");
-    if (confirmed) {
-      await fetch(`http://localhost:3000/api/maquinas/?_id=${params.id}`, {
-        method: "DELETE",
-      });
-      router.refresh();
-      window.location.reload()
-    }
+    await fetch(`http://localhost:3000/api/maquinas/?_id=${id}`, {
+      method: "DELETE",
+    });
+    router.refresh();
+    window.location.reload();
+    toast.success("Máquina eliminada exitosamente", {
+      position: toast.POSITION.TOP_RIGHT
+    });
   }
+
+  function confirmDelete() {
+    confirmAlert({
+      title: "Confirmar eliminación",
+      message: "¿Estás seguro de que quieres eliminar esta máquina?",
+      buttons: [
+        {
+          label: "Sí",
+          onClick: handleDeleteMachine
+        },
+        {
+          label: "No",
+          onClick: () => toast.info("Eliminación cancelada", {
+            position: toast.POSITION.TOP_RIGHT
+          })
+        }
+      ]
+    });
+  }
+
   return (
-   <button
-      onClick={handleDeleteMachine} style={{ fontSize: '20px'}}>
-      <FaDeleteLeft />
-    </button>
+    <>
+      <button onClick={confirmDelete} style={{ fontSize: '20px' }}>
+        <FaTrashCan />
+      </button>
+      <ToastContainer />
+    </>
   );
 }

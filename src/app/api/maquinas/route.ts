@@ -82,27 +82,27 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: string; 
 
 //DELETE A MACHINE
 export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: string) => any; }; }; }){
-    try {
-        const id = request.nextUrl.searchParams.get("_id");
-        await connectDB();
-        await  Machine.findByIdAndDelete(id);
-        
-        return NextResponse.json(
-            {
-              message: "Maquina eliminada Satisfactoriamente",
-            },
-            { status: 200 }
-          );
-        
-    } catch (error) {
-        return NextResponse.json(
-            {
-              message: "Fallo al eliminar Maquina",
-              error,
-            },
-            {
-              status: 500,
-            }
-          );
-    }
+  try {
+      const id = request.nextUrl.searchParams.get("_id");
+      await connectDB();
+      await  Machine.findByIdAndDelete(id);
+      
+      return NextResponse.json(
+          {
+            message: "Maquina eliminada Satisfactoriamente",
+          },
+          { status: 200 }
+        );
+      
+  } catch (error) {
+      return NextResponse.json(
+          {
+            message: "Fallo al eliminar Maquina",
+            error,
+          },
+          {
+            status: 500,
+          }
+        );
+  }
 }
