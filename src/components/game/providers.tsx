@@ -6,6 +6,7 @@ import getSessionData from "@/controllers/getSession";
 const Providers: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
   const [providersStatus, setProvidersStatus] = useState<{ [key: string]: number }>({});
+  const [idMachine, setIdMachine] = useState<string | null>(null); // Estado para almacenar id_machine
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,29 +16,41 @@ const Providers: React.FC = () => {
   
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
-          const response = await fetch(`http://localhost:3000/api/juegosApi/${id_machine}`);
-          const data = await response.json();
-          console.log("API Data:", data);
+          setIdMachine(id_machine); // Guardar id_machine en el estado
+
+          // Obtener idMachine de la URL usando window.location.search
+          const params = new URLSearchParams(window.location.search);
+          const idMachineFromURL = params.get('idMachine');
+
+          if (idMachineFromURL) {
+            console.log("idMachine from URL:", idMachineFromURL);
+            // Aquí puedes usar idMachineFromURL en lugar de id_machine si es necesario
+            const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
+            const data = await response.json();
+            console.log("API Data:", data);
   
-          if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
-            const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
-            const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
-
-            if (belatraProvider) {
-              setProvidersStatus(prevStatus => ({
-                ...prevStatus,
-                belatra: belatraProvider.status
-              }));
-            }
-
-            if (bgamingProvider) {
-              setProvidersStatus(prevStatus => ({
-                ...prevStatus,
-                bgaming: bgamingProvider.status
-              }));
+            if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
+              const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
+              const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
+  
+              if (belatraProvider) {
+                setProvidersStatus(prevStatus => ({
+                  ...prevStatus,
+                  belatra: belatraProvider.status
+                }));
+              }
+  
+              if (bgamingProvider) {
+                setProvidersStatus(prevStatus => ({
+                  ...prevStatus,
+                  bgaming: bgamingProvider.status
+                }));
+              }
+            } else {
+              console.error("Unexpected data structure:", data);
             }
           } else {
-            console.error("Unexpected data structure:", data);
+            console.error("idMachine parameter not found in URL");
           }
         } else {
           console.error("User not authenticated:", sessionData.data.message);
