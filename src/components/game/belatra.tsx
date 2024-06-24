@@ -15,11 +15,15 @@ const Belatra: React.FC = () => {
       try {
         const sessionData = await getSessionData();
         console.log("Session Data:", sessionData);
+
+                  // Obtener idMachine de la URL usando window.location.search
+                  const params = new URLSearchParams(window.location.search);
+                  const idMachineFromURL = params.get('idMachine');
   
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
           const provider = 29;
-          const response = await fetch(`http://localhost:3000/api/juegosApi/${id_machine}/${provider}`);
+          const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
           console.log("API Data:", data);
   
