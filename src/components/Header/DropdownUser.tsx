@@ -3,6 +3,10 @@ import Link from "next/link";
 import getUser from "@/controllers/getSession"; 
 import { FaAngleDown, FaWhmcs, FaArrowRightFromBracket } from "react-icons/fa6";
 
+//import de signOut
+import {signOut} from 'next-auth/react';
+
+
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -46,6 +50,13 @@ const DropdownUser = () => {
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false, callbackUrl: '/' });
+    setUser(null); // Clear user state after signing out
+    document.cookie = 'next-auth.session-token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax'; // Elimina cookie
+    window.location.reload ();
+  };
 
   return (
     <div className="relative">
@@ -96,7 +107,12 @@ const DropdownUser = () => {
             name="csrfToken"
             value="0f127119f5c5943bf3d6645bc50e78ce7962cc6491b5d060e70486206930405d"
           ></input>
-          <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"  id="submitButton" type="submit">
+          <button 
+          onClick={handleSignOut}
+
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+          type="button"
+        >
           <FaArrowRightFromBracket />
           Cerrar Sesión
         </button>
