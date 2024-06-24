@@ -39,7 +39,7 @@ export async function PUT(request: any, { params: { id } }: any) {
       profileType,
       password,
       status,
-      id_machine,
+      id_machine, // Los nuevos id_machine a añadir
       games,
     } = await request.json();
 
@@ -53,7 +53,7 @@ export async function PUT(request: any, { params: { id } }: any) {
       password: password,
       status: status,
       profileType: profileType, 
-      id_machine: id_machine,
+      $addToSet: { id_machine: { $each: id_machine } }, // Agrega los nuevos id_machine
       games: games,
     });
 

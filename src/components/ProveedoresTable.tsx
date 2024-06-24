@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import getGames from "@/controllers/getGames";
-import { FaPenToSquare, FaToggleOn, FaToggleOff } from "react-icons/fa6";
 import { useTable } from "react-table";
 
 interface Games {
@@ -77,14 +75,33 @@ export default function ProveedoresTable({
     fetchProviders();
   }, [query, currentPage]);
 
-  const handleToggleStatus = (providerId: number) => {
-    setProviders(prevProviders =>
-      prevProviders.map(provider =>
-        provider.id === providerId
-          ? { ...provider, status: provider.status === 0 ? 1 : 0 }
-          : provider
-      )
+  const handleToggleStatus = async (providerId: number) => {
+    const updatedProviders = providers.map(provider =>
+      provider.id === providerId
+        ? { ...provider, status: provider.status === 0 ? 1 : 0 }
+        : provider
     );
+
+    setProviders(updatedProviders);
+
+    const updatedProvider = updatedProviders.find(provider => provider.id === providerId);
+    if (updatedProvider) {
+      try {
+        const response = await fetch(`/api/updateProviderStatus`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: updatedProvider.id, status: updatedProvider.status }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error updating provider status');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   const columns = React.useMemo(
@@ -95,31 +112,15 @@ export default function ProveedoresTable({
         align: 'left',
         accessor: "status",
         Cell: ({ value, row }) => (
-          value === 1 ? (
-            <FaToggleOn style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleToggleStatus(row.original.id)} />
-          ) : (
-            <FaToggleOff style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleToggleStatus(row.original.id)} />
-          )
+          <input
+            type="checkbox"
+            checked={value === 1}
+            onChange={() => handleToggleStatus(row.original.id)}
+          />
         ),
       },
       { Header: "Nombre Proveedor", accessor: "provider_name", align: 'left' },
       { Header: "Cantidad Juegos", accessor: "quantity", align: 'left' },
-      // {
-      //   Header: "Acciones",
-      //   align: 'left',
-      //   Cell: ({ row }) => (
-      //     <div>
-      //       <Link href={`/dashboard/proveedores/ver/${row.original.id}`}>
-      //         <button>
-      //           <FaPenToSquare />
-      //         </button>
-      //       </Link>
-      //       {/* <button onClick={() => handleButtonToggle(row.original.id)}>
-      //         <FaDeleteLeft />
-      //       </button> */}
-      //     </div>
-      //   ),
-      // },
     ],
     []
   );

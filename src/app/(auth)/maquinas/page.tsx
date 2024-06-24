@@ -90,7 +90,7 @@ async function handleSubmit(e: any) {
         });
       
         if (result.isConfirmed) {
-          router.replace("/games");
+          router.replace(`/games/?idMachine=${info.id_machine}`);
         }
         setLoading(false);
       }, 1000);
