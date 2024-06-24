@@ -104,6 +104,26 @@ const handleCreateMachine = async () => {
         },
         body: JSON.stringify(updatedSala),
       });
+       // Actualizar el usuario con las nuevas máquinas asignadas
+       const updatedUser = {
+        id_machine: [...maquinasCreadas.map((maquina) => maquina.data.id_machine), ...id_machine],
+      };
+
+      const updateUserResponse = await fetch(`/api/usuarios/${operadorSeleccionado}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      const updateUserResponses = await fetch(`/api/usuarios/${newClient._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      });
   
       if (response.ok) {
         window.location.href = "/dashboard/salas";
