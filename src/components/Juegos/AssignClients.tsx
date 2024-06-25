@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import getGames from "@/controllers/getGames";
-import Select from "react-select";
+// import Select from "react-select";
 import DataTable from 'react-data-table-component';
 
 interface Game {
