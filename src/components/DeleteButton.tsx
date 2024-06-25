@@ -12,7 +12,7 @@ export default function DeleteBtn({ id }: { id: any }) {
   const router = useRouter();
 
   async function handleDeleteClient() {
-    await fetch(`http://localhost:3000/api/clientes/?_id=${id}`, {
+    await fetch(`http://localhost:3000/api/usuarios/?_id=${id}`, {
       method: "DELETE",
     });
     router.refresh();

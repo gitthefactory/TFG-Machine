@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
+import DeleteButtonSalas from '@/components/DeleteButtonSalas'
 
 interface SalaData {
   _id: string;
@@ -61,7 +62,8 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
     {
       name: 'Acciones',
       cell: (row: SalaData) => (
-      
+        <div className="flex items-center space-x-3.5">
+        <DeleteButtonSalas id={row._id} />
         <Link href={`/dashboard/salas/editar/${row._id}`}
             className="edit"
             title="Editar"
@@ -69,6 +71,7 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
           >
             <FaPen />
           </Link>
+          </div>
       ),
       sortable: true,
     },

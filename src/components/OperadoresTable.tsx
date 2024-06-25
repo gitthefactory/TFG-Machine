@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
+import Link from "next/link";
+import DeleteButtonOperadores from '@/components/DeleteButtonOperadores';
+import { FaPen } from "react-icons/fa";
+
 
 interface User {
   _id: string;
@@ -70,6 +74,22 @@ const OperadoresTable: React.FC = () => {
     {
       name: 'Cantidad de Máquinas',
       selector: (row: User) => row.cantidadMaquinas,
+      sortable: true,
+    },
+    {
+      name: 'Acciones',
+      cell: (row: User) => (
+        <div className="flex items-center space-x-3.5">
+        <DeleteButtonOperadores id={row._id} />
+        <Link href={`/dashboard/operadores/editar/${row._id}`}
+            className="edit"
+            title="Editar"
+            style={{ fontSize: '20px' }}
+          >
+            <FaPen />
+          </Link>
+          </div>
+      ),
       sortable: true,
     },
   ];

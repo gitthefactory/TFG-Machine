@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import React from "react";
 import { FaTrashCan } from "react-icons/fa6";
@@ -15,9 +16,8 @@ export default function DeleteBtn({ id }) {
       method: "DELETE",
     });
     router.refresh();
-    window.location.reload();
     toast.success("Máquina eliminada exitosamente", {
-      position: toast.POSITION.TOP_RIGHT
+      position: "top-right",
     });
   }
 
@@ -28,15 +28,15 @@ export default function DeleteBtn({ id }) {
       buttons: [
         {
           label: "Sí",
-          onClick: handleDeleteMachine
+          onClick: handleDeleteMachine,
         },
         {
           label: "No",
           onClick: () => toast.info("Eliminación cancelada", {
-            position: toast.POSITION.TOP_RIGHT
-          })
-        }
-      ]
+            position: "top-right",
+          }),
+        },
+      ],
     });
   }
 
@@ -49,3 +49,4 @@ export default function DeleteBtn({ id }) {
     </>
   );
 }
+
