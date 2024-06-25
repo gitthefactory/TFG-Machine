@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import getGames from "@/controllers/getGames";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Select from "react-select";
+import DataTable from 'react-data-table-component';
 
 interface Game {
   id: number;
@@ -37,6 +37,7 @@ export default function DetalleProveedores({
   const [selectedProviderId, setSelectedProviderId] = useState<number | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -66,31 +67,20 @@ export default function DetalleProveedores({
     setSelectedProviderId(providerId);
   }, [window.location.pathname]);
 
-  const handleCheckboxChange = (params) => {
+  const handleCheckboxChange = (gameId: number) => {
     const updatedGames = games.map((game) => {
-      if (game.id === params.row.id) {
-        const newSelectedStatus = game.selected ? 0 : 1;
+      if (game.id === gameId) {
+        const newSelectedStatus = !game.selected;
         const updatedGame = { ...game, selected: newSelectedStatus };
         localStorage.setItem(
           "selectedGames",
           JSON.stringify({
             ...JSON.parse(localStorage.getItem("selectedGames") || "{}"),
-            [game.id]: newSelectedStatus,
+            [game.id]: newSelectedStatus ? 1 : 0,
           })
         );
 
-        // Make a PUT request to update the status in your backend
-        // Example:
-        // fetch(`http://localhost:3000/api/maquinas/${game.id}`, {
-        //   method: 'PUT',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify({ selected: newSelectedStatus }),
-        // })
-        //   .then(response => response.json())
-        //   .then(data => console.log('Success:', data))
-        //   .catch((error) => console.error('Error:', error));
+        // Aquí deberías hacer una solicitud PUT al backend para actualizar el estado del juego
 
         return updatedGame;
       }
@@ -99,34 +89,43 @@ export default function DetalleProveedores({
     setGames(updatedGames);
   };
 
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "N°", flex: 1 },
-    { field: "name", headerName: "Nombre Juego", flex: 1 },
-    { field: "category", headerName: "Categoría", flex: 1 },
+  const columns = [
     {
-      field: "image",
-      headerName: "Imagen",
-      flex: 1,
-      renderCell: (params) => (
-        <img
-          src={params.row.image}
-          alt="imagen"
-          style={{ width: "50px", height: "auto" }}
-        />
-      ),
-    },
-    { field: "provider_name", headerName: "Proveedor", flex: 1 },
-    {
-      field: "selected",
-      headerName: "Seleccionar",
-      width: 150,
-      renderCell: (params) => (
+      name: 'Seleccionar',
+      cell: (row: Game) => (
         <input
           type="checkbox"
-          checked={params.value === 1}
-          onChange={() => handleCheckboxChange(params)}
+          checked={row.selected}
+          onChange={() => handleCheckboxChange(row.id)}
         />
       ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+    {
+      name: 'ID Juegos',
+      selector: (row: Game) => row.id,
+      sortable: true,
+    },
+    {
+      name: 'Categoría',
+      selector: (row: Game) => row.category,
+      sortable: true,
+    },
+    {
+      name: 'Imagen',
+      cell: (row: Game) => <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />,
+    },
+    {
+      name: 'Proveedor',
+      cell: (row: Game) => providers[row.provider],
+      sortable: true,
+    },
+    {
+      name: 'Nombre Juegos',
+      selector: (row: Game) => row.name,
+      sortable: true,
     },
   ];
 
@@ -134,42 +133,38 @@ export default function DetalleProveedores({
     ? games.filter((game) => game.provider === selectedProviderId)
     : games;
 
+  const filteredProviders = filteredGames.filter((game) =>
+    game.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mx-auto max-w-screen-lg p-4 bg-white">
-      <div className="mb-4">
-        <Select
-          value={
-            selectedProviderId
-              ? {
-                  value: selectedProviderId,
-                  label:
-                    providers[selectedProviderId] ||
-                    `Proveedor ${selectedProviderId}`,
-                }
-              : null
-          }
-          onChange={(selectedOption) =>
-            setSelectedProviderId(selectedOption ? selectedOption.value : null)
-          }
-          options={[
-            ...Array.from(new Set(games.map((game) => game.provider))).map(
-              (providerId) => ({
-                value: providerId,
-                label: providers[providerId] || `Proveedor ${providerId}`,
-              })
-            ),
-          ]}
+    <div className="mx-auto max-w-270">
+
+    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+        <h2 className="font-medium text-black dark:text-white">
+          Control de juegos / panel Administrador 
+        </h2>
+      </header>
+      <div className="p-6">
+        {/* Agrega el campo de búsqueda */}
+        <input
+          type="text"
+          placeholder="Buscar juegos..."
+          className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </div>
-      <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={filteredGames}
+        {/* Renderiza la DataTable con los datos filtrados */}
+        <DataTable
           columns={columns}
-          loading={loadingState === LoadingState.Loading}
-          pageSize={5}
-          rowsPerPageOptions={[5, 10, 20]}
+          data={filteredProviders}
+          pagination
+          highlightOnHover
+          responsive
         />
       </div>
+    </div>
     </div>
   );
 }
