@@ -39,36 +39,35 @@ export async function PUT(request: any, { params: { id } }: any) {
       profileType,
       password,
       status,
-      id_machine, // Los nuevos id_machine a añadir
+      id_machine,
       games,
     } = await request.json();
 
     // Conecta a la base de datos
     await connectDB();
 
+    // Construye el objeto de actualización
+    const updateData: any = {};
+
+    if (nombreCompleto !== undefined) updateData.nombreCompleto = nombreCompleto;
+    if (email !== undefined) updateData.email = email;
+    if (profileType !== undefined) updateData.profileType = profileType;
+    if (password !== undefined) updateData.password = password;
+    if (status !== undefined) updateData.status = status;
+    if (games !== undefined) updateData.games = games;
+
+    // Agrega los nuevos id_machine si se proporcionan
+    if (id_machine !== undefined && Array.isArray(id_machine)) {
+      updateData.$addToSet = { id_machine: { $each: id_machine } };
+    }
+
     // Actualiza el usuario utilizando el método findByIdAndUpdate
-    await User.findByIdAndUpdate(id, {
-      nombreCompleto: nombreCompleto,
-      email: email,
-      password: password,
-      status: status,
-      profileType: profileType, 
-      $addToSet: { id_machine: { $each: id_machine } }, // Agrega los nuevos id_machine
-      games: games,
-    });
+    await User.findByIdAndUpdate(id, updateData);
 
     return NextResponse.json(
       {
         message: "Usuario Actualizado con Éxito",
-        data: {
-          nombreCompleto: nombreCompleto,
-          email: email,
-          profileType: profileType,
-          password: password,
-          status: status,
-          id_machine: id_machine,
-          games: games,
-        }
+        data: updateData,
       },
       { status: 200 }
     );

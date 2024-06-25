@@ -1,10 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
-import { useTable } from "react-table";
+import DataTable from 'react-data-table-component';
+import DeleteButton from '@/components/DeleteButton'
+import Link from "next/link";
+import { FaPen } from "react-icons/fa";
+
 
 interface User {
   _id: string;
   nombreCompleto: string;
+  email: string;
   typeProfile: {
     _id: string;
   };
@@ -12,107 +17,123 @@ interface User {
   id_machine: string;
 }
 
-const DataTable: React.FC = () => {
+const UserDataTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
         const usuariosClientesFiltrados = usuarios.filter(
-          (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
+          (usuario: User) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
         );
         setUsuariosClientes(usuariosClientesFiltrados);
       } catch (error) {
         console.error(error);
-        // Manejo de errores
+        // Error handling logic
       }
     };
 
     fetchUsuariosClientes();
   }, []);
 
-  const columns = useMemo(
-    () => [
-      { Header: "ID", accessor: "_id", align: 'left' },
-      { Header: "Nombre Completo", accessor: "nombreCompleto", align: 'left'},
-      {
-        Header: "Proveedor", align: 'left',
-        accessor: "games",
-        Cell: ({ value }) => (value.length > 0 ? "Sí" : "No"),
-      },
-      {
-        Header: "ID de Máquina", align: 'left',
-        accessor: "id_machine",
-        Cell: ({ value }) => (value ? value : "Sin Máquina"),
-      },
-    ],
-    []
+  const handleStatusChange = (id: string, newStatus: number) => {
+    setUsuariosClientes((prevUsuarios) =>
+      prevUsuarios.map((usuario) =>
+        usuario._id === id ? { ...usuario, status: newStatus } : usuario
+      )
+    );
+  };
+
+  const filteredUsuarios = usuariosClientes.filter(
+    (usuario) =>
+      usuario.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: usuariosClientes || [], // Agregar verificación de seguridad para usuariosClientes
-  });
-
-  // Asegurarse de que usuariosClientes sea un array antes de usarlo
-  if (!Array.isArray(usuariosClientes)) {
-    return <div>No hay datos de usuarios disponibles.</div>;
-  }
+  const columns = [
+    {
+      name: 'Estado',
+      cell: (row: User) => (
+        <input
+          type="checkbox"
+          checked={row.status === 1}
+          onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
+        />
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+    {
+      name: 'ID',
+      selector: (row: User) => row._id,
+      sortable: true,
+    },
+    {
+      name: 'Nombre Cliente',
+      selector: (row: User) => row.nombreCompleto,
+      sortable: true,
+    },
+    // {
+    //   name: 'Maquina',
+    //   selector: (row: User) => row.games.length > 0 ? "Sí" : "No",
+    //   sortable: true,
+    // },
+    {
+      name: 'Correo',
+      selector: (row: User) => row.email,
+      sortable: true,
+    },
+    {
+      name: 'Acciones',
+      cell: (row: User) => (
+        <div className="flex items-center space-x-3.5">
+          <DeleteButton id={row._id} />
+          <Link
+            href={`/dashboard/usuarios/editar/${row._id}`}
+            className="edit"
+            title="Editar"
+            style={{ fontSize: '20px' }}
+          >
+            <FaPen />
+          </Link>
+        </div>
+      ),
+      sortable: false,
+    },
+  ];
 
   return (
     <div className="mx-auto max-w-270">
-    <div className="flex flex-col gap-9">
-    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-    <div>
-      <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, index) => (
-                <th
-                  {...column.getHeaderProps()}
-                  className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
-                >
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row, index) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                style={{ backgroundColor: index % 2 === 0 ? '#E8EDED' : 'transparent' }}
-              >
-                {row.cells.map(cell => (
-                  <td
-                    {...cell.getCellProps()}
-                    className="border-b border-[#eee] px-4 py-2 text-left"
-                  >
-                    {cell.render('Cell')}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-    </div>
-    </div>
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+          <h2 className="font-medium text-black dark:text-white">
+            Listado de Clientes
+          </h2>
+        </header>
+        <div className="p-6.5">
+          {/* Agrega el campo de búsqueda */}
+          <input
+            type="text"
+            placeholder="Buscar Cliente..."
+            className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {/* Renderiza la DataTable con los datos filtrados */}
+          <DataTable
+            columns={columns}
+            data={filteredUsuarios}
+            pagination
+            highlightOnHover
+            responsive
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default DataTable;
-
+export default UserDataTable;
