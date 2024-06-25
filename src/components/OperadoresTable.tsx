@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
-import { useTable } from "react-table";
+import DataTable from 'react-data-table-component';
 
 interface User {
   _id: string;
@@ -16,20 +16,17 @@ interface User {
 
 const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
         const usuariosClientesFiltrados = usuarios
-          .filter(
-            (usuario) => usuario.typeProfile._id === "660ebaa7b02ce973cad66552"
-          )
-          .map((usuario) => ({
+          .filter(usuario => usuario.typeProfile._id === "660ebaa7b02ce973cad66552")
+          .map(usuario => ({
             ...usuario,
-            cantidadMaquinas: usuarios.filter(
-              (u) => u.id_machine === usuario.id_machine
-            ).length,
+            cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
           }));
         setUsuariosClientes(usuariosClientesFiltrados);
       } catch (error) {
@@ -41,78 +38,73 @@ const OperadoresTable: React.FC = () => {
     fetchUsuariosClientes();
   }, []);
 
-  const columns = useMemo(
-    () => [
-      { Header: "ID", accessor: "_id",  align: 'left'},
-      { Header: "Nombre Completo", accessor: "nombreCompleto",  align: 'left' },
-      {
-        Header: "Cantidad de Máquinas",  align: 'left',
-        accessor: "cantidadMaquinas",
-      },
-      { Header: "Estado", accessor: "status",  align: 'left' },
-    ],
-    []
+  const handleStatusChange = (userId: string, newStatus: number) => {
+    // Lógica para cambiar el estado
+    console.log(`Cambiar estado de usuario ${userId} a ${newStatus}`);
+  };
+
+  const columns = [
+    {
+      name: 'Estado',
+      cell: (row: User) => (
+        <input
+          type="checkbox"
+          checked={row.status === 1}
+          onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
+        />
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+    {
+      name: 'ID',
+      selector: (row: User) => row._id,
+      sortable: true,
+    },
+    {
+      name: 'Nombre Completo',
+      selector: (row: User) => row.nombreCompleto,
+      sortable: true,
+    },
+    {
+      name: 'Cantidad de Máquinas',
+      selector: (row: User) => row.cantidadMaquinas,
+      sortable: true,
+    },
+  ];
+
+  const filteredUsers = usuariosClientes.filter(user =>
+    user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data: usuariosClientes || [],
-  });
-
-  if (!Array.isArray(usuariosClientes)) {
-    return <div>No hay datos de usuarios disponibles.</div>;
-  }
 
   return (
     <div className="mx-auto max-w-270">
-    <div className="flex flex-col gap-9">
-    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-    <div>
-      <table {...getTableProps()} style={{ borderSpacing: 0, width: '100%' }}>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, index) => (
-                <th
-                  {...column.getHeaderProps()}
-                  className={`border-b border-[#eee] px-4 py-2 bg-gray-200 dark:bg-gray-900 ${column.align === 'left' ? 'text-left' : 'text-center'}`}
-                >
-                  {column.render('Header')}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row, index) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                style={{ backgroundColor: index % 2 === 0 ? '#E8EDED' : 'transparent' }}
-              >
-                {row.cells.map(cell => (
-                  <td
-                    {...cell.getCellProps()}
-                    className="border-b border-[#eee] px-4 py-2 text-left"
-                  >
-                    {cell.render('Cell')}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-    </div>
-    </div>
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+          <h2 className="font-medium text-black dark:text-white">
+            Listado de Operadores
+          </h2>
+        </header>
+        <div className="p-6.5">
+          {/* Agrega el campo de búsqueda */}
+          <input
+            type="text"
+            placeholder="Buscar operadores..."
+            className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {/* Renderiza la DataTable con los datos filtrados */}
+          <DataTable
+            columns={columns}
+            data={filteredUsers}
+            pagination
+            highlightOnHover
+            responsive
+          />
+        </div>
+      </div>
     </div>
   );
 };
