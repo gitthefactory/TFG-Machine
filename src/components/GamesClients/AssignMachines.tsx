@@ -9,6 +9,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
 import getRooms from "@/controllers/getRooms";
 import getGames from "@/controllers/getGames";
+import DataTable from 'react-data-table-component';
 
 interface Usuario {
   _id: string;
@@ -21,6 +22,7 @@ interface Game {
   category: string;
   provider_name: string;
   image: string;
+  status: number;
 }
 
 interface Room {
@@ -49,6 +51,8 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     _id: maquina.games,
     provider_name: '',
   });
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Obtener providerId desde la URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -134,7 +138,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   }, [providerId, maquina.games]);
 
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>, gameId: number, newStatus: number) => {
+  const handleStatusChange = async (gameId: number, newStatus: number) => {
     const updatedProviders = providers.map((provider) =>
       provider.id === gameId ? { ...provider, status: newStatus } : provider
     );
@@ -170,9 +174,53 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   };
 
-  function getStatusClass(status) {
-    // Implementar lógica de clases si es necesario
-  }
+  const columns = [
+    {
+      name: 'Estado',
+      cell: (row: Game) => (
+        <input
+          type="checkbox"
+          checked={row.status === 1}
+          onChange={() => handleStatusChange(row.id, row.status === 1 ? 0 : 1)}
+        />
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+    {
+      name: 'ID Juegos',
+      selector: (row: Game) => row.id,
+      sortable: true,
+    },
+    {
+      name: 'Categoría',
+      selector: (row: Game) => row.category,
+      sortable: true,
+    },
+    {
+      name: 'Imagen',
+      cell: (row: Game) => <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />,
+    },
+    {
+      name: 'Proveedor',
+      selector: (row: Game) => row.provider_name,
+      sortable: true,
+    },
+    {
+      name: 'Nombre Juegos',
+      selector: (row: Game) => row.name,
+      sortable: true,
+    },
+  ];
+
+  const filteredProviders = providers.filter((provider) => {
+    return (
+      provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.provider_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <>
@@ -218,67 +266,54 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
                       />
                     </div>
                   </div>
-
-                  {/* PROVEEDOR */}
+                  {/* CLIENTE */}
                   <div className="flex-1">
-                    <div className="flex-1 mr-4">
-                      <label
-                        htmlFor="newProvider"
-                        className="mb-3 block text-sm font-medium text-black dark:text-white"
-                      >
-                        Proveedor
-                      </label>
-                      <input
-                        value={providerId}
-                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
-                        readOnly
-                        disabled
-                      />
-                    </div>
+                    <label
+                      htmlFor="newClient"
+                      className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    >
+                      Cliente
+                    </label>
+                    <input
+                      value={newClient.nombreCompleto}
+                      className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                      readOnly
+                      disabled
+                    />
                   </div>
                 </div>
-                <h3 className="mb-4">SELECCION DE JUEGOS</h3>
-                <table className="table-auto w-full">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 text-left">Estado</th>
-                      <th className="px-4 py-2 text-left">ID Juegos</th>
-                      <th className="px-4 py-2 text-left">Categoría</th>
-                      <th className="px-4 py-2 text-left">Imagen</th>
-                      <th className="px-4 py-2 text-left">Proveedor</th>
-                      <th className="px-4 py-2 text-left">Nombre Juegos</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {providers
-                      .filter(game => game.status === 0 || game.status === 1)
-                      .map(game => (
-                        <tr key={game.id} className={getStatusClass(game.status)}>
-                          <td className={`px-4 py-2`}>
-                            <input
-                              type="checkbox"
-                              checked={game.status === 1}
-                              onChange={(e) => handleStatusChange(e, game.id, game.status === 1 ? 0 : 1)}
-                              className="form-checkbox h-5 w-5 text-green-500 dark:text-green-400"
-                            />
-                          </td>
-                          <td className="px-4 py-2">{game.id}</td>
-                          <td className="px-4 py-2">{game.category}</td>
-                          <td className="px-4 py-2">
-                            <img src={game.image} alt={game.name} className="w-16 h-16 object-cover" />
-                          </td>
-                          <td className="px-4 py-2">{game.provider_name}</td>
-                          <td className="px-4 py-2">{game.name}</td>
-                        </tr>
-                    ))}
-                  </tbody>
-                </table>
               </form>
             </div>
+
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+                <h2 className="font-medium text-black dark:text-white">
+                  Listado de Juegos Disponibles en {newRoom.nombre}
+                </h2>
+              </header>
+              <div className="p-6.5">
+                {/* Agrega el campo de búsqueda */}
+                <input
+                  type="text"
+                  placeholder="Buscar juegos..."
+                  className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {/* Renderiza la DataTable con los datos filtrados */}
+                <DataTable
+                  columns={columns}
+                  data={filteredProviders}
+                  pagination
+                  highlightOnHover
+                  responsive
+                />
+              </div>
+            </div>
           </div>
+          <ToastContainer />
         </div>
       </DefaultLayout>
-      <ToastContainer />
     </>
   );
 };

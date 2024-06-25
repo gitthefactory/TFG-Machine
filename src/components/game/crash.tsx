@@ -1,39 +1,108 @@
-import React, { useEffect } from 'react';
-import Swiper from 'swiper';
-import 'swiper/css';
+import React, { useState, useEffect, useCallback } from "react";
+import Bgaming from './bgaming';
+import Belatra from './belatra';
+import getSessionData from "@/controllers/getSession";
 
 const Crash: React.FC = () => {
-  useEffect(() => {
-    // const crash = new Swiper("#crash", {
-    //   navigation: {
-    //     nextEl: ".swiper-button-next",
-    //     prevEl: ".swiper-button-prev",
-    //   },
-    //   watchSlidesProgress: true,
-    // });
+  const [visibleSection, setVisibleSection] = useState<string | null>(null);
+  const [providersStatus, setProvidersStatus] = useState<{ [key: string]: number }>({});
+  const [idMachine, setIdMachine] = useState<string | null>(null); // Estado para almacenar id_machine
+  const [bgamingGames, setBgamingGames] = useState<any[]>([]);
+  const [belatraGames, setBelatraGames] = useState<any[]>([]);
 
-    return () => {
-      // crash.destroy();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sessionData = await getSessionData();
+        console.log("Session Data:", sessionData);
+
+        if (sessionData.status === 200) {
+          const { id_machine } = sessionData.data.user;
+          setIdMachine(id_machine); // Guardar id_machine en el estado
+
+          // Obtener idMachine de la URL usando window.location.search
+          const params = new URLSearchParams(window.location.search);
+          const idMachineFromURL = params.get('idMachine');
+
+          if (idMachineFromURL) {
+            console.log("idMachine from URL:", idMachineFromURL);
+            // Aquí puedes usar idMachineFromURL en lugar de id_machine si es necesario
+            const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
+            const data = await response.json();
+            console.log("API Data:", data);
+
+            if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
+              const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
+              const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
+
+              if (belatraProvider) {
+                setProvidersStatus(prevStatus => ({
+                  ...prevStatus,
+                  belatra: belatraProvider.status
+                }));
+              }
+
+              if (bgamingProvider) {
+                setProvidersStatus(prevStatus => ({
+                  ...prevStatus,
+                  bgaming: bgamingProvider.status
+                }));
+              }
+
+              // Filtrar juegos por categoría "slots" y luego por status 1
+              const filteredBgamingGames = data.data.games.filter((game: any) =>
+                game.providerId === bgamingProvider?.provider && game.category === "slots" && game.status === 1
+              );
+
+              const filteredBelatraGames = data.data.games.filter((game: any) =>
+                game.providerId === belatraProvider?.provider && game.category === "slots" && game.status === 1
+              );
+
+              setBgamingGames(filteredBgamingGames);
+              setBelatraGames(filteredBelatraGames);
+
+            } else {
+              console.error("Unexpected data structure:", data);
+            }
+          } else {
+            console.error("idMachine parameter not found in URL");
+          }
+        } else {
+          console.error("User not authenticated:", sessionData.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching session data:", error);
+      }
     };
+
+    fetchData();
+  }, []);
+
+  const handleProvider = useCallback((provider: string) => {
+    setVisibleSection(prevVisibleSection =>
+      prevVisibleSection === provider ? null : provider
+    );
   }, []);
 
   return (
-    <div id="crash" style={{ display: 'none' }}>
-      <div className="swiper-wrapper">
-        <div className="swiper-slide">
-          <div className="container">
-            <div className="row" style={{ justifyContent: 'center' }}>
-              <div className="col-md-4">
-                <h1>JANIIIIIIIIIIIIIIIIIIS</h1>
-                <button className="btn-provider aviatrix"></button>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="container" style={{ textAlign: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        {Object.keys(providersStatus).map(provider => (
+          providersStatus[provider] === 1 && (
+            <button
+              key={provider}
+              className={`btn-provider ${provider}`}
+              onClick={() => handleProvider(provider)}
+              style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+            ></button>
+          )
+        ))}
       </div>
-
-      <div className="swiper-button-next swiper-button-next-img"></div>
-      <div className="swiper-button-prev swiper-button-prev-img"></div>
+      {visibleSection && (
+        <div style={{ marginTop: '20px' }}>
+          {visibleSection === 'bgaming' ? <Bgaming games={bgamingGames} /> : <Belatra games={belatraGames} />}
+        </div>
+      )}
     </div>
   );
 };
