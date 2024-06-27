@@ -1,118 +1,77 @@
 import React, { useEffect, useState } from "react";
-import getGames from "@/controllers/getGames";
 import DataTable from 'react-data-table-component';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-interface Game {
-  id: number;
+interface ProviderData {
+  _id: string;
   provider_name: string;
-  quantity: number;
   provider: number;
-  status: number;
+  status: number; // Changed to number
 }
 
-export default function ProveedoresTable({
-  query,
-  currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
-  const [games, setGames] = useState<Game[]>([]);
-  const [providers, setProviders] = useState<Game[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+interface ProviderTableProps {}
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const gamesData = await getGames(query, currentPage);
-        const storedGames = JSON.parse(localStorage.getItem("selectedGames") || "{}");
-
-        const updatedGames = gamesData.games.map((game: Game) => ({
-          ...game,
-          selected: storedGames[game.provider] || false,
-        }));
-
-        setGames(updatedGames);
-      } catch (error) {
-        console.error("Error fetching games:", error);
-      }
-    };
-
-    fetchGames();
-  }, [query, currentPage]);
+const ProviderTable: React.FC<ProviderTableProps> = () => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [providers, setProviders] = useState<ProviderData[]>([]);
+  const [filteredProviders, setFilteredProviders] = useState<ProviderData[]>([]);
 
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const gamesData = await getGames(query, currentPage);
-
-        const providerMap: Map<number, Game> = new Map();
-
-        gamesData.games.forEach((game: any) => {
-          if (!providerMap.has(game.provider)) {
-            providerMap.set(game.provider, {
-              id: game.provider,
-              provider_name: game.provider_name,
-              quantity: 1,
-              provider: game.provider,
-              status: game.status,
-            });
-          } else {
-            const existingProvider = providerMap.get(game.provider);
-            if (existingProvider) {
-              existingProvider.quantity++;
-              providerMap.set(game.provider, existingProvider);
-            }
-          }
-        });
-
-        const uniqueProviders = Array.from(providerMap.values());
-        setProviders(uniqueProviders);
+        const response = await fetch("/api/providers"); // Update with your actual API endpoint
+        if (!response.ok) {
+          throw new Error("Failed to fetch providers");
+        }
+        const data = await response.json();
+        setProviders(data.data); // Assuming your API response structure matches { message: "Ok", data: providers }
+        setFilteredProviders(data.data); // Initialize filtered providers with fetched data
       } catch (error) {
         console.error("Error fetching providers:", error);
+        toast.error("Failed to fetch providers");
       }
     };
 
     fetchProviders();
-  }, [query, currentPage]);
+  }, []);
 
-  const handleToggleStatus = async (providerId: number) => {
-    const updatedProviders = providers.map(provider =>
-      provider.id === providerId
-        ? { ...provider, status: provider.status === 0 ? 1 : 0 }
-        : provider
-    );
+  const handleToggleStatus = async (row: ProviderData) => {
+    const updatedStatus = row.status === 1 ? 0 : 1;
 
-    setProviders(updatedProviders);
+    try {
+      const response = await fetch(`/api/providers/${row._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: updatedStatus }),
+      });
 
-    const updatedProvider = updatedProviders.find(provider => provider.id === providerId);
-    if (updatedProvider) {
-      try {
-        const response = await fetch(`/api/updateProviderStatus`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: updatedProvider.id, status: updatedProvider.status }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Error updating provider status');
-        }
-      } catch (error) {
-        console.error("Error updating provider status:", error);
+      if (!response.ok) {
+        throw new Error("Failed to update provider status");
       }
+
+      const updatedProviders = filteredProviders.map(provider =>
+        provider._id === row._id ? { ...provider, status: updatedStatus } : provider
+      );
+      setFilteredProviders(updatedProviders);
+      toast.success(`Estado de ${row.provider_name} actualizado.`);
+    } catch (error) {
+      console.error("Error updating provider status:", error);
+      toast.error("Failed to update provider status");
     }
   };
 
   const columns = [
     {
       name: 'Estado',
-      cell: (row: Game) => (
+      cell: (row: ProviderData) => (
         <input
           type="checkbox"
+          className="form-checkbox h-5 w-5 text-green-500"
           checked={row.status === 1}
-          onChange={() => handleToggleStatus(row.id)}
+          onChange={() => handleToggleStatus(row)}
         />
       ),
       ignoreRowClick: true,
@@ -120,52 +79,70 @@ export default function ProveedoresTable({
     },
     {
       name: 'N°',
-      selector: (row: Game) => row.id,
+      selector: (row: ProviderData) => row._id,
       sortable: true,
     },
     {
       name: 'Nombre Proveedor',
-      selector: (row: Game) => row.provider_name,
+      selector: (row: ProviderData) => row.provider_name,
       sortable: true,
     },
     {
-      name: 'Cantidad Juegos',
-      selector: (row: Game) => row.quantity,
+      name: 'N° Proveedor',
+      selector: (row: ProviderData) => row.provider,
       sortable: true,
     },
   ];
 
-  const filteredProviders = providers.filter((provider) => (
-    provider.provider_name.toLowerCase().includes(searchTerm.toLowerCase())
-  ));
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+
+    const filteredData = providers.filter((provider) =>
+      provider.provider_name.toLowerCase().includes(searchTerm)
+    );
+
+    setFilteredProviders(filteredData);
+  };
 
   return (
     <div className="mx-auto max-w-270">
-    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
-      <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
-        <h2 className="font-medium text-black dark:text-white">
-          Listado de proveedores
-        </h2>
-      </header>
-      <div className="p-6.5">
-        {/* Agregar campo de búsqueda */}
-        <input
-          type="text"
-          placeholder="Buscar proveedor..."
-          className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {/* Renderizar DataTable con los datos filtrados */}
-        <DataTable
-          columns={columns}
-          data={filteredProviders}
-          pagination
-          highlightOnHover
-          responsive
-        />
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+          <h2 className="font-medium text-black dark:text-white">
+            Listado de proveedores
+          </h2>
+        </header>
+        <div className="p-6">
+          <input
+            type="text"
+            placeholder="Buscar proveedor..."
+            className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <DataTable
+            columns={columns}
+            data={filteredProviders}
+            pagination
+            highlightOnHover
+            responsive
+          />
+        </div>
       </div>
-    </div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
-}
+};
+
+export default ProviderTable;

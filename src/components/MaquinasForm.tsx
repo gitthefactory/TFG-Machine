@@ -8,7 +8,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
 import getRooms from "@/controllers/getRooms"
 import getGames from "@/controllers/getGames";
-import { FaToggleOn, FaToggleOff, FaPenToSquare } from "react-icons/fa6";
+import { FaPenToSquare } from "react-icons/fa6";
 
 interface Usuario {
   _id: string;
@@ -46,76 +46,76 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   });
   const [providers, setProviders] = useState<Games[]>(maquina.games);
 
- // GET USUARIOS
- useEffect(() => {
-  async function fetchUsuarios() {
-    try {
-      const fetchedUsuarios  = await getUsuarios("", 10);
-      setUsuarios(fetchedUsuarios );
-      const usuario = fetchedUsuarios .find(usuario => usuario._id === maquina.client);
-      if (usuario) {
-        setNewClient(usuario);
-      }
-    } catch (error) {
-      console.error("Error al obtener Cliente:", error);
-    }
-  }
-  fetchUsuarios();
-}, [maquina.client]);
-
-    // GET ROOMS
-    useEffect(() => {
-      async function fetchRooms() {
-        try {
-          const fetchedRooms = await getRooms("", 10);
-          setRooms(fetchedRooms);
-          const room = fetchedRooms.find(room => room._id === maquina.room);
-          if (room) {
-            setNewRoom(room);
-          }
-        } catch (error) {
-          console.error("Error al obtener salas:", error);
+  // GET USUARIOS
+  useEffect(() => {
+    async function fetchUsuarios() {
+      try {
+        const fetchedUsuarios = await getUsuarios("", 10);
+        setUsuarios(fetchedUsuarios);
+        const usuario = fetchedUsuarios.find(usuario => usuario._id === maquina.client);
+        if (usuario) {
+          setNewClient(usuario);
         }
+      } catch (error) {
+        console.error("Error al obtener Cliente:", error);
       }
-      fetchRooms();
-    }, [maquina.room]);
-
-// GET GAMES
-useEffect(() => {
-  const fetchProviders = async () => {
-    try {
-      const gamesData = await getGames("", 1);
-
-      const providerMap: Map<number, Games> = new Map();
-
-      gamesData.games.forEach((game: any) => {
-        if (!providerMap.has(game.provider)) {
-          const providersStatus = maquina.providers.find((g) => g.provider === game.provider)?.status || 0; 
-          providerMap.set(game.provider, {
-            id: game.provider,
-            provider_name: game.provider_name,
-            quantity: 1,
-            provider: game.provider,
-            status: providersStatus === 1 ? 1 : 0, 
-          });
-        } else {
-          const existingProvider = providerMap.get(game.provider);
-          if (existingProvider) {
-            existingProvider.quantity++;
-            providerMap.set(game.provider, existingProvider);
-          }
-        }
-      });
-
-      const uniqueProviders = Array.from(providerMap.values());
-      setProviders(uniqueProviders);
-    } catch (error) {
-      console.error(error);
     }
-  };
+    fetchUsuarios();
+  }, [maquina.client]);
 
-  fetchProviders();
-}, [maquina.providers]);
+  // GET ROOMS
+  useEffect(() => {
+    async function fetchRooms() {
+      try {
+        const fetchedRooms = await getRooms("", 10);
+        setRooms(fetchedRooms);
+        const room = fetchedRooms.find(room => room._id === maquina.room);
+        if (room) {
+          setNewRoom(room);
+        }
+      } catch (error) {
+        console.error("Error al obtener salas:", error);
+      }
+    }
+    fetchRooms();
+  }, [maquina.room]);
+
+  // GET GAMES
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const gamesData = await getGames("", 1);
+
+        const providerMap: Map<number, Games> = new Map();
+
+        gamesData.games.forEach((game: any) => {
+          if (!providerMap.has(game.provider)) {
+            const providersStatus = maquina.providers.find((g) => g.provider === game.provider)?.status || 0;
+            providerMap.set(game.provider, {
+              id: game.provider,
+              provider_name: game.provider_name,
+              quantity: 1,
+              provider: game.provider,
+              status: providersStatus === 1 ? 1 : 0,
+            });
+          } else {
+            const existingProvider = providerMap.get(game.provider);
+            if (existingProvider) {
+              existingProvider.quantity++;
+              providerMap.set(game.provider, existingProvider);
+            }
+          }
+        });
+
+        const uniqueProviders = Array.from(providerMap.values());
+        setProviders(uniqueProviders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProviders();
+  }, [maquina.providers]);
 
 
 
@@ -165,11 +165,11 @@ useEffect(() => {
       )
     );
   };
-  
+
   function getStatusClass(status) {
     return status === 0 ? "bg-red-100" : "bg-green";
   }
-  
+
 
   return (
     <>
@@ -180,7 +180,7 @@ useEffect(() => {
           <div className="flex flex-col gap-9">
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <form onSubmit={handleSubmit} className="p-6.5">
-                
+
                 <h1 className="mb-6">DATOS MÁQUINA</h1>
                 <div className="flex mb-4 gap-4">
                   {/* MAQUINA */}
@@ -222,24 +222,24 @@ useEffect(() => {
                 {/* Selección de Maquina */}
                 <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
                 <div className="flex">
-                    {/* Selección de Maquina */}
-                    <div className="flex-1 mr-4">
-                      <label
-                        htmlFor="newRoom"
-                        className="mb-3 block text-sm font-medium text-black dark:text-white"
-                      >
-                        Nombre Sala
-                      </label>
-                      <input
-                        value={newRoom.nombre}
-                        className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
-                        readOnly
-                        disabled
-                      />
-                    </div>
+                  {/* Selección de Maquina */}
+                  <div className="flex-1 mr-4">
+                    <label
+                      htmlFor="newRoom"
+                      className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    >
+                      Nombre Sala
+                    </label>
+                    <input
+                      value={newRoom.nombre}
+                      className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                      readOnly
+                      disabled
+                    />
+                  </div>
 
-                    {/* Selección de Cliente */}
-                    <div className="flex-1">
+                  {/* Selección de Cliente */}
+                  <div className="flex-1">
                     <div className="flex-1 mr-4">
                       <label
                         htmlFor="newClient"
@@ -254,11 +254,11 @@ useEffect(() => {
                         disabled
                       />
                     </div>
-                    </div>
-                        
-                    
                   </div>
 
+
+                </div>
+                <br />
                 <h3 className="mb-4">PROVEEDORES</h3>
                 <table className="table-auto w-full">
                   <thead>
@@ -271,34 +271,31 @@ useEffect(() => {
                     </tr>
                   </thead>
                   <tbody>
-                      
-                  {providers.map((provider, index) => (
-                    <tr key={provider.id} className={getStatusClass(provider.status)}>
-                      <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
-                        {provider.status === 0 ? (
-                          <button className="text-red focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 1)}>
-                            <FaToggleOn />
-                          </button>
-                        ) : (
-                          <button className="text-green-500 focus:outline-none" onClick={(e) => handleStatusChange(e, provider.id, 0)}>
-                            <FaToggleOff />
-                          </button>
-                        )}
-                      </td>
-                      <td className="px-4 py-2">{provider.id}</td>
-                      <td className="px-4 py-2">{provider.provider_name}</td>
-                      <td className="px-4 py-2">{provider.quantity}</td>
-                      <td className="px-4 py-2">
-                      <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}?providerId=${provider.id}`}>
-                        <div>
-                          <FaPenToSquare />
-                        </div>
-                      </Link>
+                    {providers.map((provider, index) => (
+                      <tr key={provider.id} className={getStatusClass(provider.status)}>
+                        <td className={`px-4 py-2 ${getStatusClass(provider.status)}`}>
+                          <input
+                            type="checkbox"
+                            checked={provider.status === 1}
+                            onChange={(e) => handleStatusChange(e, provider.id, e.target.checked ? 1 : 0)}
+                            className="form-checkbox h-5 w-5 text-green-500"
+                          />
+                        </td>
+                        <td className="px-4 py-2">{provider.id}</td>
+                        <td className="px-4 py-2">{provider.provider_name}</td>
+                        <td className="px-4 py-2">{provider.quantity}</td>
+                        <td className="px-4 py-2">
+                          <Link href={`/dashboard/maquinas/assignMachine/${maquina._id}?providerId=${provider.id}`}>
 
-                      </td>
-                    </tr>
-                  ))}
-                    </tbody>
+                            <FaPenToSquare />
+
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+
+
                 </table>
                 {/* Botones */}
                 <div className="mt-6 flex justify-end gap-4">

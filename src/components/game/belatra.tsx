@@ -3,37 +3,35 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation } from 'swiper';
 import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
+import GameUrl from '@/components/game/GameUrl'; 
+
 
 SwiperCore.use([Navigation]);
 
 const Belatra: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
+  const [selectedGame, setSelectedGame] = useState<any>(null);
   const swiperRef = useRef<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessionData = await getSessionData();
-        console.log("Session Data:", sessionData);
 
-                  // Obtener idMachine de la URL usando window.location.search
-                  const params = new URLSearchParams(window.location.search);
-                  const idMachineFromURL = params.get('idMachine');
-  
+        const params = new URLSearchParams(window.location.search);
+        const idMachineFromURL = params.get('idMachine');
+
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
           const provider = 29;
           const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
-          console.log("API Data:", data);
-  
+
           if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
             const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
             if (belatraProvider && belatraProvider.status === 0) {
-              // If Belatra provider status is 0, set empty array for games
               setGames([]);
             } else if (belatraProvider && belatraProvider.status === 1) {
-              // If Belatra provider status is 1, filter games with status 1
               const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
               setGames(bGamingGames);
             }
@@ -42,28 +40,33 @@ const Belatra: React.FC = () => {
           }
         } else {
           console.error("User not authenticated:", sessionData.data.message);
-          // Handle unauthenticated user case
         }
       } catch (error) {
         console.error("Error fetching session data:", error);
-        // Handle error fetching session data
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
       swiperRef.current.swiper.slidePrev();
     }
   };
-    
+
   const handleNextButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
       swiperRef.current.swiper.slideNext();
     }
+  };
+
+  const handleGameClick = (game: any) => {
+    setSelectedGame(game);
+  };
+
+  const closeGameUrl = () => {
+    setSelectedGame(null);
   };
 
   return (
@@ -84,32 +87,32 @@ const Belatra: React.FC = () => {
               <div className="row">
                 {games.slice(pageIndex * 8, (pageIndex * 8) + 4).map((game: any, index: number) => (
                   <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
-                    <a className="btn-game" href="#">
-                      <img 
-                        src={game.image} 
-                        alt={game.name} 
-                        style={{ width: "100%", height: "250px" }} 
+                    <div className="btn-game" onClick={() => handleGameClick(game)}>
+                      <img
+                        src={game.image}
+                        alt={game.name}
+                        style={{ width: "100%", height: "250px" }}
                       />
                       <div className="subtitle">
                         {game.name}
                       </div>
-                    </a>
+                    </div>
                   </div>
                 ))}
               </div>
               <div className="row">
                 {games.slice((pageIndex * 8) + 4, (pageIndex * 8) + 8).map((game: any, index: number) => (
                   <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
-                    <a className="btn-game" href="#">
-                      <img 
-                        src={game.image} 
-                        alt={game.name} 
-                        style={{ width: "100%", height: "250px" }} 
+                    <div className="btn-game" onClick={() => handleGameClick(game)}>
+                      <img
+                        src={game.image}
+                        alt={game.name}
+                        style={{ width: "100%", height: "250px" }}
                       />
                       <div className="subtitle">
                         {game.name}
                       </div>
-                    </a>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -117,6 +120,9 @@ const Belatra: React.FC = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      {selectedGame && (
+        <GameUrl game={selectedGame} onClose={closeGameUrl} />
+      )}
     </div>
   );
 }

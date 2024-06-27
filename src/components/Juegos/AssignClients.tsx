@@ -96,6 +96,8 @@ export default function DetalleProveedores({
         <input
           type="checkbox"
           checked={row.selected}
+          className="form-checkbox h-5 w-5 text-green-500"
+
           onChange={() => handleCheckboxChange(row.id)}
         />
       ),

@@ -161,14 +161,14 @@ const ECommerce: React.FC = () => {
           </CardDataStats>
         )} */}
         {user === "660ebaa7b02ce973cad66550" && (
-          <CardDataStats title="Total Clientes" total={clients.length} >
+          <CardDataStats title="Total Clientes" total={users.length} >
             <FaUserGroup />
           </CardDataStats>
         )}
         <CardDataStats title="Total Operadores" total={operators.length} >
           <FaUser />
         </CardDataStats>
-        <CardDataStats title="Total Salas/Rutas" total={rooms.length} >
+        <CardDataStats title="Total Salas" total={rooms.length} >
           <FaShop  />
         </CardDataStats>
         <CardDataStats title="Total Máquinas" total={machines.length} >

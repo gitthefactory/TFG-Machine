@@ -1,53 +1,94 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Machine from "@/models/machine";
-
+import Games from "@/models/games"
 import Room from "@/models/room";
 
+export async function PUT(request, { params: { id } }) {
+  try {
+    const { status } = await request.json(); // Solo obtenemos el campo 'status' del cuerpo JSON
 
-//Update/EDITING a MACHINE
-export async function PUT(request: any, { params: { id } }: any) {
-    try {
-      const {
-        newNombre,
-        newGames
-      } = await request.json();
-  
-      // Conectar a la base de datos
-      await connectDB();
-  
-      // Construir el objeto con los datos actualizados de la máquina
-      const updatedMachineData = {
-        nombre: newNombre,
-        games: newGames
-      };
-  
-      // Actualizar la máquina en la base de datos
-      const updatedMachine = await Machine.findByIdAndUpdate(id, updatedMachineData, { new: true });
-  
-      // Si el usuario asociado ha cambiado, puedes realizar una acción adicional aquí
-  
+    await connectDB();
+
+    const game = await Games.findById(id);
+
+    if (!game) {
       return NextResponse.json(
         {
-          message: "Máquina Actualizada con Éxito",
-          data: updatedMachine,
+          message: "Game not found",
         },
-        { status: 200 }
-      );
-    } catch (error) {
-      return NextResponse.json(
-        {
-          message: "Error al actualizar la máquina",
-          error,
-        },
-        {
-          status: 500,
-        }
+        { status: 404 }
       );
     }
+
+    // Actualizamos el estado del juego
+    game.status = status;
+
+    const updatedGame = await game.save();
+
+    return NextResponse.json(
+      {
+        message: "Estado de juego actualizado con éxito",
+        data: updatedGame,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "Error al actualizar el estado del juego",
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
+}
 
+// export async function PUT(request, { params: { provider } }) {
+//   try {
+//     const { status } = await request.json(); 
 
+//     await connectDB();
+
+//     console.log('Provider:', provider);  // Debugging line
+
+//     const game = await Games.findOne({ provider }); 
+
+//     if (!game) {
+//       return NextResponse.json(
+//         {
+//           message: "Game not found",
+//         },
+//         { status: 404 }
+//       );
+//     }
+
+//     // Actualizamos el estado del juego
+//     game.status = status;
+
+//     const updatedGame = await game.save();
+
+//     return NextResponse.json(
+//       {
+//         message: "Estado de juego actualizado con éxito",
+//         data: updatedGame,
+//       },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     return NextResponse.json(
+//       {
+//         message: "Error al actualizar el estado del juego",
+//         error: error.message,
+//       },
+//       {
+//         status: 500,
+//       }
+//     );
+//   }
+// }
 
 // Ruta para obtener una máquina por id y provider
 export async function GET(request: any, { params: { id, provider } }: any) {

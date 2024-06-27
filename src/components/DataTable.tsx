@@ -59,6 +59,8 @@ const UserDataTable: React.FC = () => {
         <input
           type="checkbox"
           checked={row.status === 1}
+          className="form-checkbox h-5 w-5 text-green-500"
+
           onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
         />
       ),

@@ -31,36 +31,36 @@ export async function GET() {
 
 
 
-//CREAR PROVEEDORES
-export async function POST(request: { json: () => PromiseLike<{ provider_name: string; provider: number; games: string[]; status: boolean; img: string; }> }) {
-  try {
-    const { provider_name, provider, games, status, img } = await request.json();
+// //CREAR PROVEEDORES
+// export async function POST(request: { json: () => PromiseLike<{ provider_name: string; provider: number; games: string[]; status: boolean; img: string; }> }) {
+//   try {
+//     const { provider_name, provider, games, status, img } = await request.json();
 
-    // Conecta a la base de datos
-    await connectDB();
+//     // Conecta a la base de datos
+//     await connectDB();
 
-    // Crea un nuevo proveedor de juegos en base a los datos proporcionados
-    const newGameProvider = await GamesModel.create({
-      provider_name: provider_name,
-      provider: provider,
-      games: games,
-      status: status,
-      img: img,
+//     // Crea un nuevo proveedor de juegos en base a los datos proporcionados
+//     const newGameProvider = await GamesModel.create({
+//       provider_name: provider_name,
+//       provider: provider,
+//       games: games,
+//       status: status,
+//       img: img,
  
-    });
+//     });
 
-    return NextResponse.json({
-      message: "Proveedor de Juegos Creado con Éxito",
-      data: newGameProvider
-    }, { status: 201 });
-  } catch (error) {
-    console.error("Error al crear el proveedor de juegos:", error);
-    return NextResponse.json({
-      message: "Error al crear el proveedor de juegos",
-      error,
-    }, {
-      status: 500,
-    });
-  }
-}
+//     return NextResponse.json({
+//       message: "Proveedor de Juegos Creado con Éxito",
+//       data: newGameProvider
+//     }, { status: 201 });
+//   } catch (error) {
+//     console.error("Error al crear el proveedor de juegos:", error);
+//     return NextResponse.json({
+//       message: "Error al crear el proveedor de juegos",
+//       error,
+//     }, {
+//       status: 500,
+//     });
+//   }
+// }
 

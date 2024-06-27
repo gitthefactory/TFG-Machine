@@ -26,7 +26,7 @@ export async function GET() {
   }
   
 
-async function guardarJuegos(juegos) {
+async function paraProvider (juegos) {
   try {
     for (const juego of juegos) {
       const { provider, provider_name } = juego;
@@ -53,15 +53,15 @@ async function guardarJuegos(juegos) {
   }
 }
 
-async function obtenerYGuardarJuegos() {
+async function obtenerYGuardarAmbos() {
   try {
     const response = await fetch('https://aggregator.casinoenruta.com/games-all?client_secret=9ffcfd63-e809-451c-9651-955c0622709d');
     if (!response.ok) {
       throw new Error('Error al obtener los juegos de la API');
     }
     const { data: { games } } = await response.json();
-    await guardarJuegos(games);
-    await guardarJuegos2(games);
+    await paraProvider(games);
+    await ParaGames(games);
   } catch (error) {
     console.error('Error al obtener y guardar los juegos:', error);
   }
@@ -69,7 +69,7 @@ async function obtenerYGuardarJuegos() {
 
 
 
-async function guardarJuegos2(juegos: any[]) {
+async function ParaGames(juegos: any[]) {
   try {
     for (const juego of juegos) {
       const { provider, id_machine, games } = juego;
@@ -100,15 +100,10 @@ async function guardarJuegos2(juegos: any[]) {
 }
 
 
-export async function obtenerJuegosDesdeAPI() {
+export async function getProviders() {
   try {
-    // Conectar a la base de datos
     await connectDB();
-
-    // Obtener todos los clientes con los datos del usuario asociado poblados
     const proveedores = await ProviderModel.find();
-
-    // Devolver la respuesta con los datos de los clientes
     return NextResponse.json({
       message: "Ok",
       data: proveedores,
@@ -116,7 +111,6 @@ export async function obtenerJuegosDesdeAPI() {
       status: 200
     });
   } catch (error) {
-    // Manejar cualquier error que pueda ocurrir durante el proceso
     return NextResponse.json({
       message: "Failed to get providers",
       error,
@@ -127,6 +121,6 @@ export async function obtenerJuegosDesdeAPI() {
 }
 
 
-obtenerJuegosDesdeAPI();
+getProviders();
 
-obtenerYGuardarJuegos();
+obtenerYGuardarAmbos();
