@@ -162,7 +162,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </Link>
                 </li>
               )}
-                {user === "660ebaa7b02ce973cad66551" && (
+                {/* {user === "660ebaa7b02ce973cad66551" && (
                 <li>
                   <Link
                     href="/dashboard/providersClients"
@@ -174,7 +174,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     Juegos / Proveedores
                   </Link>
                 </li>
-             )}
+             )} */}
             </ul>
           </div>
         </nav>

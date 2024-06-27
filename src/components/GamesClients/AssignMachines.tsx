@@ -53,6 +53,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   });
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
 
   // Obtener providerId desde la URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -174,9 +175,51 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     }
   };
 
+  const handleSelectAll = () => {
+    const newStatus = !selectAll ? 1 : 0;
+    const updatedProviders = providers.map((provider) => ({ ...provider, status: newStatus }));
+    setProviders(updatedProviders);
+    setSelectAll(!selectAll);
+
+    // Actualizar el estado de todos los juegos en la máquina
+    const updatedMaquina = {
+      newStatus,
+      newRoom,
+      newClient: newClient._id,
+      games: updatedProviders,
+    };
+
+    try {
+      fetch(`/api/maquinas/${maquina._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedMaquina),
+      }).then((response) => {
+        if (response.ok) {
+          toast.success("Estado de todos los juegos actualizado exitosamente");
+        } else {
+          console.error("Hubo un error al actualizar la máquina.");
+        }
+      });
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
+  };
+
   const columns = [
     {
-      name: 'Estado',
+      name: (
+        <>
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />{" "}
+          Estado
+        </>
+      ),
       cell: (row: Game) => (
         <input
           type="checkbox"
