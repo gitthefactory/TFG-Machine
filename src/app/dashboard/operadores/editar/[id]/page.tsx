@@ -1,14 +1,14 @@
 
 
 import OperatorForm from "@/components/OperatorForm";
-import getSingleOperator from "@/controllers/getSingleOperator";
+import getSingleUser from "@/controllers/getSingleUser";
 import React from "react";
 
 export default async function EditOperator({params: {id}}: {params: {id: string}}) {
-  const operator = await getSingleOperator(id);
+  const usuario = await getSingleUser(id);
   return (
     <>
-      <OperatorForm operator={operator} />
+      <OperatorForm usuario={usuario} />
     </>
   );
 }

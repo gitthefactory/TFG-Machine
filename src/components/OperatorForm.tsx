@@ -1,5 +1,5 @@
 "use client";
-// import { useState } from "react";
+import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link";
@@ -8,14 +8,14 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
-    // const [nombreCompleto, setNewNombreCompleto] = useState(usuario.nombreCompleto);
-    // const [newEmail, setNewEmail] = useState(usuario.email);
-    // const [newPassword, setNewPassword] = useState(usuario.password);
+    const [newNombreCompleto, setNewNombreCompleto] = useState(usuario.nombreCompleto);
+    const [newEmail, setNewEmail] = useState(usuario.email);
+    const [newPassword, setNewPassword] = useState(usuario.password);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const updatedUsuario = {
-            nombreCompleto,
+            nombreCompleto: newNombreCompleto,
             email: newEmail,
             password: newPassword,
         };
@@ -46,7 +46,7 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
         <DefaultLayout>
             <div className="mx-auto max-w-270">
                 <Breadcrumb pageName="Editar Operador" />
-                <AtrasButton href="/dashboard/operadores" />
+                <AtrasButton href="/dashboard/clientes" />
                 <div className="flex flex-col gap-9">
                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                         <form onSubmit={handleSubmit} className="p-6.5">
@@ -59,7 +59,7 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                     >
                                         Nombre Operador
                                     </label>
-                                    {/* <input
+                                    <input
                                         onChange={(e) => setNewNombreCompleto(e.target.value)}
                                         value={newNombreCompleto}
                                         id="newNombreCompleto"
@@ -67,8 +67,8 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                         type="text"
                                         placeholder="Ingresa nombre completo."
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                                        required */}
-                                    {/* /> */}
+                                        required
+                                    />
                                 </div>
                                 <div className="w-full xl:w-1/2">
                                     <label
@@ -77,7 +77,7 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                     >
                                         Correo Electrónico
                                     </label>
-                                    {/* <input
+                                    <input
                                         onChange={(e) => setNewEmail(e.target.value)}
                                         value={newEmail}
                                         id="newEmail"
@@ -86,7 +86,7 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                         placeholder="Ingresa correo electrónico."
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                                         required
-                                    /> */}
+                                    />
                                 </div>
                             </div>
                             <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
@@ -97,7 +97,7 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                     >
                                         Nueva Contraseña
                                     </label>
-                                    {/* <input
+                                    <input
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         value={newPassword}
                                         id="newPassword"
@@ -105,12 +105,12 @@ const OperatorForm: React.FC<{ usuario: any }> = ({ usuario }) => {
                                         type="password"
                                         placeholder="Ingresa una nueva contraseña..."
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                                    /> */}
+                                    />
                                 </div>
                             </div>
                             <div className="mt-6 flex justify-end gap-4">
                                 <Link
-                                    href="/dashboard/clientes"
+                                    href="/dashboard/operadores"
                                     className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
                                 >
                                     Cancelar
