@@ -84,7 +84,7 @@ const UserDataTable: React.FC = () => {
     //   sortable: true,
     // },
     {
-      name: 'Correo',
+      name: 'Correo Electrónico',
       selector: (row: User) => row.email,
       sortable: true,
     },

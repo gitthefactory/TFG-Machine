@@ -9,9 +9,11 @@ import { FaPen } from "react-icons/fa";
 interface User {
   _id: string;
   nombreCompleto: string;
+  email: string;
   typeProfile: {
     _id: string;
   };
+  
   games: { provider: string }[];
   id_machine: string;
   cantidadMaquinas: number;
@@ -74,8 +76,8 @@ const OperadoresTable: React.FC = () => {
       sortable: true,
     },
     {
-      name: 'Cantidad de Máquinas',
-      selector: (row: User) => row.cantidadMaquinas,
+      name: 'Correo Electrónico',
+      selector: (row: User) => row.email,
       sortable: true,
     },
     {
