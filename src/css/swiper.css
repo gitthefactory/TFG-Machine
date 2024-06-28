@@ -1,105 +1,106 @@
 .belatra-container {
-    position: relative;
-  }
-  
-  .navigation-buttons {
-    position: absolute;
-    width: 100%;
-    top: 40%; /* Ajusta este valor para subir los botones */
-    display: flex;
-    justify-content: space-between;
-    z-index: 10;
-    transform: translateY(-40%); /* Ajusta este valor para mantener la posición centrada verticalmente */
-  }
-  
-  .swiper-button-prev-img, .swiper-button-next-img {
-    cursor: pointer;
-    background-size: contain;
-    background-repeat: no-repeat;
-    height: 50px; /* Ajusta el tamaño según sea necesario */
-    width: 50px;  /* Ajusta el tamaño según sea necesario */
-  }
-  
-  .swiper-button-prev-img {
-    background-image: url('/images/img/left1.png');
-    width: 82px !important;
-    height: 100px !important;
-    position: absolute;
-    left: -150px; 
-  }
-  
-  .swiper-button-prev-img:hover {
-    background-image: url('/images/img/left2.png') !important;
-  }
-  
-  .swiper-button-next-img {
-    background-image: url('/images/img/right1.png');
-    width: 82px !important;
-    height: 100px !important;
-    position: absolute;
-    right: -150px; 
-  }
-  
-  .swiper-button-next-img:hover {
-    background-image: url('/images/img/right2.png') !important;
-  }
-  
-  .swiper-slide-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .col-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-  
-  .col-md-3 {
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-  
-  .btn-game {
-    display: block;
-    text-align: center;
-  }
-  
-  .swiper-container {
-    width: 100%;
-    height: 100%;
-  }
-  
-  .swiper {
-    width: 100%;
-    height: 100%;
-  }
-  
-  .swiper-slide {
-    text-align: center;
-  }
-  
-  .swiper-slide-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .swiper-slide img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-  
-  .swiper-button-next,
-  .swiper-button-prev {
-    --swiper-navigation-size: 85px;
-    --swiper-navigation-color: transparent;
-  }
-  
+  position: relative;
+  width: 100%;
+}
+
+.navigation-buttons {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+  transform: translateY(-50%);
+}
+
+.swiper-button-prev-img, .swiper-button-next-img {
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 50px;
+  width: 50px;
+}
+
+.swiper-button-prev-img {
+  background-image: url('/images/img/left1.png');
+  width: 82px !important;
+  height: 100px !important;
+  position: absolute;
+  left: -150px;
+}
+
+.swiper-button-prev-img:hover {
+  background-image: url('/images/img/left2.png') !important;
+}
+
+.swiper-button-next-img {
+  background-image: url('/images/img/right1.png');
+  width: 82px !important;
+  height: 100px !important;
+  position: absolute;
+  right: -150px;
+}
+
+.swiper-button-next-img:hover {
+  background-image: url('/images/img/right2.png') !important;
+}
+
+.swiper-slide-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.col-3 {
+  flex: 0 0 25%;
+  max-width: 25%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.btn-game {
+  display: block;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.btn-game img {
+  display: block;
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+
+margin-bottom: 4%;
+
+}
+
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+}
+
+.swiper-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  --swiper-navigation-size: 85px;
+  --swiper-navigation-color: transparent;
+}
+
