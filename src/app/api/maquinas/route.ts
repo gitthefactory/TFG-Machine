@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Machine from "@/models/machine";
-import { generateSha9 } from "@/models/machine";
+import { generateSha9, generateUUID } from "@/models/machine";
 
 
 //GET ALL MACHINES
@@ -42,7 +42,8 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: string; 
 
     // Generar el id_machine
     const id_machine = generateSha9();
-
+    // Generar un token para la nueva máquina 
+    const token = generateUUID();
     // Crear una nueva máquina en base a los datos proporcionados
     const newMachine = await Machine.create({
       nombre,
@@ -55,7 +56,8 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: string; 
       room,
       pais,
       direccion,
-      ciudad
+      ciudad,
+      token
     });
 
     // Devolver una respuesta con la máquina recién creada

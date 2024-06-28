@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, model, Types } from "mongoose";
+import mongoose, { Schema, Document, model, Types } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 // Definición de la interfaz de la máquina
 interface Machine extends Document {
@@ -9,21 +10,22 @@ interface Machine extends Document {
   client: Types.ObjectId;
   room: Types.ObjectId;
   providers: any[];
+  token: string;
 }
 
 // Definición del esquema de la máquina
 const MachineSchema = new Schema<Machine>({
-  id_machine: { type: String }, 
+  id_machine: { type: String, unique: true }, 
   status: { type: Number, default: 1 },
   games: { type: [{ type: Schema.Types.Mixed }], default: [] },
-  operator: { type: Schema.Types.ObjectId, ref: "Operator", required: false }, // Campo opcional
-  client: { type: Schema.Types.ObjectId, ref: "Client" },
-  room: { type: Schema.Types.ObjectId, ref: "Room" },
+  operator: { type: Schema.Types.ObjectId, ref: 'Operator', required: false }, // Campo opcional
+  client: { type: Schema.Types.ObjectId, ref: 'Client' },
+  room: { type: Schema.Types.ObjectId, ref: 'Room' },
   providers: { type: [{ type: Schema.Types.Mixed }], default: [] }, // Array de tipo any[] similar a games
+  token: { type: String, default: generateUUID }, // Añade un token único para cada documento
 }, {
   timestamps: true,
 });
-
 // Función para generar sha-9 único
 export function generateSha9(): string {
   const base = "XA5A";
@@ -45,7 +47,23 @@ MachineSchema.pre('save', function (next) {
   next();
 });
 
+// Función para generar un UUID único sin guiones
+export function generateUUID(): string {
+  return uuidv4().replace(/-/g, ''); // Genera el UUID y elimina los guiones
+}
+// Antes de guardar el documento, asigna un valor fijo a id_machine si está vacío
+MachineSchema.pre('save', function (next) {
+  const machine = this as any;
+  if (!machine.isNew) {
+    return next();
+  }
+  if (!machine.id_machine) {
+    machine.id_machine = generateUUID(); // Asigna el valor generado por la función generateUUID()
+  }
+  next();
+});
+
 // Definición del modelo de la máquina
-const Machine = mongoose.models.Machine || model<Machine>("Machine", MachineSchema);
+const Machine = mongoose.models.Machine || model<Machine>('Machine', MachineSchema);
 
 export default Machine;

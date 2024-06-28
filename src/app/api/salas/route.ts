@@ -52,7 +52,7 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: any; des
       comuna,
       operator: operatorValue,
       client,
-    
+      
     });
 
     return NextResponse.json({
