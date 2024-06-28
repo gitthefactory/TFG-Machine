@@ -94,23 +94,7 @@ const Belatra: React.FC = () => {
           <SwiperSlide key={pageIndex}>
             <div className="swiper-slide-content">
               <div className="row">
-                {games.slice(pageIndex * 8, (pageIndex * 8) + 4).map((game: any, index: number) => (
-                  <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
-                    <div className="btn-game" onClick={() => handleGameClick(game)}>
-                      <img
-                        src={game.image}
-                        alt={game.name}
-                        style={{ width: "100%", height: "250px" }}
-                      />
-                      <div className="subtitle">
-                        {game.name}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="row">
-                {games.slice((pageIndex * 8) + 4, (pageIndex * 8) + 8).map((game: any, index: number) => (
+                {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
                   <div key={index} className="col-6 col-md-3" style={{ marginBottom: "20px" }}>
                     <div className="btn-game" onClick={() => handleGameClick(game)}>
                       <img
@@ -134,6 +118,7 @@ const Belatra: React.FC = () => {
       )}
     </div>
   );
+  
 }
 
 export default Belatra;
