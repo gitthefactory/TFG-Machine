@@ -3,30 +3,38 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation } from 'swiper';
 import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
-import GameUrl from '@/components/game/GameUrl'; 
-
+import GameUrl from '@/components/game/GameUrl';
 
 SwiperCore.use([Navigation]);
 
 const Belatra: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
+  const [token, setToken] = useState<string | null>(null); // Assuming token is a string
   const swiperRef = useRef<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessionData = await getSessionData();
-
+  
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine');
-
+  
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
           const provider = 29;
           const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
-
+  
+          // Check if the token is available in the response
+          if (data.data && data.data.token) {
+            setToken(data.data.token); // Set the token state
+          } else {
+            console.error("Token not found in response:", data);
+          }
+  
+          // Proceed with handling games if the response structure is as expected
           if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
             const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
             if (belatraProvider && belatraProvider.status === 0) {
@@ -45,9 +53,10 @@ const Belatra: React.FC = () => {
         console.error("Error fetching session data:", error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -120,8 +129,8 @@ const Belatra: React.FC = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      {selectedGame && (
-        <GameUrl game={selectedGame} onClose={closeGameUrl} />
+      {selectedGame && token && (
+        <GameUrl game={selectedGame} token={token} onClose={closeGameUrl} />
       )}
     </div>
   );

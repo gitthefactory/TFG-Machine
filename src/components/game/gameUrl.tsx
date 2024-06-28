@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { FaRegRectangleXmark } from "react-icons/fa6";
-import getSessionData from "@/controllers/getSession";
 
 interface GameUrlProps {
-  game: any; // Adjust the type according to your game object structure
+  game: any;
+  token: string;
   onClose: () => void;
 }
 
-const GameUrl: React.FC<GameUrlProps> = ({ game, onClose }) => {
+const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [gameUrl, setGameUrl] = useState<string | null>(null);
-  const { sessionToken } = getSessionData();
 
   useEffect(() => {
     const fetchGameUrl = async () => {
       try {
-        const response = await fetch(
-          `https://aggregator.casinoenruta.com/api/game?SessionToken=${sessionToken}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=1&username=usertest&balance=0&country=CL&currency=CLP&game=${game.id}&return_url=https://google.com&language=es_ES&mobile=false`
-        );
+        const url = `https://aggregator.casinoenruta.com/api/game?SessionToken=${token}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=1&username=usertest&balance=0&country=CL&currency=CLP&game=${game.id}&return_url=https://google.com&language=es_ES&mobile=false`;
+        console.log("AQUI game URL:", url);
+
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           if (data.status === "OK" && data.data.url) {
@@ -37,7 +37,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, onClose }) => {
     if (game) {
       fetchGameUrl();
     }
-  }, [game, sessionToken]);
+  }, [game, token]);
 
   const closeGame = () => {
     onClose();
