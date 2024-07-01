@@ -22,7 +22,7 @@ const Belatra: React.FC = () => {
         const idMachineFromURL = params.get('idMachine');
   
         if (sessionData.status === 200) {
-          const { id_machine } = sessionData.data.user;
+          // const { id_machine } = sessionData.data.user;
           const provider = 29;
           const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();

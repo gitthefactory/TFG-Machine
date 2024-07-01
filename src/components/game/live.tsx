@@ -86,7 +86,7 @@ const Live: React.FC = () => {
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
         {Object.keys(providersStatus).map(provider => (
           providersStatus[provider] === 1 && (
             <button
@@ -102,7 +102,7 @@ const Live: React.FC = () => {
         <div style={{ marginTop: '20px' }}>
           {visibleSection === 'bgaming' ? <Bgaming games={bgamingGames} /> : <Belatra games={belatraGames} />}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
