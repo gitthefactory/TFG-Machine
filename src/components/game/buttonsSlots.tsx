@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation } from 'swiper';
-import 'swiper/swiper-bundle.css'; // Import correct CSS from swiper
+import 'swiper/swiper-bundle.css'; 
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/GameUrl';
-import Buttons from '@/components/game/buttons';
 
 SwiperCore.use([Navigation]);
 
-const ButonsSlots: React.FC = () => {
+interface ButtonsSlotsProps {
+  providerId: number;
+}
+
+const ButtonsSlots: React.FC<ButtonsSlotsProps> = ({ providerId }) => {
   const [games, setGames] = useState<any[]>([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -18,31 +21,35 @@ const ButonsSlots: React.FC = () => {
     const fetchData = async () => {
       try {
         const sessionData = await getSessionData();
-  
+
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine');
-  
+
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
-          const provider = Buttons.id; // Corrected variable name and removed interpolation
-          const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${Buttons.id}`);
+          const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${providerId}`);
           const data = await response.json();
-          console.log(response);
-  
+          // console.log(response)
+
           if (data.data && data.data.token) {
             setToken(data.data.token);
           } else {
             console.error("Token not found in response:", data);
-            return; // Exit early if token is not found
+            return; 
           }
-  
+
           if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
-            const belatraProvider = data.data.providers.find((p: any) => p.provider === Buttons.id);
-            if (belatraProvider && belatraProvider.status === 0) {
+            const provider = data.data.providers.find((p: any) => p.provider === providerId);
+            if (provider && provider.status === 0) {
               setGames([]);
-            } else if (belatraProvider && belatraProvider.status === 1) {
-              const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1 && game.category === 'slots');
-              setGames(bGamingGames);
+            } else if (provider && provider.status === 1) {
+              const belatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1 && game.category === 'slots');
+              const bgamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming' && game.status === 1 && game.category === 'slots');
+          
+              // Ahora debes decidir qué juegos quieres establecer, por ejemplo:
+              setGames([...belatraGames, ...bgamingGames]);
+  
+          
             }
           } else {
             console.error("Unexpected data structure:", data);
@@ -54,9 +61,9 @@ const ButonsSlots: React.FC = () => {
         console.error("Error fetching session data:", error);
       }
     };
-  
+
     fetchData();
-  }, []);
+  }, [providerId]);
   
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -118,4 +125,4 @@ const ButonsSlots: React.FC = () => {
   );
 }
 
-export default ButonsSlots;
+export default ButtonsSlots;

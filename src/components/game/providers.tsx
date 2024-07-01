@@ -95,6 +95,7 @@ const Providers: React.FC = () => {
             onClick={() => handleProvider('bgaming')}
             style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
           >
+            {/* BGAMING */}
           </button>
         )}
       </div>

@@ -100,7 +100,8 @@ const Slots: React.FC = () => {
       </div>
       {visibleSection && (
         <div style={{ marginTop: '20px' }}>
-          {visibleSection === 'belatra' ? <ButtonsSlots /> : <Bgaming />}
+          {visibleSection === 'belatra' ? <ButtonsSlots providerId={29} /> : null } 
+          {visibleSection === 'bgaming' ? <ButtonsSlots providerId={68} />: null} 
         </div>
       )}
     </div>
