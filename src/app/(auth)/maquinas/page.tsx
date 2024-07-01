@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 import Swal from 'sweetalert2';
 import { FaCircleCheck } from "react-icons/fa6";
 import axios from 'axios'; 
-
+import '../../../css/globals.css';
 
 const Maquinas: React.FC = () => {
   const [info, setInfo] = useState({
@@ -17,7 +17,7 @@ const Maquinas: React.FC = () => {
   });
 
   const [error, setError] = useState("");
-  const [pending, setPending] = useState(false);
+  // const [pending, setPending] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -104,125 +104,6 @@ async function handleSubmit(e: any) {
   
   return (
     <>
-   <style jsx>{`
-        /* Estilos CSS */ 
-        .rounded-sm {
-          background-image: url("/images/logo/fondo.png");
-          // color: white;
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          font-weight: bold;
-        }
-
-        .text-center {
-          margin-bottom: 2rem;
-        }
-
-        .relative {
-          width: 100%;
-          max-width: 300px;
-          background: white;
-          border-radius: 100px;
-          border: none;
-        }
-
-        input {
-          width: 100%;
-          padding: 1rem;
-          border-radius: 5px;
-          border: 1px solid #ccc;
-          font-size: 1rem;
-        }
-
-        .message {
-          color: red;
-          margin-bottom: 1rem;
-        }
-
-        input[type='submit'] {
-          width: 100%;
-          padding: 1rem;
-          border: none;
-          border-radius: 5px;
-          background-color: rgb(227, 17, 108);
-          border-radius: 10px;
-          color: white;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-          max-width: 250px;
-        }
-
-        input[type='submit'] {
-          font-weight: bold;
-        }
-        
-        /* Estilo adicional para cuando el botón está en estado de hover */
-        input[type='submit']:hover {
-          background-color: #5a67d8;
-          font-weight: bold;
-        }
-
-        .footer-content p {
-          text-align: center;
-        }
-        
-        input[type='id_machine']::placeholder {
-          text-align: center;
-          font-weight: bold;
-        }
-        
-        input[type='password']::placeholder {
-          text-align: center;
-          font-weight: bold;
-        }
-
-        /* Información del pie de página */
-        .footer-content {
-          position: absolute;
-          bottom: 2rem;
-          left: 50%;
-          transform: translateX(-50%);
-          text-align: center;
-          color: #883d64;
-        }
-
-        .custom-title {
-          color: red; /* Cambia el color del título */
-        }
-
-        .custom-html {
-          color: blue; /* Cambia el color del texto */
-        }
-        
-        .bold-text {
-          font-weight: bold;
-        }
-
-        //Loading
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-
-        // #custom-title {
-        //   color: red; 
-        //   background-color: #5a67d8;
-          
-        // }
-        
-        // .custom-html {
-        //   color: blue; 
-        // }
-      `}</style>
-
       {loading && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', zIndex: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
           <div style={{ width: '50px', height: '50px', borderRadius: '50%', border: '5px solid transparent', borderTopColor: 'white', animation: 'spin 1s linear infinite' }}></div>
