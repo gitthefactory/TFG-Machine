@@ -1,77 +1,70 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Bgaming from './bgaming';
-import Belatra from './belatra';
+import ButtonsSlots from './buttonsSlots';
 import getSessionData from "@/controllers/getSession";
+import Loader from "@/components/common/Loader";
+
+interface ProviderData {
+  provider_name: string;
+  status: number;
+}
 
 const Slots: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
-  const [providersStatus, setProvidersStatus] = useState<{ [key: string]: number }>({});
-  const [idMachine, setIdMachine] = useState<string | null>(null); // Estado para almacenar id_machine
-  const [bgamingGames, setBgamingGames] = useState<any[]>([]);
-  const [belatraGames, setBelatraGames] = useState<any[]>([]);
+  const [belatraStatus, setBelatraStatus] = useState<number | null>(null);
+  const [bgamingStatus, setBgamingStatus] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showBelatraButton, setShowBelatraButton] = useState(false);
+  const [showBgamingButton, setShowBgamingButton] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const sessionData = await getSessionData();
-        console.log("Session Data:", sessionData);
 
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
-          setIdMachine(id_machine); // Guardar id_machine en el estado
+          const providersResponse = await fetch(`http://localhost:3000/api/providers`);
+          const providersData = await providersResponse.json();
 
-          // Obtener idMachine de la URL usando window.location.search
-          const params = new URLSearchParams(window.location.search);
-          const idMachineFromURL = params.get('idMachine');
+          if (providersData.message === "Ok") {
+            const params = new URLSearchParams(window.location.search);
+            const idMachineFromURL = params.get('idMachine');
 
-          if (idMachineFromURL) {
-            console.log("idMachine from URL:", idMachineFromURL);
-            // Aquí puedes usar idMachineFromURL en lugar de id_machine si es necesario
-            const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
-            const data = await response.json();
-            console.log("API Data:", data);
+            if (idMachineFromURL) {
+              const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
+              const data = await response.json();
 
-            if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
-              const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
-              const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
+              if (data.data && Array.isArray(data.data.providers)) {
+                const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
+                const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
 
-              if (belatraProvider) {
-                setProvidersStatus(prevStatus => ({
-                  ...prevStatus,
-                  belatra: belatraProvider.status
-                }));
+                if (belatraProvider) {
+                  setBelatraStatus(belatraProvider.status);
+                }
+
+                if (bgamingProvider) {
+                  setBgamingStatus(bgamingProvider.status);
+                }
+
+                // Verificar si ambos proveedores tienen status 1 en ambas APIs
+                setShowBelatraButton(belatraProvider?.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'belatra gaming' && p.status === 1));
+                setShowBgamingButton(bgamingProvider?.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'bgaming' && p.status === 1));
+              } else {
+                console.error("La API /api/juegosApi no devolvió un estado válido.");
               }
-
-              if (bgamingProvider) {
-                setProvidersStatus(prevStatus => ({
-                  ...prevStatus,
-                  bgaming: bgamingProvider.status
-                }));
-              }
-
-              // Filtrar juegos por categoría "slots" y luego por status 1
-              const filteredBgamingGames = data.data.games.filter((game: any) =>
-                game.providerId === bgamingProvider?.provider && game.category === "slots" && game.status === 1
-              );
-
-              const filteredBelatraGames = data.data.games.filter((game: any) =>
-                game.providerId === belatraProvider?.provider && game.category === "slots" && game.status === 1
-              );
-
-              setBgamingGames(filteredBgamingGames);
-              setBelatraGames(filteredBelatraGames);
-
             } else {
-              console.error("Unexpected data structure:", data);
+              console.error("idMachine parameter not found in URL");
             }
           } else {
-            console.error("idMachine parameter not found in URL");
+            console.error("La API /api/providers no devolvió un estado válido.");
           }
-        } else {
-          console.error("User not authenticated:", sessionData.data.message);
         }
       } catch (error) {
         console.error("Error fetching session data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -79,28 +72,35 @@ const Slots: React.FC = () => {
   }, []);
 
   const handleProvider = useCallback((provider: string) => {
-    setVisibleSection(prevVisibleSection =>
-      prevVisibleSection === provider ? null : provider
-    );
+    setLoading(true);
+    setVisibleSection(provider);
+    setTimeout(() => setLoading(false), 900);
   }, []);
 
   return (
     <div className="container" style={{ textAlign: 'center' }}>
+      {loading && <Loader />}
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        {Object.keys(providersStatus).map(provider => (
-          providersStatus[provider] === 1 && (
-            <button
-              key={provider}
-              className={`btn-provider ${provider}`}
-              onClick={() => handleProvider(provider)}
-              style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-            ></button>
-          )
-        ))}
+        {showBelatraButton && (
+          <button
+            className="btn-provider belatra"
+            onClick={() => handleProvider('belatra')}
+            style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+          >
+          </button>
+        )}
+        {showBgamingButton && (
+          <button
+            className="btn-provider bgaming"
+            onClick={() => handleProvider('bgaming')}
+            style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+          >
+          </button>
+        )}
       </div>
       {visibleSection && (
         <div style={{ marginTop: '20px' }}>
-          {visibleSection === 'bgaming' ? <Bgaming games={bgamingGames} /> : <Belatra games={belatraGames} />}
+          {visibleSection === 'belatra' ? <ButtonsSlots /> : <Bgaming />}
         </div>
       )}
     </div>
