@@ -26,7 +26,7 @@
   width: 82px !important;
   height: 100px !important;
   position: absolute;
-  left: -150px;
+  left: -150px !important ;
 }
 
 .swiper-button-prev-img:hover {
@@ -38,7 +38,7 @@
   width: 82px !important;
   height: 100px !important;
   position: absolute;
-  right: -150px;
+  right: -150px !important;
 }
 
 .swiper-button-next-img:hover {
