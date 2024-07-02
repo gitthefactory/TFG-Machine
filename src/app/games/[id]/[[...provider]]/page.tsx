@@ -12,7 +12,7 @@ const Proveedores: React.FC = () => {
         const machineId = pathArray[pathArray.length - 1];
         const provider = pathArray[pathArray.length - 2]; 
 
-        const response = await fetch(`http://localhost:3000/api/juegosApi/${provider}/${machineId}/`); // Ajusta la URL de la solicitud
+        const response = await fetch(`/api/juegosApi/${provider}/${machineId}/`); // Ajusta la URL de la solicitud
         if (!response.ok) {
           throw new Error('Error al obtener los datos de la máquina');
         }

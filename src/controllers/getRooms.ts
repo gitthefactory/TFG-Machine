@@ -13,7 +13,7 @@ export default async function getRooms(query: string, currentPage: number) {
     const userId = session?.user?._id;
 
     // Obtener los datos de las salas
-    const response = await fetch(`http://localhost:3000/api/salas?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+    const response = await fetch(`/api/salas?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
       cache: "no-store",
     });
     const salasData = await response.json();

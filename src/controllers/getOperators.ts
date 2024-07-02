@@ -10,7 +10,7 @@ export default async function getOperators(query: string, currentPage: number) {
     const session = await getSession();
 
     // Fetch operator data
-    const response = await fetch(`http://localhost:3000/api/usuarios?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+    const response = await fetch(`/api/usuarios?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
       cache: "no-store",
     });
 

@@ -25,7 +25,7 @@ const Providers: React.FC = () => {
 
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
-          const providersResponse = await fetch(`http://localhost:3000/api/providers`);
+          const providersResponse = await fetch(`/api/providers`);
           const providersData = await providersResponse.json();
 
           if (providersData.message === "Ok") {
@@ -33,7 +33,7 @@ const Providers: React.FC = () => {
             const idMachineFromURL = params.get('idMachine');
 
             if (idMachineFromURL) {
-              const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
+              const response = await fetch(`/api/juegosApi/${idMachineFromURL}`);
               const data = await response.json();
 
               if (data.data && Array.isArray(data.data.providers)) {

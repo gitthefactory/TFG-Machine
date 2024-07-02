@@ -46,7 +46,7 @@ export default function CrearOperadores() {
         maquina: maquinaSeleccionada,
       };
   
-      const response = await fetch('http://localhost:3000/api/operadores', {
+      const response = await fetch('/api/operadores', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

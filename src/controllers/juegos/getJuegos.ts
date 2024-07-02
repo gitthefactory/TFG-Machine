@@ -15,7 +15,7 @@ export default async function getJuegos(userId: string, currentPage: number) {
     }
 
     // Obtener la máquina asociada al usuario
-    const responseMaquinas = await fetch(`http://localhost:3000/api/maquinas/${userId}`);
+    const responseMaquinas = await fetch(`/api/maquinas/${userId}`);
     const maquinaSeleccionada = await responseMaquinas.json();
 
     if (!maquinaSeleccionada) {
@@ -27,7 +27,7 @@ export default async function getJuegos(userId: string, currentPage: number) {
 
     if (isAdmin) {
       // Si el usuario es administrador, obtener juegos de la API de juegos
-      const responseJuegos = await fetch(`http://localhost:3000/api/juegosApi?query=&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+      const responseJuegos = await fetch(`/api/juegosApi?query=&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
         cache: "no-store",
       });
       const juegos = await responseJuegos.json();

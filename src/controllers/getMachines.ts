@@ -16,7 +16,7 @@ export default async function getMachines(room: string, query: string, currentPa
     const userProfile = session?.user?.typeProfile;
 
     // Obtener los datos de las máquinas asociadas a la sala seleccionada
-    const maquinasResponse = await fetch(`http://localhost:3000/api/maquinas?room=${room}&query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+    const maquinasResponse = await fetch(`/api/maquinas?room=${room}&query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
       cache: "no-store",
     });
     const maquinasData = await maquinasResponse.json();

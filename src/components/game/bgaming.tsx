@@ -24,7 +24,7 @@ const Belatra: React.FC = () => {
         if (sessionData.status === 200) {
           // const { id_machine } = sessionData.data.user;
           const provider = 68;
-          const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${provider}`);
+          const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
   
           // Check if the token is available in the response

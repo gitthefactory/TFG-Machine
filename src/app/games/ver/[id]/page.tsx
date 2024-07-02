@@ -13,7 +13,7 @@
           const machineId = pathArray[pathArray.length - 1];
   
           // Realizar la solicitud HTTP con el ID de la máquina
-          const response = await fetch(`http://localhost:3000/api/juegosApi/66479f0a812cec0bc3d0496a`);
+          const response = await fetch(`/api/juegosApi/66479f0a812cec0bc3d0496a`);
           if (!response.ok) {
             throw new Error('Error al obtener los datos de la máquina');
           }

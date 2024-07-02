@@ -27,7 +27,7 @@ const Live: React.FC = () => {
           if (idMachineFromURL) {
             console.log("idMachine from URL:", idMachineFromURL);
             // Aquí puedes usar idMachineFromURL en lugar de id_machine si es necesario
-            const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}`);
+            const response = await fetch(`/api/juegosApi/${idMachineFromURL}`);
             const data = await response.json();
             console.log("API Data:", data);
 

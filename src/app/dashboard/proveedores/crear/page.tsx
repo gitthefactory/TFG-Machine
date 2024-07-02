@@ -43,7 +43,7 @@ export default function CrearProveedores() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/juegosApi', {
+      const response = await fetch('/api/juegosApi', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

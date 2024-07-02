@@ -12,7 +12,7 @@ export default function DeleteBtn({ id }) {
   const router = useRouter();
 
   async function handleDeleteMachine() {
-    await fetch(`http://localhost:3000/api/maquinas/?_id=${id}`, {
+    await fetch(`/api/maquinas/?_id=${id}`, {
       method: "DELETE",
     });
     router.refresh();

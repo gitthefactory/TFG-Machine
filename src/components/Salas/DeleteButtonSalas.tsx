@@ -12,7 +12,7 @@ export default function DeleteBtn(params: { id: any }) {
   const router = useRouter();
 
   async function handleDeleteRoom() {
-      await fetch(`http://localhost:3000/api/salas/?_id=${params.id}`, {
+      await fetch(`/api/salas/?_id=${params.id}`, {
         method: "DELETE",
       });
     router.refresh();

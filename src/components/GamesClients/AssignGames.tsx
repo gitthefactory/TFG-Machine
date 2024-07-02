@@ -231,7 +231,7 @@
 //     }
   
 //     try {
-//       const maquinasResponse = await fetch(`http://localhost:3000/api/maquinas?room=${salaSeleccionada}`);
+//       const maquinasResponse = await fetch(`api/maquinas?room=${salaSeleccionada}`);
 //       if (!maquinasResponse.ok) {
 //         throw new Error("Error al obtener las máquinas");
 //       }

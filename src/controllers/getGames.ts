@@ -4,7 +4,7 @@ export default async function getGames(query: string, currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/games?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+    const response = await fetch(`/api/games?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
       cache: "no-store",
     });
 

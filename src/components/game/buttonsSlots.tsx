@@ -27,7 +27,7 @@ const ButtonsSlots: React.FC<ButtonsSlotsProps> = ({ providerId }) => {
 
         if (sessionData.status === 200) {
           const { id_machine } = sessionData.data.user;
-          const response = await fetch(`http://localhost:3000/api/juegosApi/${idMachineFromURL}/${providerId}`);
+          const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${providerId}`);
           const data = await response.json();
           // console.log(response)
 
