@@ -1,6 +1,6 @@
 
 
-import ClientForm from "@/components/ClientForm";
+import ClientForm from "@/components/Clientes/ClientForm";
 import getSingleClient from "@/controllers/getSingleClient";
 import React from "react";
 
