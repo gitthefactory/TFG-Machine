@@ -140,19 +140,19 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   }, [providerId, maquina.games]);
 
   const handleStatusChange = async (gameId: number, newStatus: number) => {
+    // Clonar la lista de proveedores para evitar modificar la original
     const updatedProviders = providers.map((provider) =>
       provider.id === gameId ? { ...provider, status: newStatus } : provider
     );
-    setProviders(updatedProviders);
-
+  
+    // Clonar el objeto de máquina para evitar modificar el original
     const updatedMaquina = {
-      newStatus,
-      newRoom,
-      newClient: newClient._id,
+      ...maquina,
       games: updatedProviders,
     };
-
+  
     try {
+      // Enviar la solicitud PUT para actualizar la máquina
       const response = await fetch(`/api/maquinas/${maquina._id}`, {
         method: "PUT",
         headers: {
@@ -160,8 +160,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
         },
         body: JSON.stringify(updatedMaquina),
       });
-
+  
       if (response.ok) {
+        // Mostrar un mensaje de éxito según el nuevo estado
         if (newStatus === 1) {
           toast.success("Juego enviado exitosamente");
         } else if (newStatus === 0) {
@@ -174,6 +175,8 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       console.error("Error de red:", error);
     }
   };
+  
+  
 
   const handleSelectAll = () => {
     const newStatus = !selectAll ? 1 : 0;

@@ -34,34 +34,16 @@ export async function GET(request: any, { params: { id } }: any) {
 
   export async function PUT(request: any, { params: { id } }: any) {
     try {
-      const { newStatus, newOperator, newClient, games, providers } = await request.json();
+      const { games: newGame } = await request.json();
   
       // Conectar a la base de datos
       await connectDB();
   
-      // Construir el objeto con los datos actualizados de la máquina
-      const updatedMachineData: any = {
-        status: newStatus,
-        client: newClient,
-        games: games,
-        providers: providers, // Agregar el campo providers
-        updatedAt: new Date(), // Actualizar el campo updatedAt
-      };
+      // Encontrar la máquina por su ID
+      const machine = await Machine.findById(id);
   
-      // Agregar newOperator solo si está definido
-      if (newOperator !== undefined) {
-        updatedMachineData.operator = newOperator;
-      }
-  
-      console.log("Datos a actualizar:", updatedMachineData);
-  
-      // Actualizar la máquina en la base de datos
-      const updatedMachine = await Machine.findByIdAndUpdate(id, updatedMachineData, { new: true });
-  
-      console.log("Máquina actualizada:", updatedMachine);
-  
-      // Verificar si la máquina se actualizó correctamente
-      if (!updatedMachine) {
+      // Verificar si la máquina existe
+      if (!machine) {
         return NextResponse.json(
           {
             message: "Máquina no encontrada",
@@ -69,6 +51,21 @@ export async function GET(request: any, { params: { id } }: any) {
           { status: 404 }
         );
       }
+  
+      // Actualizar el estado del juego existente sin duplicar
+      const existingGameIndex = machine.games.findIndex((game: any) => game.id === newGame.id);
+      if (existingGameIndex > -1) {
+        // Actualizar el juego existente
+        machine.games[existingGameIndex] = { ...machine.games[existingGameIndex], ...newGame };
+      } else {
+        // Agregar nuevo juego
+        machine.games.push(newGame);
+      }
+  
+      machine.updatedAt = new Date();
+  
+      // Guardar los cambios en la base de datos
+      const updatedMachine = await machine.save();
   
       return NextResponse.json(
         {
@@ -90,8 +87,6 @@ export async function GET(request: any, { params: { id } }: any) {
       );
     }
   }
-
-
  
 export async function DELETE(request: Request, { params }: { params: { id_machine: string } }) {
   try {
