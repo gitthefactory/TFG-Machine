@@ -19,10 +19,7 @@ export default async function getUsers(query: string, currentPage: number) {
     const cleanQuery = encodeURIComponent(query);
 
     // Construir la URL de la API utilizando el objeto URL
-    const apiUrl = new URL("http://localhost:3000/api/usuarios");
-    apiUrl.searchParams.append("query", cleanQuery);
-    apiUrl.searchParams.append("limit", ITEMS_PER_PAGE.toString());
-    apiUrl.searchParams.append("offset", offset.toString());
+    const apiUrl = `/api/usuarios?query=${cleanQuery}&limit=${ITEMS_PER_PAGE}&offset=${offset}`;
 
     // Realizar la solicitud HTTP
     const response = await fetch(apiUrl.toString(), {

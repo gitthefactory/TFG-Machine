@@ -24,6 +24,7 @@ interface MaquinasTableProps {
 }
 
 
+
 const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState(sala.nombre);
   const [newStatus, setNewStatus] = useState(sala.status);

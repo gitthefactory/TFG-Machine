@@ -2,7 +2,8 @@
 
 export default async function getSingleMachine(id: any){
     try {
-        const response = await fetch(`/api/maquinas/${id}`,{
+        const response = await fetch(`http://localhost:3000/api/maquinas/${id}`,{
+            
             cache: "no-store",
         });
         const maquina = await response.json();

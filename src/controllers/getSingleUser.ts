@@ -2,7 +2,7 @@
 
 export default async function getSingleUser(id: any){
     try {
-        const response = await fetch(`/api/usuarios/${id}`,{
+        const response = await fetch(`http://localhost:3000/api/usuarios/${id}`,{
             cache: "no-store",
         });
         const users = await response.json();
