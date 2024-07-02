@@ -48,7 +48,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
 
   const [providers, setProviders] = useState<Game[]>(maquina.games);
   const [newProvider, setNewProvider] = useState<{ _id: string; provider_name: string }>({
-    _id: maquina.games,
+    _id: "",
     provider_name: '',
   });
 
@@ -140,33 +140,36 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   }, [providerId, maquina.games]);
 
   const handleStatusChange = async (gameId: number, newStatus: number) => {
-    // Clonar la lista de proveedores para evitar modificar la original
-    const updatedProviders = providers.map((provider) =>
-      provider.id === gameId ? { ...provider, status: newStatus } : provider
-    );
-  
-    // Clonar el objeto de máquina para evitar modificar el original
-    const updatedMaquina = {
-      ...maquina,
-      games: updatedProviders,
-    };
-  
     try {
-      // Enviar la solicitud PUT para actualizar la máquina
+      // Encontrar el juego específico dentro de los proveedores
+      const updatedProvider = providers.find((provider) => provider.id === gameId);
+  
+      if (!updatedProvider) {
+        console.error(`No se encontró el juego con id ${gameId}`);
+        return;
+      }
+  
+      // Clonar el juego específico y actualizar su estado
+      const updatedGame = { ...updatedProvider, status: newStatus };
+  
+      // Enviar la solicitud PUT solo para actualizar este juego específico
       const response = await fetch(`/api/maquinas/${maquina._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedMaquina),
+        body: JSON.stringify({
+          ...maquina,
+          games: updatedGame, // Enviar solo el juego actualizado como un arreglo
+        }),
       });
   
       if (response.ok) {
         // Mostrar un mensaje de éxito según el nuevo estado
         if (newStatus === 1) {
-          toast.success("Juego enviado exitosamente");
+          toast.success("Juego activado exitosamente");
         } else if (newStatus === 0) {
-          toast.error("Juego quitado exitosamente");
+          toast.error("Juego desactivado exitosamente");
         }
       } else {
         console.error("Hubo un error al actualizar la máquina.");
@@ -175,6 +178,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       console.error("Error de red:", error);
     }
   };
+  
   
   
 
