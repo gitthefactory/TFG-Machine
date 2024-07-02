@@ -3,7 +3,7 @@
 // import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import SalasTable from "@/components/SalasTable";
+import SalasTable from "@/components/Salas/SalasTable";
 import React, { useEffect, useState } from "react";
 import getRooms from "@/controllers/getRooms";
 import AddButton from "@/components/AddButton";

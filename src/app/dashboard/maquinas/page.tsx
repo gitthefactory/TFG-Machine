@@ -4,7 +4,7 @@
 // import AddButton from "@/components/AddButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import MaquinasTable from "@/components/MaquinasTable";
+import MaquinasTable from "@/components/Maquinas/MaquinasTable";
 import getMachines from "@/controllers/getMachines";
 import React, { useEffect, useState } from "react";
 

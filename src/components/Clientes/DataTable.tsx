@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
+import DeleteButton from '@/components/Clientes/DeleteButton'
 import Link from "next/link";
-import DeleteButtonOperadores from '@/components/DeleteButtonOperadores';
 import { FaPen } from "react-icons/fa";
 
 
@@ -13,41 +13,44 @@ interface User {
   typeProfile: {
     _id: string;
   };
-  
   games: { provider: string }[];
   id_machine: string;
-  cantidadMaquinas: number;
-  status: number;
 }
 
-const OperadoresTable: React.FC = () => {
+const UserDataTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
-        const usuariosClientesFiltrados = usuarios
-          .filter(usuario => usuario.typeProfile._id === "660ebaa7b02ce973cad66552")
-          .map(usuario => ({
-            ...usuario,
-            cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
-          }));
+        const usuariosClientesFiltrados = usuarios.filter(
+          (usuario: User) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
+        );
         setUsuariosClientes(usuariosClientesFiltrados);
       } catch (error) {
         console.error(error);
-        // Manejo de errores
+        // Error handling logic
       }
     };
 
     fetchUsuariosClientes();
   }, []);
 
-  const handleStatusChange = (userId: string, newStatus: number) => {
-    // Lógica para cambiar el estado
-    console.log(`Cambiar estado de usuario ${userId} a ${newStatus}`);
+  const handleStatusChange = (id: string, newStatus: number) => {
+    setUsuariosClientes((prevUsuarios) =>
+      prevUsuarios.map((usuario) =>
+        usuario._id === id ? { ...usuario, status: newStatus } : usuario
+      )
+    );
   };
+
+  const filteredUsuarios = usuariosClientes.filter(
+    (usuario) =>
+      usuario.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
     {
@@ -55,9 +58,9 @@ const OperadoresTable: React.FC = () => {
       cell: (row: User) => (
         <input
           type="checkbox"
+          checked={row.status === 1}
           className="form-checkbox h-5 w-5 text-green-500"
 
-          checked={row.status === 1}
           onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
         />
       ),
@@ -71,10 +74,15 @@ const OperadoresTable: React.FC = () => {
       sortable: true,
     },
     {
-      name: 'Nombre Completo',
+      name: 'Nombre Cliente',
       selector: (row: User) => row.nombreCompleto,
       sortable: true,
     },
+    // {
+    //   name: 'Maquina',
+    //   selector: (row: User) => row.games.length > 0 ? "Sí" : "No",
+    //   sortable: true,
+    // },
     {
       name: 'Correo Electrónico',
       selector: (row: User) => row.email,
@@ -84,37 +92,34 @@ const OperadoresTable: React.FC = () => {
       name: 'Acciones',
       cell: (row: User) => (
         <div className="flex items-center space-x-3.5">
-        <DeleteButtonOperadores id={row._id} />
-        <Link href={`/dashboard/operadores/editar/${row._id}`}
+          <DeleteButton id={row._id} />
+          <Link
+            href={`/dashboard/usuarios/editar/${row._id}`}
             className="edit"
             title="Editar"
             style={{ fontSize: '20px' }}
           >
             <FaPen />
           </Link>
-          </div>
+        </div>
       ),
-      sortable: true,
+      sortable: false,
     },
   ];
-
-  const filteredUsers = usuariosClientes.filter(user =>
-    user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="mx-auto max-w-270">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
           <h2 className="font-medium text-black dark:text-white">
-            Listado de Operadores
+            Listado de Clientes
           </h2>
         </header>
         <div className="p-6.5">
           {/* Agrega el campo de búsqueda */}
           <input
             type="text"
-            placeholder="Buscar operadores..."
+            placeholder="Buscar Cliente..."
             className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -122,7 +127,7 @@ const OperadoresTable: React.FC = () => {
           {/* Renderiza la DataTable con los datos filtrados */}
           <DataTable
             columns={columns}
-            data={filteredUsers}
+            data={filteredUsuarios}
             pagination
             highlightOnHover
             responsive
@@ -133,4 +138,4 @@ const OperadoresTable: React.FC = () => {
   );
 };
 
-export default OperadoresTable;
+export default UserDataTable;

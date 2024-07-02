@@ -1,6 +1,6 @@
 
 
-import OperatorForm from "@/components/OperatorForm";
+import OperatorForm from "@/components/Operadores/OperatorForm";
 import getSingleUser from "@/controllers/getSingleUser";
 import React from "react";
 

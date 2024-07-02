@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
-import DeleteButtonSalas from '@/components/DeleteButtonSalas'
+import DeleteButtonSalas from '@/components/Salas/DeleteButtonSalas'
 
 interface SalaData {
   _id: string;

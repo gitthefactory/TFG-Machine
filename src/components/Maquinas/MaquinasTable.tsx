@@ -1,5 +1,5 @@
 
-import DeleteButtonMachine from "@/components/DeleteButtonMaquinas";
+import DeleteButtonMachine from "@/components/Maquinas/DeleteButtonMaquinas";
 import React, { useState } from "react";
 import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";

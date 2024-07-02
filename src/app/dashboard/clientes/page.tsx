@@ -1,7 +1,7 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DataTable from "@/components/DataTable";
+import DataTable from "@/components/Clientes/DataTable";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useEffect, useState } from "react";
 import getClients from "@/controllers/getClients";

@@ -1,6 +1,6 @@
 
 
-import UserForm from "@/components/UserForm";
+import UserForm from "@/components/Clientes/UserForm";
 import getSingleUser from "@/controllers/getSingleUser";
 import React from "react";
 

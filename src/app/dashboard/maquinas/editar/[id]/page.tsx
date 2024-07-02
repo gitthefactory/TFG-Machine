@@ -1,6 +1,6 @@
 
 
-import MaquinasForm from "@/components/MaquinasForm";
+import MaquinasForm from "@/components/Maquinas/MaquinasForm";
 import getSingleMachine from "@/controllers/getSingleMachine";
 import React from "react";
 

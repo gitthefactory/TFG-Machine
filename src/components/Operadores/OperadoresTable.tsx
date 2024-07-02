@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
-import DeleteButton from '@/components/DeleteButton'
 import Link from "next/link";
+import DeleteButtonOperadores from '@/components/Operadores/DeleteButtonOperadores';
 import { FaPen } from "react-icons/fa";
 
 
@@ -13,44 +13,41 @@ interface User {
   typeProfile: {
     _id: string;
   };
+  
   games: { provider: string }[];
   id_machine: string;
+  cantidadMaquinas: number;
+  status: number;
 }
 
-const UserDataTable: React.FC = () => {
+const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
-        const usuariosClientesFiltrados = usuarios.filter(
-          (usuario: User) => usuario.typeProfile._id === "660ebaa7b02ce973cad66551"
-        );
+        const usuariosClientesFiltrados = usuarios
+          .filter(usuario => usuario.typeProfile._id === "660ebaa7b02ce973cad66552")
+          .map(usuario => ({
+            ...usuario,
+            cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
+          }));
         setUsuariosClientes(usuariosClientesFiltrados);
       } catch (error) {
         console.error(error);
-        // Error handling logic
+        // Manejo de errores
       }
     };
 
     fetchUsuariosClientes();
   }, []);
 
-  const handleStatusChange = (id: string, newStatus: number) => {
-    setUsuariosClientes((prevUsuarios) =>
-      prevUsuarios.map((usuario) =>
-        usuario._id === id ? { ...usuario, status: newStatus } : usuario
-      )
-    );
+  const handleStatusChange = (userId: string, newStatus: number) => {
+    // Lógica para cambiar el estado
+    console.log(`Cambiar estado de usuario ${userId} a ${newStatus}`);
   };
-
-  const filteredUsuarios = usuariosClientes.filter(
-    (usuario) =>
-      usuario.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      usuario.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const columns = [
     {
@@ -58,9 +55,9 @@ const UserDataTable: React.FC = () => {
       cell: (row: User) => (
         <input
           type="checkbox"
-          checked={row.status === 1}
           className="form-checkbox h-5 w-5 text-green-500"
 
+          checked={row.status === 1}
           onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
         />
       ),
@@ -74,15 +71,10 @@ const UserDataTable: React.FC = () => {
       sortable: true,
     },
     {
-      name: 'Nombre Cliente',
+      name: 'Nombre Completo',
       selector: (row: User) => row.nombreCompleto,
       sortable: true,
     },
-    // {
-    //   name: 'Maquina',
-    //   selector: (row: User) => row.games.length > 0 ? "Sí" : "No",
-    //   sortable: true,
-    // },
     {
       name: 'Correo Electrónico',
       selector: (row: User) => row.email,
@@ -92,34 +84,37 @@ const UserDataTable: React.FC = () => {
       name: 'Acciones',
       cell: (row: User) => (
         <div className="flex items-center space-x-3.5">
-          <DeleteButton id={row._id} />
-          <Link
-            href={`/dashboard/usuarios/editar/${row._id}`}
+        <DeleteButtonOperadores id={row._id} />
+        <Link href={`/dashboard/operadores/editar/${row._id}`}
             className="edit"
             title="Editar"
             style={{ fontSize: '20px' }}
           >
             <FaPen />
           </Link>
-        </div>
+          </div>
       ),
-      sortable: false,
+      sortable: true,
     },
   ];
+
+  const filteredUsers = usuariosClientes.filter(user =>
+    user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="mx-auto max-w-270">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
           <h2 className="font-medium text-black dark:text-white">
-            Listado de Clientes
+            Listado de Operadores
           </h2>
         </header>
         <div className="p-6.5">
           {/* Agrega el campo de búsqueda */}
           <input
             type="text"
-            placeholder="Buscar Cliente..."
+            placeholder="Buscar operadores..."
             className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -127,7 +122,7 @@ const UserDataTable: React.FC = () => {
           {/* Renderiza la DataTable con los datos filtrados */}
           <DataTable
             columns={columns}
-            data={filteredUsuarios}
+            data={filteredUsers}
             pagination
             highlightOnHover
             responsive
@@ -138,4 +133,4 @@ const UserDataTable: React.FC = () => {
   );
 };
 
-export default UserDataTable;
+export default OperadoresTable;

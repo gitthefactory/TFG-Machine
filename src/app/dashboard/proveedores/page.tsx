@@ -3,7 +3,7 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 // import ProveedoresDetalle from "@/components/ProveedoresDetalle";
-import ProveedoresTable from "@/components/ProveedoresTable";
+import ProveedoresTable from "@/components/Proveedores/ProveedoresTable";
 import React from "react";
 // import AddButton from "@/components/AddButton";
 

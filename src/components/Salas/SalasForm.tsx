@@ -6,7 +6,7 @@ import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getUsuarios from "@/controllers/getUsers";
-import DeleteButtonMachine from "@/components/DeleteButtonMaquinas";
+import DeleteButtonMachine from "@/components/Maquinas/DeleteButtonMaquinas";
 
 interface Usuario {
   _id: string;

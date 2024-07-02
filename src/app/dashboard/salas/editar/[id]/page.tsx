@@ -1,6 +1,6 @@
 
 
-import SalasForm from "@/components/SalasForm";
+import SalasForm from "@/components/Salas/SalasForm";
 import getSingleRoom from "@/controllers/getSingleRoom";
 import React from "react";
 

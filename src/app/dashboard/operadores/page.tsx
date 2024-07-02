@@ -3,7 +3,7 @@
 import Link from "next/link";
 import AddButton from "@/components/AddButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import OperadoresTable from "@/components/OperadoresTable";
+import OperadoresTable from "@/components/Operadores/OperadoresTable";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getOperators from "@/controllers/getOperators";
 import React, { useEffect, useState } from "react";
