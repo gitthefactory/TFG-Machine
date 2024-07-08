@@ -139,7 +139,6 @@ const handlers = NextAuth({
   },
 });
 
-
 async function handler(req, res) {
   await signOut({ redirect: false, callbackUrl: '/' });
   res.status(200).end();
@@ -147,5 +146,5 @@ async function handler(req, res) {
 
 export default handler;
 
-
-export { handlers as GET, handlers as POST };
+export const GET = handler;
+export const POST = handler;

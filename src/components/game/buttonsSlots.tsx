@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation } from 'swiper';
 import 'swiper/swiper-bundle.css'; 
 import getSessionData from "@/controllers/getSession";
-import GameUrl from '@/components/game/GameUrl';
+import GameUrl from '@/components/game/gameUrl';
 
 SwiperCore.use([Navigation]);
 

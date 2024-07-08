@@ -2,9 +2,9 @@
 
 import { SetStateAction, useEffect, useState } from "react";
 import Link from "next/link";
-import DefaultLayout from "./Layouts/DefaultLayout";
-import Breadcrumb from "./Breadcrumbs/Breadcrumb";
-import AtrasButton from "./AtrasButton";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import AtrasButton from "@/components/AtrasButton";
 import getUsers from "@/controllers/getUsers";
 
 export default function ClientForm({ client }) {

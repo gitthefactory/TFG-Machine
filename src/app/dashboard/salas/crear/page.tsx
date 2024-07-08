@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import getoperators from "@/controllers/getoperators";
+import getoperators from "@/controllers/getOperators";
 import getClientes from "@/controllers/getClients";
 import AtrasButton from "@/components/AtrasButton";
 
