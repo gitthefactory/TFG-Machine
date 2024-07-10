@@ -32,9 +32,12 @@ export async function GET(request: any, { params: { id } }: any) {
   }
 
 
+  
   export async function PUT(request: any, { params: { id } }: any) {
     try {
-      const { games: newGame } = await request.json();
+      const { games: newGame, status, providers } = await request.json();
+  
+      console.log("Datos recibidos:", { newGame, status, providers });
   
       // Conectar a la base de datos
       await connectDB();
@@ -53,13 +56,25 @@ export async function GET(request: any, { params: { id } }: any) {
       }
   
       // Actualizar el estado del juego existente sin duplicar
-      const existingGameIndex = machine.games.findIndex((game: any) => game.id === newGame.id);
-      if (existingGameIndex > -1) {
-        // Actualizar el juego existente
-        machine.games[existingGameIndex] = { ...machine.games[existingGameIndex], ...newGame };
-      } else {
-        // Agregar nuevo juego
-        machine.games.push(newGame);
+      if (newGame) {
+        const existingGameIndex = machine.games.findIndex((game: any) => game.id === newGame.id);
+        if (existingGameIndex > -1) {
+          // Actualizar el juego existente
+          machine.games[existingGameIndex] = { ...machine.games[existingGameIndex], ...newGame };
+        } else {
+          // Agregar nuevo juego
+          machine.games.push(newGame);
+        }
+      }
+  
+      // Actualizar el status de la máquina
+      if (status !== undefined) {
+        machine.status = status;
+      }
+  
+      // Actualizar los providers de la máquina
+      if (providers) {
+        machine.providers = providers;
       }
   
       machine.updatedAt = new Date();
@@ -87,6 +102,7 @@ export async function GET(request: any, { params: { id } }: any) {
       );
     }
   }
+  
  
 export async function DELETE(request: Request, { params }: { params: { id_machine: string } }) {
   try {
