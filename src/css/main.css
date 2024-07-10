@@ -1,7 +1,7 @@
 body, html {
   position: relative;
   display: flex; /* repare aqui */
-  flex-direction: column; /* repare aqui xdjajajajjajajjajaja*/
+  flex-direction: column; /* repare aqui*/
   width: 100%;
   height: 100%;
   margin: 0px;
