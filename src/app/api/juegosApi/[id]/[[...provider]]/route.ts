@@ -6,7 +6,7 @@ import Room from "@/models/room";
 
 export async function PUT(request, { params: { id } }) {
   try {
-    const { status } = await request.json(); // Solo obtenemos el campo 'status' del cuerpo JSON
+    const { status } = await request.json();
 
     await connectDB();
 
