@@ -131,7 +131,7 @@ async function handleSubmit(e: any) {
               <Link className="mb-5.5 inline-block" href="/">
                 <Image
                   className="hidden dark:block"
-                  src={"/images/logo/logo1.png"}
+                  src={"/images/logo/QR-Factory.png"}
                   alt="Logo"
                   width={176}
                   height={32}
@@ -139,7 +139,7 @@ async function handleSubmit(e: any) {
               </Link>
               <Image
                 className="dark:hidden"
-                src={"/images/logo/qr.png"}
+                src={"/images/logo/QR-Factory.png"}
                 alt="Logo"
                 width={200}
                 height={32}
