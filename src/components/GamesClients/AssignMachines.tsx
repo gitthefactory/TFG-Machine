@@ -143,15 +143,15 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     try {
       // Encontrar el juego específico dentro de los proveedores
       const updatedProvider = providers.find((provider) => provider.id === gameId);
-  
+
       if (!updatedProvider) {
         console.error(`No se encontró el juego con id ${gameId}`);
         return;
       }
-  
+
       // Clonar el juego específico y actualizar su estado
       const updatedGame = { ...updatedProvider, status: newStatus };
-  
+
       // Enviar la solicitud PUT solo para actualizar este juego específico
       const response = await fetch(`/api/maquinas/${maquina._id}`, {
         method: "PUT",
@@ -163,14 +163,19 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
           games: updatedGame, // Enviar solo el juego actualizado como un arreglo
         }),
       });
-  
+
       if (response.ok) {
         // Mostrar un mensaje de éxito según el nuevo estado
         if (newStatus === 1) {
-          toast.success("Juego activado exitosamente");
+          toast.success(`Juego ${updatedGame.name} activado exitosamente`);
         } else if (newStatus === 0) {
-          toast.error("Juego desactivado exitosamente");
+          toast.error(`Juego ${updatedGame.name} desactivado exitosamente`);
         }
+        // Actualizar el estado local de los juegos después de la confirmación del servidor
+        const updatedProviders = providers.map((prov) =>
+          prov.id === gameId ? updatedGame : prov
+        );
+        setProviders(updatedProviders); // Actualizar el estado global de providers
       } else {
         console.error("Hubo un error al actualizar la máquina.");
       }
@@ -178,42 +183,50 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       console.error("Error de red:", error);
     }
   };
-  
-  
-  
 
-  const handleSelectAll = () => {
+  const handleSelectAll = async () => {
     const newStatus = !selectAll ? 1 : 0;
-    const updatedProviders = providers.map((provider) => ({ ...provider, status: newStatus }));
-    setProviders(updatedProviders);
-    setSelectAll(!selectAll);
-
-    // Actualizar el estado de todos los juegos en la máquina
-    const updatedMaquina = {
-      newStatus,
-      newRoom,
-      newClient: newClient._id,
-      games: updatedProviders,
-    };
-
+    setSelectAll(!selectAll); // Actualiza el estado de selectAll
+    
     try {
-      fetch(`/api/maquinas/${maquina._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedMaquina),
-      }).then((response) => {
+      const updatedGamesPromises = providers.map(async (provider) => {
+        const updatedGame = { ...provider, status: newStatus };
+    
+        const response = await fetch(`/api/maquinas/${maquina._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            games: updatedGame,
+          }),
+        });
+    
         if (response.ok) {
-          toast.success("Estado de todos los juegos actualizado exitosamente");
+          if (newStatus === 1) {
+            toast.success(`Juego ${provider.name} activado exitosamente`);
+          } else if (newStatus === 0) {
+            toast.error(`Juego ${provider.name} desactivado exitosamente`);
+          }
+    
+          return updatedGame; // Devuelve el juego actualizado para Promise.all
         } else {
           console.error("Hubo un error al actualizar la máquina.");
+          return null; // Manejar errores de manera adecuada
         }
       });
+    
+      const updatedGames = await Promise.all(updatedGamesPromises);
+      
+      // Actualiza el estado de providers con todos los juegos actualizados
+      setProviders(updatedGames.filter(game => game !== null)); // Filtra los juegos nulos por si hubo errores
+    
     } catch (error) {
       console.error("Error de red:", error);
     }
   };
+  
+
 
   const columns = [
     {
