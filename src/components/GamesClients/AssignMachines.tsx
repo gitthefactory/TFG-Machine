@@ -167,9 +167,9 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
       if (response.ok) {
         // Mostrar un mensaje de éxito según el nuevo estado
         if (newStatus === 1) {
-          toast.success("Juego activado exitosamente");
+          toast.success(`Juego ${updatedGame.name} activado exitosamente`);
         } else if (newStatus === 0) {
-          toast.error("Juego desactivado exitosamente");
+          toast.error(`Juego ${updatedGame.name} desactivado exitosamente`);
         }
       } else {
         console.error("Hubo un error al actualizar la máquina.");
