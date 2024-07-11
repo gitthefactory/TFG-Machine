@@ -182,38 +182,47 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   
   
 
-  const handleSelectAll = () => {
+  const handleSelectAll = async () => {
     const newStatus = !selectAll ? 1 : 0;
-    const updatedProviders = providers.map((provider) => ({ ...provider, status: newStatus }));
-    setProviders(updatedProviders);
     setSelectAll(!selectAll);
-
-    // Actualizar el estado de todos los juegos en la máquina
-    const updatedMaquina = {
-      newStatus,
-      newRoom,
-      newClient: newClient._id,
-      games: updatedProviders,
-    };
-
-    try {
-      fetch(`/api/maquinas/${maquina._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedMaquina),
-      }).then((response) => {
+  
+    const updatedGamesPromises = providers.map(async (provider) => {
+      try {
+        // Clonar el juego específico y actualizar su estado
+        const updatedGame = { ...provider, status: newStatus };
+  
+        // Enviar la solicitud PUT solo para actualizar este juego específico
+        const response = await fetch(`/api/maquinas/${maquina._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...maquina,
+            games: updatedGame, // Enviar el juego actualizado como objeto, no como parte de un array
+          }),
+        });
+  
         if (response.ok) {
-          toast.success("Estado de todos los juegos actualizado exitosamente");
+          // Mostrar un mensaje de éxito según el nuevo estado
+          if (newStatus === 1) {
+            toast.success(`Juego ${provider.name} activado exitosamente`);
+          } else if (newStatus === 0) {
+            toast.error(`Juego ${provider.name} desactivado exitosamente`);
+          }
         } else {
           console.error("Hubo un error al actualizar la máquina.");
         }
-      });
-    } catch (error) {
-      console.error("Error de red:", error);
-    }
+      } catch (error) {
+        console.error("Error de red:", error);
+      }
+    });
+  
+    // Esperar a que se completen todas las solicitudes de actualización de juegos
+    await Promise.all(updatedGamesPromises);
   };
+  
+  
 
   const columns = [
     {
