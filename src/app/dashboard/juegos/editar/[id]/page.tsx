@@ -1,6 +1,6 @@
 
 
-import ConfirmarJuegos from "@/components/Juegos/ConfirmarJuegos";
+import ConfirmarJuegos from "@/components/GamesClients/GamesClient";
 import getSingleMachine from "@/controllers/getSingleMachine";
 import React from "react";
 

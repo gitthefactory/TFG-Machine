@@ -42,7 +42,7 @@ export async function GET(request: any, { params: { id } }: any) {
       // Conectar a la base de datos
       await connectDB();
   
-      // Encontrar la máquina por su ID
+      // Encontrar la máquina por su ID xd
       const machine = await Machine.findById(id);
   
       // Verificar si la máquina existe

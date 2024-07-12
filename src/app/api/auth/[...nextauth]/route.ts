@@ -4,12 +4,6 @@ import Client from "@/models/client";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-//import para probar jwt
-
-import { getToken } from 'next-auth/jwt';
-
-//definicion de jwt const
-
 
 
 
@@ -116,7 +110,7 @@ const handlers = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60,
+    maxAge: 3600, //60 minutos de duracion
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -128,24 +122,6 @@ const handlers = NextAuth({
       return session;
     },
   },
-  events: {
-    async signOut(message) {
-      // Elimina el token de sesió
-      const token = await getToken ({req: message.req});
-      if (token) {
-        message.res.setHeader('Set-Cookie', 'next-auth.session-token=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax');
-      }
-    },
-  },
 });
-
-
-async function handler(req, res) {
-  await signOut({ redirect: false, callbackUrl: '/' });
-  res.status(200).end();
-}
-
-export default handler;
-
 
 export { handlers as GET, handlers as POST };
