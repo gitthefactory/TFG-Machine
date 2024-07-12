@@ -8,76 +8,85 @@ import GameUrl from '@/components/game/gameUrl';
 // SwiperCore.use([Navigation]);
 
 const Belatra: React.FC = () => {
-  const [games, setGames] = useState<any[]>([]);
-  const [selectedGame, setSelectedGame] = useState<any>(null);
-  const [token, setToken] = useState<string | null>(null); // Assuming token is a string
-  const swiperRef = useRef<any>(null);
+  const [games, setGames] = useState<any[]>([]); // Estado para almacenar los juegos
+  const [selectedGame, setSelectedGame] = useState<any>(null); // Estado para el juego seleccionado
+  const [token, setToken] = useState<string | null>(null); // Estado para el token de autenticación, asumiendo que es una cadena
+  const swiperRef = useRef<any>(null); // Referencia al Swiper para controlarlo programáticamente
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessionData = await getSessionData();
-  
+        // Obtiene los datos de sesión del usuario
+        const sessionData = await getSessionData(); 
+
+        // Obtiene el parámetro 'idMachine' de la URL
         const params = new URLSearchParams(window.location.search);
-        const idMachineFromURL = params.get('idMachine');
-  
+        const idMachineFromURL = params.get('idMachine'); 
+
+        // Verifica si el usuario está autenticado
         if (sessionData.status === 200) {
-          // const { id_machine } = sessionData.data.user;
-          const provider = 29;
+          const provider = 29; // Identificador del proveedor de juegos (en este caso, 29)
+
+          // Realiza una solicitud para obtener datos de juegos desde el servidor
           const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
   
-          // Check if the token is available in the response
+          // Verifica si el token está disponible en la respuesta
           if (data.data && data.data.token) {
-            setToken(data.data.token); // Set the token state
+            setToken(data.data.token); // Establece el estado del token
           } else {
-            console.error("Token not found in response:", data);
+            console.error("Token no encontrado en la respuesta:", data);
           }
   
-          // Proceed with handling games if the response structure is as expected
+          // Procesa los juegos si la estructura de la respuesta es la esperada
           if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
             const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
+            // Verifica el estado del proveedor
             if (belatraProvider && belatraProvider.status === 0) {
-              setGames([]);
+              setGames([]); // Si el estado es 0, establece la lista de juegos como vacía
             } else if (belatraProvider && belatraProvider.status === 1) {
+              // Filtra los juegos de 'belatra' que están activos
               const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
-              setGames(bGamingGames);
+              setGames(bGamingGames); // Establece los juegos filtrados en el estado
             }
           } else {
-            console.error("Unexpected data structure:", data);
+            console.error("Estructura de datos inesperada:", data);
           }
         } else {
-          console.error("User not authenticated:", sessionData.data.message);
+          console.error("Usuario no autenticado:", sessionData.data.message);
         }
       } catch (error) {
-        console.error("Error fetching session data:", error);
+        console.error("Error al obtener los datos de sesión:", error);
       }
     };
   
     fetchData();
-  }, []);
-  
+  }, []); // Este efecto se ejecuta una vez al montar el componente
 
-  const handlePrevButtonClick = () => {
+// Función para manejar el clic en el botón "Anterior"
+const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slidePrev();
+      swiperRef.current.swiper.slidePrev(); // Mueve el swiper a la diapositiva anterior
     }
-  };
+};
 
-  const handleNextButtonClick = () => {
+// Función para manejar el clic en el botón "Siguiente"
+const handleNextButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slideNext();
+      swiperRef.current.swiper.slideNext(); // Mueve el swiper a la siguiente diapositiva
     }
-  };
+};
 
-  const handleGameClick = (game: any) => {
-    setSelectedGame(game);
-  };
+// Función para manejar el clic en un juego
+const handleGameClick = (game: any) => {
+    setSelectedGame(game); // Establece el juego seleccionado en el estado
+};
 
-  const closeGameUrl = () => {
-    setSelectedGame(null);
-  };
-
+// Función para cerrar el juego seleccionado
+const closeGameUrl = () => {
+    setSelectedGame(null); // Resetea el juego seleccionado a null
+};
   return (
     <div className="belatra-container">
       <div className="navigation-buttons">

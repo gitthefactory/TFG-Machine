@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import getJuegos from "@/controllers/juegos/getJuegos"; // Cambiar la importación a getJuegos
-import DataTable from 'react-data-table-component';
+import getJuegos from "@/controllers/juegos/getJuegos";
+import DataTable from "react-data-table-component";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function DetalleProveedores({
   query,
@@ -11,6 +13,7 @@ export default function DetalleProveedores({
 }) {
   const [games, setGames] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectAll, setSelectAll] = useState<boolean>(false);
 
   useEffect(() => {
     fetchGames();
@@ -19,16 +22,14 @@ export default function DetalleProveedores({
   const fetchGames = async () => {
     try {
       const gamesData = await getJuegos(query, currentPage);
-      console.log("Games Data:", gamesData); // Verifica los datos que recibes
-      
+      console.log("Games Data:", gamesData);
+
       if (gamesData && gamesData.length > 0) {
         const storedGames = JSON.parse(localStorage.getItem("selectedGames") || "{}");
-        // Crear un array vacío para almacenar todos los juegos
-        let updatedGames = [];
-  
-        // Iterar sobre cada elemento de gamesData
-        gamesData.forEach((gameData) => {
-          gameData.games.forEach((game) => {
+        let updatedGames: any[] = [];
+
+        gamesData.forEach((gameData: any) => {
+          gameData.games.forEach((game: any) => {
             updatedGames.push({
               id: game.id,
               name: game.name,
@@ -39,7 +40,7 @@ export default function DetalleProveedores({
             });
           });
         });
-  
+
         setGames(updatedGames);
       } else {
         setGames([]);
@@ -49,20 +50,114 @@ export default function DetalleProveedores({
     }
   };
 
-  const handleCheckboxChange = (id: string) => {
-    // Aquí puedes implementar la lógica para cambiar el estado seleccionado del juego
-    // Puedes usar setGames para actualizar el estado de los juegos
+  const handleSelectAll = async () => {
+    const updatedGames = games.map(game => ({ ...game, selected: !selectAll }));
+    setGames(updatedGames);
+    setSelectAll(!selectAll);
+  
+    try {
+      const response = await fetch("http://localhost:3000/api/juegosApi", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedGames.map(game => ({ id: game.id, selected: game.selected }))),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      console.log("Update response:", data);
+  
+      const storedGames = updatedGames.reduce((acc, game) => {
+        acc[game.id] = game.selected;
+        return acc;
+      }, {});
+      localStorage.setItem("selectedGames", JSON.stringify(storedGames));
+  
+      // Show success notification for each game activated
+      updatedGames.forEach(game => {
+        if (game.selected) {
+          toast.success(`Juego ${game.name} activado globalmente exitosamente`);
+        } else {
+          toast.error(`Juego ${game.name} desactivado globalmente exitosamente`);
+        }
+      });
+    } catch (error) {
+      console.error("Hubo un error al actualizar estado:", error);
+      toast.error("Error al actualizar estado");
+    }
   };
+  
+  const handleRowSelect = async (id: string) => {
+    const updatedGames = games.map(game =>
+      game.id === id ? { ...game, selected: !game.selected } : game
+    );
+    setGames(updatedGames);
+  
+    const gameToUpdate = updatedGames.find(game => game.id === id);
+    if (gameToUpdate) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/juegosApi/${gameToUpdate.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: gameToUpdate.selected ? 1 : 0 }), // Adjust status as needed
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+  
+        const data = await response.json();
+        console.log('Update response:', data);
+  
+        const storedGames = updatedGames.reduce((acc, game) => {
+          acc[game.id] = game.selected;
+          return acc;
+        }, {});
+        localStorage.setItem("selectedGames", JSON.stringify(storedGames));
+  
+        // Show notification for the specific game
+        if (gameToUpdate.selected) {
+          toast.success(`Juego ${gameToUpdate.name} activado globalmente exitosamente`);
+        } else {
+          toast.error(`Juego ${gameToUpdate.name} desactivado globalmente exitosamente`);
+        }
+      } catch (error) {
+        console.error('Hubo un error al actualizar estado:', error);
+        toast.error("Error al actualizar estado");
+      }
+    }
+  };
+  
+
+  const filteredGames = games.filter((game) =>
+    game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    game.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    game.provider.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
     {
-      name: 'Seleccionar',
-      cell: (row: any) => (
+      name: (
+        <>
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />{" "}
+          Estado
+        </>
+      ),
+      selector: (row: any) => (
         <input
           type="checkbox"
           checked={row.selected}
-          className="form-checkbox h-5 w-5 text-green-500"
-          onChange={() => handleCheckboxChange(row.id)}
+          onChange={() => handleRowSelect(row.id)}
         />
       ),
       ignoreRowClick: true,
@@ -70,26 +165,28 @@ export default function DetalleProveedores({
       button: true,
     },
     {
-      name: 'ID Juegos',
+      name: "ID Juegos",
       selector: (row: any) => row.id,
       sortable: true,
     },
     {
-      name: 'Categoría',
+      name: "Categoría",
       selector: (row: any) => row.category,
       sortable: true,
     },
     {
-      name: 'Imagen',
-      cell: (row: any) => <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />,
+      name: "Imagen",
+      cell: (row: any) => (
+        <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />
+      ),
     },
     {
-      name: 'Proveedor',
+      name: "Proveedor",
       cell: (row: any) => row.provider,
       sortable: true,
     },
     {
-      name: 'Nombre Juegos',
+      name: "Nombre Juegos",
       selector: (row: any) => row.name,
       sortable: true,
     },
@@ -97,6 +194,7 @@ export default function DetalleProveedores({
 
   return (
     <div className="mx-auto max-w-270">
+       <ToastContainer />
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
           <h2 className="font-medium text-black dark:text-white">
@@ -113,7 +211,7 @@ export default function DetalleProveedores({
           />
           <DataTable
             columns={columns}
-            data={games}  
+            data={filteredGames}
             pagination
             highlightOnHover
             responsive

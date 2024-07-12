@@ -10,7 +10,12 @@ export async function PUT(request, { params: { id } }) {
 
     await connectDB();
 
-    const game = await Games.findById(id);
+    // Encuentra el documento que contiene el juego con el id especificado y actualiza su estado
+    const game = await Games.findOneAndUpdate(
+      { "games.id": parseInt(id) }, // Encuentra el documento con el juego específico
+      { $set: { "games.$.status": status } }, // Actualiza el estado del juego
+      { new: true }
+    );
 
     if (!game) {
       return NextResponse.json(
@@ -21,15 +26,10 @@ export async function PUT(request, { params: { id } }) {
       );
     }
 
-    // Actualizamos el estado del juego
-    game.status = status;
-
-    const updatedGame = await game.save();
-
     return NextResponse.json(
       {
         message: "Estado de juego actualizado con éxito",
-        data: updatedGame,
+        data: game,
       },
       { status: 200 }
     );
@@ -39,13 +39,10 @@ export async function PUT(request, { params: { id } }) {
         message: "Error al actualizar el estado del juego",
         error: error.message,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }
-
 // export async function PUT(request, { params: { provider } }) {
 //   try {
 //     const { status } = await request.json(); 
