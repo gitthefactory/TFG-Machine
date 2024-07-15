@@ -51,33 +51,47 @@ export default function DetalleProveedores({
   };
 
   const handleSelectAll = async () => {
-    const updatedGames = games.map(game => ({ ...game, selected: !selectAll }));
-    setGames(updatedGames);
-    setSelectAll(!selectAll);
-  
     try {
-      const response = await fetch("http://localhost:3000/api/juegosApi", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedGames.map(game => ({ id: game.id, selected: game.selected }))),
-      });
+      // Toggle selectAll flag
+      const updatedSelectAll = !selectAll;
   
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+      // Update all games to reflect new selection status
+      const updatedGames = games.map(game => ({ ...game, selected: updatedSelectAll }));
+      setGames(updatedGames);
+      setSelectAll(updatedSelectAll);
+  
+      // Array to store results of individual fetch requests
+      const fetchResults = [];
+  
+      for (let i = 0; i < updatedGames.length; i++) {
+        const game = updatedGames[i];
+  
+        const response = await fetch(`/api/juegosApi/${game.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: game.selected ? 1 : 0 }), // Adjust status as needed
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
+        }
+  
+        const responseData = await response.json();
+        console.log(`Update response for game ${game.id}:`, responseData);
+  
+        fetchResults.push(responseData);
       }
   
-      const data = await response.json();
-      console.log("Update response:", data);
-  
+      // Store selected status in localStorage
       const storedGames = updatedGames.reduce((acc, game) => {
         acc[game.id] = game.selected;
         return acc;
       }, {});
       localStorage.setItem("selectedGames", JSON.stringify(storedGames));
   
-      // Show success notification for each game activated
+      // Show success notification for each game activated/deactivated globally
       updatedGames.forEach(game => {
         if (game.selected) {
           toast.success(`Juego ${game.name} activado globalmente exitosamente`);
@@ -90,6 +104,7 @@ export default function DetalleProveedores({
       toast.error("Error al actualizar estado");
     }
   };
+  
   
   const handleRowSelect = async (id: string) => {
     const updatedGames = games.map(game =>

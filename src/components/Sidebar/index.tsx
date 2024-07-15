@@ -149,7 +149,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </Link>
                 </li>
               )}
-              {/* {user === "660ebaa7b02ce973cad66550" && (
+              {user === "660ebaa7b02ce973cad66550" && (
                 <li>
                   <Link
                     href="/dashboard/juegos"
@@ -161,7 +161,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     Juegos
                   </Link>
                 </li>
-              )} */}
+              )}
                 {/* {user === "660ebaa7b02ce973cad66551" && (
                 <li>
                   <Link
