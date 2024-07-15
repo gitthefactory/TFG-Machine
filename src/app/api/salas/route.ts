@@ -31,9 +31,9 @@ export async function GET() {
 }
 
 
-export async function POST(request: { json: () => PromiseLike<{ nombre: any; descripcion: any; status: any; pais: any; ciudad: any; comuna: any; user: any; operator?: any; client: any; }> }) {
+export async function POST(request: { json: () => PromiseLike<{ nombre: any; descripcion: any; status: any; pais: any; ciudad: any; comuna: any; user: any; operator?: any; client: any; currency: any; phone: any; address: any; }> }) {
   try {
-    const { nombre, status, pais, ciudad, comuna, user, operator, client } = await request.json();
+    const { nombre, status, pais, ciudad, comuna, currency, operator, client, address, phone } = await request.json();
 
     // Convertir el valor de operator a undefined si es una cadena vacía
     const operatorValue = operator !== "" ? operator : undefined;
@@ -52,6 +52,9 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: any; des
       comuna,
       operator: operatorValue,
       client,
+      currency,
+      address,
+      phone,
       
     });
 

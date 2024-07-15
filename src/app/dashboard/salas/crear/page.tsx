@@ -18,6 +18,10 @@ export default function CrearSalas() {
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState("");
   const [clientes, setClientes] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
+  const [currency, setCurrency] = useState("Seleccionar");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+
 
   // GET USUARIOS
   useEffect(() => {
@@ -52,6 +56,10 @@ export default function CrearSalas() {
       ciudad,
       operator: usuarioSeleccionado,
       client: clienteSeleccionado,
+      currency,
+      address,
+      phone,
+
     };
 
     // Convertir el valor de usuarioSeleccionado a undefined si es null
@@ -138,7 +146,7 @@ export default function CrearSalas() {
                     htmlFor="pais"
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
                   >
-                    Cambiar país <span className="text-red">*</span>
+                    País <span className="text-red">*</span>
                   </label>
                   <select
                     onChange={(e: any) => setPais(e.target.value)}
@@ -153,7 +161,7 @@ export default function CrearSalas() {
                     </option>
                     <option value="Brazil">Brazil</option>
                     <option value="Chile">Chile</option>
-                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="República Dominicana">República Dominicana</option>
                     <option value="Mexico">Mexico</option>
                     <option value="Perú">Perú</option>
                   </select>
@@ -195,6 +203,76 @@ export default function CrearSalas() {
                   />
                 </div>
               </div>
+              
+
+               {/* currency */}
+               <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full xl:w-1/3">
+                  <label
+                    htmlFor="Moneda"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Moneda <span className="text-red">*</span>
+                  </label>
+                  <select
+                    onChange={(e: any) => setCurrency(e.target.value)}
+                    value={currency}
+                    id="currency"
+                    name="currency"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                    required
+                  >
+                    <option value="Seleccionar" disabled>
+                      Seleccionar
+                    </option>
+                    <option value="CLP">CLP</option>
+                    <option value="PEN">PEN</option>
+                    <option value="MXN">MXN</option>
+                    <option value="RBL">RBL</option>
+                    <option value="USD">USD</option>
+                    <option value="DOP">DOP</option>
+                  </select>
+                </div>
+
+                <div className="w-full xl:w-1/3">
+                <label
+                  htmlFor="address"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Dirección <span className="text-red">*</span>
+                </label>
+                <input
+                  onChange={(e) => setAddress(e.target.value)}
+                  value={address}
+                  id="address"
+                  name="address"
+                  type="text"
+                  placeholder="Ingrese dirección"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  required
+                />
+              </div>
+
+              <div className="w-full xl:w-1/3">
+              <label
+                  htmlFor="phone"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Teléfono <span className="text-red">*</span>
+                </label>
+                <input
+                  onChange={(e) => setPhone(e.target.value)}
+                  value={phone}
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  placeholder="Ingrese número de contacto"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  required
+                />
+              </div>
+
+                </div>
 
               <h3 className="mb-4">DATOS ADMINISTRATIVOS</h3>
               <div className="mb-4">

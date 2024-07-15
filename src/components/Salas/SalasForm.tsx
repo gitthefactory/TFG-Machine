@@ -35,6 +35,12 @@ const EditarSala: React.FC<{ sala: any }> = ({ sala }) => {
   const [id_machine, setid_machine] = useState<string[]>(sala.id_machine || []);
   const [machineCreationError, setMachineCreationError] = useState<string | null>(null);
   const [maquinasCreadas, setMaquinasCreadas] = useState<any[]>([]);
+  const [newCurrency, setNewCurrency] = useState(sala.currency);
+  const [newAddress, setNewAddress] = useState(sala.address);
+  const [newPhone, setNewPhone] = useState(sala.phone);
+  const [newComuna, setNewComuna] = useState(sala.comuna);
+
+
 
   // Función para cargar los usuarios
   useEffect(() => {
@@ -95,6 +101,10 @@ const handleCreateMachine = async () => {
       newOperator: operadorSeleccionado,
       newClient: newClient._id,
       id_machine: [...maquinasCreadas.map((maquina) => maquina.data.id_machine), ...id_machine],
+      newCurrency,
+      newAddress,
+      newPhone,
+      newComuna,
     };
   
     try {
@@ -177,13 +187,13 @@ const handleCreateMachine = async () => {
                 required
               />
             </div>
-            <div className="mb-4 flex flex-row">
-              <div className="flex-grow mr-4">
+            <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full xl:w-1/3">
                 <label
                   htmlFor="pais"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Cambiar país
+                  País
                 </label>
                 <select
                   onChange={(e) => setNewPais(e.target.value)}
@@ -194,13 +204,32 @@ const handleCreateMachine = async () => {
                 >
                   <option value={"Brazil"}>Brazil</option>
                   <option value={"Chile"}>Chile</option>
-                  <option value={"Estados Unidos"}>Estados Unidos</option>
+                  <option value={"República Dominicana"}>República Dominicana</option>
                   <option value={"Mexico"}>Mexico</option>
                   <option value={"Perú"}>Perú</option>
                 </select>
               </div>
-              <div className="flex-grow">
-                <label
+              <div className="w-full xl:w-1/3">
+              <label
+                  htmlFor="newComuna"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Comuna
+                </label>
+                <input
+                onChange={(e) => setNewComuna(e.target.value)}
+                value={newComuna}
+                id="newComuna"
+                name="newComuna"
+                type="text"
+                placeholder="Ingresa el nombre.."
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                required
+              />
+              </div>
+
+              <div className="w-full xl:w-1/3">
+              <label
                   htmlFor="newStatus"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
@@ -215,6 +244,67 @@ const handleCreateMachine = async () => {
                 >
                   <option value={1}>Activo</option>
                   <option value={0}>Inactivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full xl:w-1/3">
+              <label
+                htmlFor="newAddress"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+               Dirección
+              </label>
+              <input
+                onChange={(e) => setNewAddress(e.target.value)}
+                value={newAddress}
+                id="newAddress"
+                name="newAddress"
+                type="text"
+                placeholder="Ingresa el nombre.."
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                required
+              />
+            </div>
+            <div className="w-full xl:w-1/3">
+              <label
+                  htmlFor="newPhone"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Teléfono
+                </label>
+                <input
+                onChange={(e) => setNewPhone(e.target.value)}
+                value={newPhone}
+                id="newPhone"
+                name="newPhone"
+                type="text"
+                placeholder="Ingresa el nombre.."
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                required
+              />
+              </div>
+              <div className="w-full xl:w-1/3">
+              <label
+                  htmlFor="currency"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Moneda
+                </label>
+                <select
+                  onChange={(e) => setNewCurrency(e.target.value)}
+                  value={newCurrency}
+                  id="currency"
+                  name="currency"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                >
+                  <option value={"CLP"}>CLP</option>
+                  <option value={"PEN"}>PEN</option>
+                  <option value={"MXN"}>MXN</option>
+                  <option value={"RBL"}>RBL</option>
+                  <option value={"USD"}>USD</option>
+                  <option value={"DOP"}>DOP</option>
                 </select>
               </div>
             </div>

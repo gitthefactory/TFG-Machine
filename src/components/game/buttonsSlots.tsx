@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Navigation } from 'swiper';
+// import SwiperCore, { Navigation } from 'swiper';
 import 'swiper/swiper-bundle.css'; 
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 
-SwiperCore.use([Navigation]);
+// SwiperCore.use([Navigation]);
 
 interface ButtonsSlotsProps {
   providerId: number;

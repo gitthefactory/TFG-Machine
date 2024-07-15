@@ -10,6 +10,9 @@ interface SalaData {
   comuna: string;
   pais: string;
   status: number;
+  currency:string;
+  address: string;
+  phone: number;
 }
 
 interface SalasTableProps {
@@ -59,6 +62,21 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
     {
       name: 'Comuna',
       selector: (row: SalaData) => row.comuna,
+      sortable: true,
+    },
+    {
+      name: 'Dirección',
+      selector: (row: SalaData) => row.address,
+      sortable: true,
+    },
+    {
+      name: 'Teléfono',
+      selector: (row: SalaData) => row.phone,
+      sortable: true,
+    },
+    {
+      name: 'Moneda',
+      selector: (row: SalaData) => row.currency,
       sortable: true,
     },
     {

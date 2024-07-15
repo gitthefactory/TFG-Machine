@@ -13,45 +13,60 @@ const Belatra: React.FC = () => {
   const [token, setToken] = useState<string | null>(null); // Estado para el token de autenticación, asumiendo que es una cadena
   const swiperRef = useRef<any>(null); // Referencia al Swiper para controlarlo programáticamente
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Obtiene los datos de sesión del usuario
         const sessionData = await getSessionData(); 
-
+        // console.log("Datos de sesión:", sessionData);
+  
         // Obtiene el parámetro 'idMachine' de la URL
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine'); 
-
+        // console.log("ID de la máquina desde URL:", idMachineFromURL);
+  
         // Verifica si el usuario está autenticado
         if (sessionData.status === 200) {
           const provider = 29; // Identificador del proveedor de juegos (en este caso, 29)
-
+  
           // Realiza una solicitud para obtener datos de juegos desde el servidor
           const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
           const data = await response.json();
+          // console.log("Datos de juegos desde el servidor:", data);
   
           // Verifica si el token está disponible en la respuesta
           if (data.data && data.data.token) {
             setToken(data.data.token); // Establece el estado del token
           } else {
-            console.error("Token no encontrado en la respuesta:", data);
+            // console.error("Token no encontrado en la respuesta:", data);
+            return; // Sale de la función si no se encuentra el token
           }
   
-          // Procesa los juegos si la estructura de la respuesta es la esperada
-          if (data.data && Array.isArray(data.data.games) && Array.isArray(data.data.providers)) {
-            const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
-            // Verifica el estado del proveedor
-            if (belatraProvider && belatraProvider.status === 0) {
-              setGames([]); // Si el estado es 0, establece la lista de juegos como vacía
-            } else if (belatraProvider && belatraProvider.status === 1) {
-              // Filtra los juegos de 'belatra' que están activos
-              const bGamingGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
-              setGames(bGamingGames); // Establece los juegos filtrados en el estado
-            }
+          // Realiza una solicitud para obtener juegos globales
+          const globalGamesResponse = await fetch('/api/juegosApi');
+          const globalGamesData = await globalGamesResponse.json();
+          // console.log("Datos de juegos globales:", globalGamesData);
+  
+          // Verifica si los juegos están disponibles en la respuesta
+          if (globalGamesData.data && Array.isArray(globalGamesData.data)) {
+            // Filtra los juegos globales con status 1
+            const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
+            // console.log("Juegos activos globales con status 1:", activeGlobalGames);
+  
+            // Filtra los juegos de 'belatra' específicos con status 1
+            const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
+            // console.log("Juegos activos de 'belatra' con status 1:", activeBelatraGames);
+  
+            // Filtra los juegos de 'belatra' que también están en la lista de juegos globales con status 1
+            const finalBelatraGames = activeBelatraGames.filter(belatraGame => 
+              activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
+            );
+            // console.log("Juegos finales de 'belatra' con status 1 en ambas listas:", finalBelatraGames);
+  
+            // Establece los juegos filtrados en el estado
+            setGames(finalBelatraGames);
           } else {
-            console.error("Estructura de datos inesperada:", data);
+            console.error("Estructura de datos inesperada:", globalGamesData);
           }
         } else {
           console.error("Usuario no autenticado:", sessionData.data.message);
@@ -62,7 +77,9 @@ const Belatra: React.FC = () => {
     };
   
     fetchData();
-  }, []); // Este efecto se ejecuta una vez al montar el componente
+  }, []);
+  
+  
 
 // Función para manejar el clic en el botón "Anterior"
 const handlePrevButtonClick = () => {
