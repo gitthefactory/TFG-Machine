@@ -96,7 +96,7 @@ export default function DetalleProveedores({
     const gameToUpdate = updatedGames.find(game => game.id === id);
     if (gameToUpdate) {
       try {
-        const response = await fetch(`http://localhost:3000/api/juegosApi/${gameToUpdate.id}`, {
+        const response = await fetch(`/api/juegosApi/${gameToUpdate.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
