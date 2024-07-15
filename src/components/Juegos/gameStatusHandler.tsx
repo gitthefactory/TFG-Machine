@@ -25,7 +25,6 @@ export default function DetalleProveedores({
       console.log("Games Data:", gamesData);
 
       if (gamesData && gamesData.length > 0) {
-        const storedGames = JSON.parse(localStorage.getItem("selectedGames") || "{}");
         let updatedGames: any[] = [];
 
         gamesData.forEach((gameData: any) => {
@@ -36,7 +35,8 @@ export default function DetalleProveedores({
               provider: game.provider_name,
               category: game.category,
               image: game.image,
-              selected: storedGames[game.id] || false,
+              selected: game.status === 1, // Assuming status 1 means selected
+              status: game.status,
             });
           });
         });
@@ -52,46 +52,32 @@ export default function DetalleProveedores({
 
   const handleSelectAll = async () => {
     try {
-      // Toggle selectAll flag
       const updatedSelectAll = !selectAll;
-  
-      // Update all games to reflect new selection status
       const updatedGames = games.map(game => ({ ...game, selected: updatedSelectAll }));
       setGames(updatedGames);
       setSelectAll(updatedSelectAll);
-  
-      // Array to store results of individual fetch requests
-      const fetchResults = [];
-  
-      for (let i = 0; i < updatedGames.length; i++) {
-        const game = updatedGames[i];
-  
+
+      for (const game of updatedGames) {
         const response = await fetch(`/api/juegosApi/${game.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
+<<<<<<< HEAD
           body: JSON.stringify({ status: game.selected ? 1 : 0 }), // Adjust status as neededd
+=======
+          body: JSON.stringify({ status: updatedSelectAll ? 1 : 0 }),
+>>>>>>> development
         });
-  
+
         if (!response.ok) {
           throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
         }
-  
+
         const responseData = await response.json();
         console.log(`Update response for game ${game.id}:`, responseData);
-  
-        fetchResults.push(responseData);
       }
-  
-      // Store selected status in localStorage
-      const storedGames = updatedGames.reduce((acc, game) => {
-        acc[game.id] = game.selected;
-        return acc;
-      }, {});
-      localStorage.setItem("selectedGames", JSON.stringify(storedGames));
-  
-      // Show success notification for each game activated/deactivated globally
+
       updatedGames.forEach(game => {
         if (game.selected) {
           toast.success(`Juego ${game.name} activado globalmente exitosamente`);
@@ -104,14 +90,13 @@ export default function DetalleProveedores({
       toast.error("Error al actualizar estado");
     }
   };
-  
-  
+
   const handleRowSelect = async (id: string) => {
     const updatedGames = games.map(game =>
       game.id === id ? { ...game, selected: !game.selected } : game
     );
     setGames(updatedGames);
-  
+
     const gameToUpdate = updatedGames.find(game => game.id === id);
     if (gameToUpdate) {
       try {
@@ -120,23 +105,16 @@ export default function DetalleProveedores({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status: gameToUpdate.selected ? 1 : 0 }), // Adjust status as needed
+          body: JSON.stringify({ status: gameToUpdate.selected ? 1 : 0 }),
         });
-  
+
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
-  
+
         const data = await response.json();
         console.log('Update response:', data);
-  
-        const storedGames = updatedGames.reduce((acc, game) => {
-          acc[game.id] = game.selected;
-          return acc;
-        }, {});
-        localStorage.setItem("selectedGames", JSON.stringify(storedGames));
-  
-        // Show notification for the specific game
+
         if (gameToUpdate.selected) {
           toast.success(`Juego ${gameToUpdate.name} activado globalmente exitosamente`);
         } else {
@@ -148,7 +126,6 @@ export default function DetalleProveedores({
       }
     }
   };
-  
 
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -206,6 +183,7 @@ export default function DetalleProveedores({
       sortable: true,
     },
   ];
+
 
   return (
     <div className="mx-auto max-w-270">
