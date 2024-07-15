@@ -71,7 +71,7 @@ export default function DetalleProveedores({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: game.selected ? 1 : 0 }), // Adjust status as needed
+          body: JSON.stringify({ status: game.selected ? 1 : 0 }), // Adjust status as neededd
         });
   
         if (!response.ok) {
