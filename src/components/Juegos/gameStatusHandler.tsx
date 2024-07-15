@@ -63,11 +63,7 @@ export default function DetalleProveedores({
           headers: {
             "Content-Type": "application/json",
           },
-<<<<<<< HEAD
-          body: JSON.stringify({ status: game.selected ? 1 : 0 }), // Adjust status as neededd
-=======
           body: JSON.stringify({ status: updatedSelectAll ? 1 : 0 }),
->>>>>>> development
         });
 
         if (!response.ok) {
