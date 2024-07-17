@@ -154,11 +154,11 @@ export default function DetalleProveedores() {
           Estado
         </>
       ),
-      selector: (row: any) => (
+      selector: (games: any) => (
         <input
           type="checkbox"
-          checked={row.status}
-          onChange={() => handleRowSelect(row.id, row.status ? 1 : 0)}
+          checked={games.status}
+          onChange={() => handleRowSelect(games.id, games.status ? 1 : 0)}
         />
       ),
       ignoreRowClick: true,
