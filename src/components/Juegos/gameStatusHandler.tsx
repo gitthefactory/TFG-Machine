@@ -4,45 +4,36 @@ import DataTable from "react-data-table-component";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function DetalleProveedores({
-  query,
-  currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
+export default function DetalleProveedores() {
   const [games, setGames] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectAll, setSelectAll] = useState<boolean>(false);
 
   useEffect(() => {
     fetchGames();
-  }, [query, currentPage]);
+  }, []); // Se ejecuta solo al montar el componente
 
   const fetchGames = async () => {
     try {
-      const gamesData = await getJuegos(query, currentPage);
-      console.log("Games Data:", gamesData);
-  
+      const gamesData = await getJuegos("", 1);
+
       if (gamesData && gamesData.length > 0) {
         let updatedGames: any[] = [];
-  
+
         gamesData.forEach((gameData: any) => {
           gameData.games.forEach((game: any) => {
-            console.log("Game from DB:", game);
             updatedGames.push({
               id: game.id,
               name: game.name,
               provider: game.provider_name,
               category: game.category,
               image: game.image,
-              status: game.status,
+              status: game.status === 1, // Convertir a booleano
             });
           });
         });
-  
+
         setGames(updatedGames);
-        console.log("Updated Games State:", updatedGames); 
       } else {
         setGames([]);
       }
@@ -50,42 +41,44 @@ export default function DetalleProveedores({
       console.error(error);
     }
   };
-  
 
   const handleSelectAll = async () => {
     try {
-      const updatedSelectAll = !selectAll;
-      const updatedGames = games.map(game => ({ ...game, status: updatedSelectAll }));
-      setGames(updatedGames);
-      setSelectAll(updatedSelectAll);
+      const updatedSelectAll = !selectAll; // Invertir el estado de selectAll
+      setSelectAll(updatedSelectAll); // Actualizar el estado local de selectAll
 
-      for (const game of updatedGames) {
-        const response = await fetch(`/api/juegosApi/${game.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: updatedSelectAll ? 1 : 0 }),
-        });
+      const promises = games.map(async (game) => {
+        try {
+          const response = await fetch(`/api/juegosApi/${game.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: updatedSelectAll ? 1 : 0 }),
+          });
 
-        if (!response.ok) {
-          throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
-        }
+          if (!response.ok) {
+            throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
+          }
 
-        const responseData = await response.json();
-        console.log(`Update response for game ${game.id}:`, responseData);
-      }
+          const responseData = await response.json();
+          console.log(`Update response for game ${game.id}:`, responseData);
 
-      updatedGames.forEach(game => {
-        if (game.status) {
-          toast.success(`Juego ${game.name} activado globalmente exitosamente`);
-        } else {
-          toast.error(`Juego ${game.name} desactivado globalmente exitosamente`);
+          if (updatedSelectAll) {
+            toast.success(`Juego ${game.name} activado globalmente exitosamente`);
+          } else {
+            toast.error(`Juego ${game.name} desactivado globalmente exitosamente`);
+          }
+        } catch (error) {
+          console.error(`Hubo un error al actualizar estado para el juego ${game.id}:`, error);
+          toast.error(`Error al actualizar estado para el juego ${game.name}`);
         }
       });
+
+      await Promise.all(promises);
     } catch (error) {
-      console.error("Hubo un error al actualizar estado:", error);
-      toast.error("Error al actualizar estado");
+      console.error("Hubo un error al actualizar estado global:", error);
+      toast.error("Error al actualizar estado global");
     }
   };
 
@@ -107,20 +100,20 @@ export default function DetalleProveedores({
         });
 
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          throw new Error(`Error updating game ${gameToUpdate.id}: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        console.log('Update response:', data);
+        const responseData = await response.json();
+        console.log(`Update response for game ${gameToUpdate.id}:`, responseData);
 
         if (gameToUpdate.status) {
-          toast.success(`Juego ${gameToUpdate.name} activado globalmente exitosamente`);
+          toast.success(`Juego ${gameToUpdate.name} activado exitosamente`);
         } else {
-          toast.error(`Juego ${gameToUpdate.name} desactivado globalmente exitosamente`);
+          toast.error(`Juego ${gameToUpdate.name} desactivado exitosamente`);
         }
       } catch (error) {
-        console.error('Hubo un error al actualizar estado:', error);
-        toast.error("Error al actualizar estado");
+        console.error(`Hubo un error al actualizar estado para el juego ${gameToUpdate.id}:`, error);
+        toast.error(`Error al actualizar estado para el juego ${gameToUpdate.name}`);
       }
     }
   };
@@ -140,7 +133,7 @@ export default function DetalleProveedores({
             checked={selectAll}
             onChange={handleSelectAll}
           />{" "}
-          Estado
+          Estados
         </>
       ),
       selector: (row: any) => (
