@@ -11,15 +11,15 @@ export default function DetalleProveedores() {
 
   useEffect(() => {
     fetchGames();
-  }, []); 
+  }, []);
 
   const fetchGames = async () => {
     try {
       const gamesData = await getJuegos("", 1);
-  
+
       if (gamesData && gamesData.length > 0) {
         let updatedGames: any[] = [];
-  
+
         gamesData.forEach((gameData: any) => {
           gameData.games.forEach((game: any) => {
             updatedGames.push({
@@ -32,7 +32,7 @@ export default function DetalleProveedores() {
             });
           });
         });
-  
+
         setGames(updatedGames);
       } else {
         setGames([]);
@@ -41,7 +41,6 @@ export default function DetalleProveedores() {
       console.error(error);
     }
   };
-  
 
   const handleRowSelect = async (gameId: number, currentStatus: number) => {
     try {
@@ -52,38 +51,29 @@ export default function DetalleProveedores() {
         },
         body: JSON.stringify({ status: currentStatus === 0 ? 1 : 0 }), // Cambiar el estado opuesto al actual
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error updating game ${gameId}: ${response.statusText}`);
       }
-  
+
       const responseData = await response.json();
       console.log(`Update response for game ${gameId}:`, responseData);
-  
+
       if (currentStatus === 0) {
         toast.success(`Juego activado exitosamente`);
       } else {
         toast.error(`Juego desactivado exitosamente`);
       }
-  
-      // Actualizar el estado local para reflejar el cambio
-      const updatedGames = games.map((game) => {
-        if (game.id === gameId) {
-          return {
-            ...game,
-            status: currentStatus === 0 ? 1 : 0,
-          };
-        }
-        return game;
-      });
-      setGames(updatedGames);
-  
+
+      // Volver a consultar los juegos después de actualizar
+      fetchGames();
+      
     } catch (error) {
       console.error(`Hubo un error al actualizar estado para el juego ${gameId}:`, error);
       toast.error(`Error al actualizar estado para el juego ${gameId}`);
     }
   };
-  
+
   const handleSelectAll = async () => {
     try {
       const promises = games.map(async (game) => {
@@ -95,41 +85,32 @@ export default function DetalleProveedores() {
             },
             body: JSON.stringify({ status: !selectAll ? 1 : 0 }),
           });
-  
+
           if (!response.ok) {
             throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
           }
-  
+
           const responseData = await response.json();
           console.log(`Update response for game ${game.id}:`, responseData);
-  
+
           if (!selectAll) {
             toast.success(`Juego activado globalmente exitosamente`);
           } else {
-            toast.error(`Juego  desactivado globalmente exitosamente`);
+            toast.error(`Juego desactivado globalmente exitosamente`);
           }
-  
-          // Actualizar el estado local para reflejar el cambio
-          const updatedGames = games.map((gameItem) => {
-            if (gameItem.id === game.id) {
-              return {
-                ...gameItem,
-                status: !selectAll ? 1 : 0,
-              };
-            }
-            return gameItem;
-          });
-          setGames(updatedGames);
-  
+
         } catch (error) {
           console.error(`Hubo un error al actualizar estado para el juego ${game.id}:`, error);
           toast.error(`Error al actualizar estado para el juego ${game.name}`);
         }
       });
-  
+
       await Promise.all(promises);
       setSelectAll(!selectAll); // Actualizar el estado de selectAll después de completar las actualizaciones
-  
+      
+      // Volver a consultar los juegos después de actualizar
+      fetchGames();
+
     } catch (error) {
       console.error("Hubo un error al actualizar estado global:", error);
       toast.error("Error al actualizar estado global");
