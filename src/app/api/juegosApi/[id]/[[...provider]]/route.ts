@@ -4,9 +4,11 @@ import Machine from "@/models/machine";
 import Games from "@/models/games"
 import Room from "@/models/room";
 
-export async function PUT(request, { params: { id } }) {
+export async function PUT(request: any, { params: { id } }: any) {
   try {
     const { status } = await request.json();
+
+    console.log("Datos recibidos:", { status });
 
     await connectDB();
 
@@ -20,7 +22,7 @@ export async function PUT(request, { params: { id } }) {
     if (!game) {
       return NextResponse.json(
         {
-          message: "Game not found",
+          message: "Error al actualizar el juego",
         },
         { status: 404 }
       );
@@ -43,6 +45,7 @@ export async function PUT(request, { params: { id } }) {
     );
   }
 }
+
 // export async function PUT(request, { params: { provider } }) {
 //   try {
 //     const { status } = await request.json(); 

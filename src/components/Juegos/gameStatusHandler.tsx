@@ -44,15 +44,16 @@ export default function DetalleProveedores() {
   
 
   const handleRowSelect = async (gameId: number, currentStatus: number) => {
+    
     try {
       const response = await fetch(`/api/juegosApi/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          
         },
         body: JSON.stringify({ status: currentStatus === 0 ? 1 : 0 }), // Cambiar el estado opuesto al actual
       });
-  
       if (!response.ok) {
         throw new Error(`Error updating game ${gameId}: ${response.statusText}`);
       }
