@@ -29,22 +29,20 @@ export default function DetalleProveedores({
   
         gamesData.forEach((gameData: any) => {
           gameData.games.forEach((game: any) => {
-            console.log("Game from DB:", game); // Agregar esto para verificar el estado
+            console.log("Game from DB:", game);
             updatedGames.push({
               id: game.id,
               name: game.name,
               provider: game.provider_name,
               category: game.category,
               image: game.image,
-              selected: game.status === 1 ? 1 : 0,
               status: game.status,
-              statusText: game.status === 1 ? "Activo" : "Inactivo",
             });
           });
         });
   
         setGames(updatedGames);
-        console.log("Updated Games State:", updatedGames); // Verifica el estado actualizado
+        console.log("Updated Games State:", updatedGames); 
       } else {
         setGames([]);
       }
@@ -57,7 +55,7 @@ export default function DetalleProveedores({
   const handleSelectAll = async () => {
     try {
       const updatedSelectAll = !selectAll;
-      const updatedGames = games.map(game => ({ ...game, selected: updatedSelectAll }));
+      const updatedGames = games.map(game => ({ ...game, status: updatedSelectAll }));
       setGames(updatedGames);
       setSelectAll(updatedSelectAll);
 
@@ -79,7 +77,7 @@ export default function DetalleProveedores({
       }
 
       updatedGames.forEach(game => {
-        if (game.selected) {
+        if (game.status) {
           toast.success(`Juego ${game.name} activado globalmente exitosamente`);
         } else {
           toast.error(`Juego ${game.name} desactivado globalmente exitosamente`);
@@ -93,7 +91,7 @@ export default function DetalleProveedores({
 
   const handleRowSelect = async (id: string) => {
     const updatedGames = games.map(game =>
-      game.id === id ? { ...game, selected: !game.selected } : game
+      game.id === id ? { ...game, status: !game.status } : game
     );
     setGames(updatedGames);
 
@@ -105,7 +103,7 @@ export default function DetalleProveedores({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status: gameToUpdate.selected ? 1 : 0 }),
+          body: JSON.stringify({ status: gameToUpdate.status ? 1 : 0 }),
         });
 
         if (!response.ok) {
@@ -115,7 +113,7 @@ export default function DetalleProveedores({
         const data = await response.json();
         console.log('Update response:', data);
 
-        if (gameToUpdate.selected) {
+        if (gameToUpdate.status) {
           toast.success(`Juego ${gameToUpdate.name} activado globalmente exitosamente`);
         } else {
           toast.error(`Juego ${gameToUpdate.name} desactivado globalmente exitosamente`);
@@ -148,7 +146,7 @@ export default function DetalleProveedores({
       selector: (row: any) => (
         <input
           type="checkbox"
-          checked={row.selected}
+          checked={row.status}
           onChange={() => handleRowSelect(row.id)}
         />
       ),
@@ -180,11 +178,6 @@ export default function DetalleProveedores({
     {
       name: "Nombre Juegos",
       selector: (row: any) => row.name,
-      sortable: true,
-    },
-    {
-      name: "Estado del Juego",
-      selector: (row: any) => row.statusText,
       sortable: true,
     },
   ];
