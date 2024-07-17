@@ -23,25 +23,28 @@ export default function DetalleProveedores({
     try {
       const gamesData = await getJuegos(query, currentPage);
       console.log("Games Data:", gamesData);
-
+  
       if (gamesData && gamesData.length > 0) {
         let updatedGames: any[] = [];
-
+  
         gamesData.forEach((gameData: any) => {
           gameData.games.forEach((game: any) => {
+            console.log("Game from DB:", game); // Agregar esto para verificar el estado
             updatedGames.push({
               id: game.id,
               name: game.name,
               provider: game.provider_name,
               category: game.category,
               image: game.image,
-              selected: game.status === 1, // Assuming status 1 means selected
+              selected: game.status === 1 ? 1 : 0,
               status: game.status,
+              statusText: game.status === 1 ? "Activo" : "Inactivo",
             });
           });
         });
-
+  
         setGames(updatedGames);
+        console.log("Updated Games State:", updatedGames); // Verifica el estado actualizado
       } else {
         setGames([]);
       }
@@ -49,6 +52,7 @@ export default function DetalleProveedores({
       console.error(error);
     }
   };
+  
 
   const handleSelectAll = async () => {
     try {
@@ -178,12 +182,16 @@ export default function DetalleProveedores({
       selector: (row: any) => row.name,
       sortable: true,
     },
+    {
+      name: "Estado del Juego",
+      selector: (row: any) => row.statusText,
+      sortable: true,
+    },
   ];
-
 
   return (
     <div className="mx-auto max-w-270">
-       <ToastContainer />
+      <ToastContainer />
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
           <h2 className="font-medium text-black dark:text-white">
