@@ -33,6 +33,7 @@ export default function DetalleProveedores() {
           });
         });
   
+        console.log('Updated games:', updatedGames); // Agrega este registro para verificar los datos
         setGames(updatedGames);
       } else {
         setGames([]);
@@ -41,6 +42,7 @@ export default function DetalleProveedores() {
       console.error(error);
     }
   };
+  
 
   const handleRowSelect = async (gameId: number, currentStatus: number) => {
     try {
@@ -51,36 +53,29 @@ export default function DetalleProveedores() {
         },
         body: JSON.stringify({ status: currentStatus === 0 ? 1 : 0 }), // Cambiar el estado opuesto al actual
       });
+  
       if (!response.ok) {
         throw new Error(`Error updating game ${gameId}: ${response.statusText}`);
       }
-
+  
       const responseData = await response.json();
       console.log(`Update response for game ${gameId}:`, responseData);
-
+  
       if (currentStatus === 0) {
         toast.success(`Juego activado exitosamente`);
       } else {
         toast.error(`Juego desactivado exitosamente`);
       }
-
-      const updatedGames = games.map((game) => {
-        if (game.id === gameId) {
-          return {
-            ...game,
-            status: currentStatus === 0 ? 1 : 0,
-          };
-        }
-        return game;
-      });
-      setGames(updatedGames);
-
+  
+      // Vuelve a obtener los datos después de la actualización
+      fetchGames();
+  
     } catch (error) {
       console.error(`Hubo un error al actualizar estado para el juego ${gameId}:`, error);
       toast.error(`Error al actualizar estado para el juego ${gameId}`);
     }
   };
-
+  
   const handleSelectAll = async () => {
     try {
       const promises = games.map(async (game) => {
