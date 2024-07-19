@@ -43,6 +43,7 @@ export async function PUT(request: any, { params: { id } }: any) {
     );
   }
 }
+
 // export async function PUT(request, { params: { provider } }) {
 //   try {
 //     const { status } = await request.json(); 

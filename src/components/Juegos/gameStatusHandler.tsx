@@ -58,16 +58,8 @@ export default function DetalleProveedores() {
       } else {
         toast.error(`Juego desactivado exitosamente`);
       }
-      const updatedGames = games.map((game) => {
-        if (game.id === gameId) {
-          return {
-            ...game,
-            status: currentStatus === 0 ? 1 : 0,
-          };
-        }
-        return game;
-      });
-      setGames(updatedGames);
+      // Refrescar juegos después de actualizar el estado
+      fetchGames();
     } catch (error) {
       console.error(`Hubo un error al actualizar estado para el juego ${gameId}:`, error);
       toast.error(`Error al actualizar estado para el juego ${gameId}`);
@@ -93,24 +85,16 @@ export default function DetalleProveedores() {
           if (!selectAll) {
             toast.success(`Juego activado globalmente exitosamente`);
           } else {
-            toast.error(`Juego  desactivado globalmente exitosamente`);
+            toast.error(`Juego desactivado globalmente exitosamente`);
           }
-          const updatedGames = games.map((gameItem) => {
-            if (gameItem.id === game.id) {
-              return {
-                ...gameItem,
-                status: !selectAll ? 1 : 0,
-              };
-            }
-            return gameItem;
-          });
-          setGames(updatedGames);
         } catch (error) {
           console.error(`Hubo un error al actualizar estado para el juego ${game.id}:`, error);
           toast.error(`Error al actualizar estado para el juego ${game.name}`);
         }
       });
       await Promise.all(promises);
+      // Refrescar juegos después de actualizar el estado
+      fetchGames();
       setSelectAll(!selectAll);
     } catch (error) {
       console.error("Hubo un error al actualizar estado global:", error);
