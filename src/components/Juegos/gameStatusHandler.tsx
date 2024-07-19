@@ -11,11 +11,12 @@ export default function DetalleProveedores() {
 
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, []); // Carga inicial de juegos
 
   const fetchGames = async () => {
     try {
       const gamesData = await getJuegos("", 1);
+      console.log("Fetched games data:", gamesData); // Verifica los datos
       if (gamesData && gamesData.length > 0) {
         let updatedGames: any[] = [];
         gamesData.forEach((gameData: any) => {
@@ -31,6 +32,7 @@ export default function DetalleProveedores() {
           });
         });
         setGames(updatedGames);
+        console.log("Updated games state:", updatedGames); // Verifica el estado actualizado
       } else {
         setGames([]);
       }
@@ -107,6 +109,8 @@ export default function DetalleProveedores() {
     game.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
     game.provider.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log("Filtered games:", filteredGames);
 
   const columns = [
     {
