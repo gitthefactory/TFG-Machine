@@ -7,15 +7,13 @@ import Room from "@/models/room";
 export async function PUT(request: any, { params: { id } }: any) {
   try {
     const { status } = await request.json();
-
     console.log("Datos recibidos:", { status });
 
     await connectDB();
 
-    // Encuentra el documento que contiene el juego con el id especificado y actualiza su estado
     const game = await Games.findOneAndUpdate(
-      { "games.id": parseInt(id) }, // Encuentra el documento con el juego específico
-      { $set: { "games.$.status": status } }, // Actualiza el estado del juego
+      { "games.id": parseInt(id) }, 
+      { $set: { "games.$.status": status } }, 
       { new: true }
     );
 
@@ -36,16 +34,15 @@ export async function PUT(request: any, { params: { id } }: any) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error en la actualización del estado del juego:", error);
     return NextResponse.json(
       {
-        message: "Error al actualizar el estado del juego",
-        error: error.message,
+        message: "Error en la actualización del estado del juego",
       },
       { status: 500 }
     );
   }
 }
-
 // export async function PUT(request, { params: { provider } }) {
 //   try {
 //     const { status } = await request.json(); 
