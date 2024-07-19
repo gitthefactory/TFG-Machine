@@ -10,40 +10,47 @@ interface EditarSalaProps {
 }
 
 const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
-  const [newNombre, setNewNombre] = useState(sala.nombre);
-  const [newCurrency, setNewCurrency] = useState(sala.currency);
-  const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined); // Estado inicial
+  const [newNombre, setNewNombre] = useState<string>(sala.nombre || '');
+  const [newCurrency, setNewCurrency] = useState<string>(sala.currency || '');
+  const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
+  const [balance, setBalance] = useState<number>(0);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const updatedSala = {
-      newNombre,
-      id_machine: selectedMachines ? [selectedMachines] : [], // Convertimos a array si hay máquina seleccionada
-      newCurrency,
+    console.log("Valor de newCurrency:", newCurrency); // Verifica el valor de newCurrency
+
+    const transferData = {
+      currency: newCurrency,
+      id_machine: selectedMachines,
+      balance,
     };
 
+    console.log("Datos a enviar:", transferData); // Verifica los datos antes de enviarlos
+
     try {
-      const response = await fetch(`/api/salas/${sala._id}`, {
-        method: "PUT",
+      const response = await fetch(`/api/transfer`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedSala),
+        body: JSON.stringify(transferData),
       });
+
       if (response.ok) {
         window.location.href = "/dashboard/salas";
       } else {
-        console.error("Hubo un error al actualizar la sala.");
+        const errorData = await response.json();
+        console.error("Error al hacer la solicitud:", errorData.message);
       }
     } catch (error) {
-      console.error("Error de red:", error);
+      console.error("Error de red:", error.message);
     }
   };
 
   const handleMachineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value;
-    setSelectedMachines(selectedOption === "" ? undefined : selectedOption); // Actualizamos el estado
+    setSelectedMachines(selectedOption === "" ? undefined : selectedOption);
   };
 
   return (
@@ -95,7 +102,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
               </div>
             </div>
 
-            <h1 className="mb-6">SELECCIONAR MAQUINA</h1>
+            <h1 className="mb-6">SELECCIONAR MÁQUINA</h1>
 
             <div className="mb-4">
               <label
@@ -106,13 +113,13 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
               </label>
               <select
                 onChange={handleMachineChange}
-                value={selectedMachines || ""} // Valor del select dependiendo del estado
+                value={selectedMachines || ""}
                 id="id_machine"
                 name="id_machine"
                 className="w-full rounded mt-2 border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                 required
               >
-                <option value="">Seleccionar</option> {/* Opción predeterminada */}
+                <option value="">Seleccionar</option>
                 {sala.id_machine &&
                   sala.id_machine.map((id: string, index: number) => (
                     <option key={index} value={id}>
@@ -121,7 +128,26 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
                   ))}
               </select>
             </div>
-            
+
+            <div className="mb-4">
+              <label
+                htmlFor="balance"
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+              >
+                Balance <span className="text-red">*</span>
+              </label>
+              <input
+                onChange={(e) => setBalance(Number(e.target.value))}
+                value={balance}
+                id="balance"
+                name="balance"
+                type="number"
+                placeholder="Balance"
+                className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                required
+              />
+            </div>
+
             <div className="mt-6 flex justify-end gap-4">
               <Link
                 href="/dashboard/salas"
