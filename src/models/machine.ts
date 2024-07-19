@@ -11,6 +11,7 @@ interface Machine extends Document {
   room: Types.ObjectId;
   providers: any[];
   token: string;
+  balance?: number; // Campo para el saldo
 }
 
 // Definición del esquema de la máquina
@@ -23,9 +24,11 @@ const MachineSchema = new Schema<Machine>({
   room: { type: Schema.Types.ObjectId, ref: 'Room' },
   providers: { type: [{ type: Schema.Types.Mixed }], default: [] }, // Array de tipo any[] similar a games
   token: { type: String, default: generateUUID }, // Añade un token único para cada documento
+  balance: { type: Number, default: 0 }, // Añade un campo para el saldo inicial
 }, {
   timestamps: true,
 });
+
 // Función para generar sha-9 único
 export function generateSha9(): string {
   const base = "XA5A";
@@ -33,6 +36,11 @@ export function generateSha9(): string {
   const randomString = randomNumber.toString().substring(0, 5); // Convierte el número en cadena y toma solo los primeros 5 dígitos
   const hash = base + randomString;
   return hash;
+}
+
+// Función para generar UUID único sin guiones
+export function generateUUID(): string {
+  return uuidv4().replace(/-/g, ''); // Genera el UUID y elimina los guiones
 }
 
 // Antes de guardar el documento, asigna un valor fijo a id_machine si está vacío
@@ -43,22 +51,6 @@ MachineSchema.pre('save', function (next) {
   }
   if (!machine.id_machine) {
     machine.id_machine = generateSha9(); // Asigna el valor generado por la función generateSha9()
-  }
-  next();
-});
-
-// Función para generar un UUID único sin guiones
-export function generateUUID(): string {
-  return uuidv4().replace(/-/g, ''); // Genera el UUID y elimina los guiones
-}
-// Antes de guardar el documento, asigna un valor fijo a id_machine si está vacío
-MachineSchema.pre('save', function (next) {
-  const machine = this as any;
-  if (!machine.isNew) {
-    return next();
-  }
-  if (!machine.id_machine) {
-    machine.id_machine = generateUUID(); // Asigna el valor generado por la función generateUUID()
   }
   next();
 });
