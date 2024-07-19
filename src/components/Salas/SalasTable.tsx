@@ -3,6 +3,7 @@ import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
 import DeleteButtonSalas from '@/components/Salas/DeleteButtonSalas'
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 interface SalaData {
   _id: string;
@@ -59,11 +60,11 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
       selector: (row: SalaData) => row.pais,
       sortable: true,
     },
-    {
-      name: 'Comuna',
-      selector: (row: SalaData) => row.comuna,
-      sortable: true,
-    },
+    // {
+    //   name: 'Comuna',
+    //   selector: (row: SalaData) => row.comuna,
+    //   sortable: true,
+    // },
     {
       name: 'Dirección',
       selector: (row: SalaData) => row.address,
@@ -83,18 +84,27 @@ const SalasTable: React.FC<SalasTableProps> = ({ salas }) => {
       name: 'Acciones',
       cell: (row: SalaData) => (
         <div className="flex items-center space-x-3.5">
-        <DeleteButtonSalas id={row._id} />
-        <Link href={`/dashboard/salas/editar/${row._id}`}
+          <DeleteButtonSalas id={row._id} />
+          <Link
+            href={`/dashboard/salas/editar/${row._id}`}
             className="edit"
             title="Editar"
             style={{ fontSize: '20px' }}
           >
             <FaPen />
           </Link>
-          </div>
+          <Link
+            href={`/dashboard/salas/transferir/${row._id}`}
+            className="transfer"
+            title="Transferir"
+            style={{ fontSize: '20px' }}
+          >
+            <FaMoneyBillTransfer />
+          </Link>
+        </div>
       ),
       sortable: true,
-    },
+    }
   ];
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
