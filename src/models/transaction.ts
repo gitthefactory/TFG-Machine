@@ -3,8 +3,10 @@ import mongoose, { Schema, Document, model } from "mongoose";
 interface Transaction extends Document {
     status: number;
     id_machine: string;
-    currency: string[]; // Cambiar a un array de strings
+    currency: string[]; 
     balance: number;
+    message?: string;
+    action: string;
   }
   
 
@@ -15,8 +17,11 @@ interface TransactionModel extends mongoose.Model<Transaction> {
 const TransactionSchema = new Schema<Transaction>({
     status: { type: Number, default: 1 },
     id_machine: { type: String, required: true },
-    currency: { type: [String], required: true }, // Definir como array de strings
+    currency: { type: [String], required: true }, 
     balance: { type: Number, required: true },
+    message: { type: String, required: false },
+    action: { type: String, required: true },
+
   });
   
 // Agregar el método estático al esquema

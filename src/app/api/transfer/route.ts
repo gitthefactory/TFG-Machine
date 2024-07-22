@@ -6,13 +6,10 @@ import Transaction from "@/models/transaction";
 //GET ALL Transaction
 export async function GET() {
   try {
-    // Conectar a la base de datos
     await connectDB();
 
-    // Obtener todos los clientes con los datos del usuario asociado poblados
     const transaction = await Transaction.find();
 
-    // Devolver la respuesta con los datos de los clientes
     return NextResponse.json({
       message: "Ok",
       data: transaction,
@@ -20,7 +17,6 @@ export async function GET() {
       status: 200
     });
   } catch (error) {
-    // Manejar cualquier error que pueda ocurrir durante el proceso
     return NextResponse.json({
       message: "Failed to get transaction",
       error,
@@ -31,30 +27,37 @@ export async function GET() {
 }
 
 
-export async function POST(request: { json: () => PromiseLike<{ status: any; currency: any; id_machine: any; balance: any; }> }) {
+export async function POST(request: { json: () => PromiseLike<{ status: any; currency: any; id_machine: any; balance: any; message?: any; action: any; }> }) {
   try {
-    const { status, currency, id_machine, balance } = await request.json();
+    const { status, currency, id_machine, balance, message, action } = await request.json();
 
     // Conectar a la base de datos
     await connectDB();
 
     // Crea una nueva máquina en base a los datos proporcionados
-    const newTransaction = await Transaction.create({
+    const newTransactionData = {
       status,
       currency,
       id_machine,
       balance,
-      
-    });
+      action,
+    };
+
+    // Add message only if it is provided
+    if (message) {
+      newTransactionData.message = message;
+    }
+
+    const newTransaction = await Transaction.create(newTransactionData);
 
     return NextResponse.json({
-        message: "Transacción Creada con Éxito",
-        data: newTransaction
-    }, {status: 201});
+      message: "Transacción Creada con Éxito",
+      data: newTransaction
+    }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       {
-        message: "Error al crear la Sala",
+        message: "Error al crear la Transacción",
         error,
       },
       {
