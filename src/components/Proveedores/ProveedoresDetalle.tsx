@@ -3,6 +3,7 @@ import Link from "next/link";
 import getGames from "@/controllers/getGames";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Select from "react-select";
+import Image from 'next/image';
 
 interface Game {
   id: number;
@@ -75,10 +76,12 @@ export default function DetalleProveedores({
       headerName: "Imagen",
       flex: 1,
       renderCell: (params) => (
-        <img
+        <Image
           src={params.row.image}
           alt="imagen"
           style={{ width: "50px", height: "auto" }}
+          width={500} 
+          height={500}
         />
       ),
     },

@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
+import Image from 'next/image';
 
 // SwiperCore.use([Navigation]);
 
@@ -122,10 +123,12 @@ const closeGameUrl = () => {
               {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
                 <div key={index} className="col-3 col-md-3">
                   <div className="btn-game" onClick={() => handleGameClick(game)}>
-                    <img
+                    <Image
                       src={game.image}
                       alt={game.name}
                       style={{width:'100%'}}
+                      width={500}
+                       height={500}
                       />
                     <div className="subtitle">
                       {game.name}

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-// import Swiper from 'swiper';
 import '/src/css/swiper.css';
 import '/src/css/main.css';
 import '/src/css/bootstrap.min.css';
@@ -12,6 +11,7 @@ import Providers from '@/components/game/providers';
 import DreamcatcherCashier from '@/components/game/DreamcatcherCashier';
 import Slots from '@/components/game/slots';
 import Loader from "@/components/common/Loader";
+import Image from 'next/image';
 
 const Games = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +49,7 @@ const Games = () => {
       {isLoading && <Loader />}
       <div className="topbar">
         <div className="logo">
-          <img src="/images/img/logo.png" alt="Logo" />
+          <Image src="/images/img/logo.png" alt="Logo" width={500} height={500} />
         </div>
         <div className="nav">
           <div className="navbar">
@@ -73,7 +73,7 @@ const Games = () => {
       {visibleSection === 'crash' && <CrashSection />}
 
       <div className="dc" id="dreamcatcher" onClick={toggleModal}>
-        <img src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" />
+        <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
       </div>
 
       {isModalOpen && (

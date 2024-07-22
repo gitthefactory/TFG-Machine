@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 const Proveedores: React.FC = () => {
   const [machineData, setMachineData] = useState<any>(null);
@@ -43,7 +44,7 @@ const Proveedores: React.FC = () => {
                       <h4>{game.name}</h4>
                       <p>Creador: {game.maker}</p>
                       <p>Categoría: {game.category}</p>
-                      <img src={game.image} alt={game.name} />
+                      <Image src={game.image} alt={game.name} width={500} height={500}/>
                     </li>
                   ))}
                 </ul>

@@ -1,31 +1,42 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-
-function generateTransactionId(): string {
-  const randomId = Math.floor(Math.random() * 10 ** 16).toString();
-  return randomId.padStart(16, '0');
-}
+import type { NextApiRequest, NextApiResponse } from 'next';
+import mongoose from 'mongoose';
+import Machine from '@/models/machine';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id, amount } = req.body;
+
   if (req.method === 'POST') {
-    const { amount } = req.body;
+    if (!id || !amount || typeof amount !== 'number') {
+      return res.status(400).json({ status: 'ERROR', code: 400, message: 'ID de la máquina y cantidad son requeridos' });
+    }
 
-    // Lógica para obtener el saldo actual (aquí deberías obtener el saldo desde la base de datos)
-    const saldoActual = 550.25;
+    try {
+      await mongoose.connect(process.env.MONGO_URI as string); // Asegúrate de que la variable de entorno esté configurada
 
-    // Lógica para acreditar la transacción
-    const nuevoSaldo = saldoActual + amount;
-    const transactionId = generateTransactionId();
+      // Encuentra la máquina por ID y actualiza su balance
+      const machine = await Machine.findById(id);
 
-    const creditResponse = {
-      status: 'OK',
-      code: 200,
-      data: {
-        transaction: transactionId,
-        balance: nuevoSaldo
+      if (!machine) {
+        return res.status(404).json({ status: 'ERROR', code: 404, message: 'Máquina no encontrada' });
       }
-    };
 
-    return res.status(200).json(creditResponse);
+      machine.balance = (machine.balance || 0) + amount;
+      await machine.save();
+
+      const creditResponse = {
+        status: 'OK',
+        code: 200,
+        data: {
+          id_machine: machine.id_machine,
+          new_balance: machine.balance
+        }
+      };
+
+      return res.status(200).json(creditResponse);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: 'ERROR', code: 500, message: 'Error en el servidor', error });
+    }
   } else {
     return res.status(405).json({ status: 'ERROR', code: 405, message: 'Método no permitido' });
   }
