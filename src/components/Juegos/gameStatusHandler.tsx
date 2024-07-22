@@ -11,12 +11,11 @@ export default function DetalleProveedores() {
 
   useEffect(() => {
     fetchGames();
-  }, []); // Carga inicial de juegos
+  }, []);
 
   const fetchGames = async () => {
     try {
       const gamesData = await getJuegos("", 1);
-      console.log("Fetched games data:", gamesData); // Verifica los datos
       if (gamesData && gamesData.length > 0) {
         let updatedGames: any[] = [];
         gamesData.forEach((gameData: any) => {
@@ -32,7 +31,6 @@ export default function DetalleProveedores() {
           });
         });
         setGames(updatedGames);
-        console.log("Updated games state:", updatedGames); // Verifica el estado actualizado
       } else {
         setGames([]);
       }
@@ -60,8 +58,16 @@ export default function DetalleProveedores() {
       } else {
         toast.error(`Juego desactivado exitosamente`);
       }
-      // Refrescar juegos después de actualizar el estado
-      fetchGames();
+      const updatedGames = games.map((game) => {
+        if (game.id === gameId) {
+          return {
+            ...game,
+            status: currentStatus === 0 ? 1 : 0,
+          };
+        }
+        return game;
+      });
+      setGames(updatedGames);
     } catch (error) {
       console.error(`Hubo un error al actualizar estado para el juego ${gameId}:`, error);
       toast.error(`Error al actualizar estado para el juego ${gameId}`);
@@ -89,14 +95,22 @@ export default function DetalleProveedores() {
           } else {
             toast.error(`Juego desactivado globalmente exitosamente`);
           }
+          const updatedGames = games.map((gameItem) => {
+            if (gameItem.id === game.id) {
+              return {
+                ...gameItem,
+                status: !selectAll ? 1 : 0,
+              };
+            }
+            return gameItem;
+          });
+          setGames(updatedGames);
         } catch (error) {
           console.error(`Hubo un error al actualizar estado para el juego ${game.id}:`, error);
           toast.error(`Error al actualizar estado para el juego ${game.name}`);
         }
       });
       await Promise.all(promises);
-      // Refrescar juegos después de actualizar el estado
-      fetchGames();
       setSelectAll(!selectAll);
     } catch (error) {
       console.error("Hubo un error al actualizar estado global:", error);
@@ -109,8 +123,6 @@ export default function DetalleProveedores() {
     game.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
     game.provider.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  console.log("Filtered games:", filteredGames);
 
   const columns = [
     {
