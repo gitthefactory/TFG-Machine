@@ -7,6 +7,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getJuegos from "@/controllers/juegos/getJuegos";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa6";
+import Image from 'next/image';
 
 // Definir la interfaz del juego
 interface Juego {
@@ -106,10 +107,12 @@ const ConfirmarJuegos: React.FC<{ maquina: any }> = ({ maquina }) => {
       headerName: "Imagen",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
-        <img
+        <Image
           src={params.row.image}
           alt="imagen"
           style={{ width: "50px", height: "auto" }}
+          width={500} 
+          height={500}
         />
       ),
     },

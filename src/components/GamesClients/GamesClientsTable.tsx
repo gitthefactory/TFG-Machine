@@ -3,6 +3,7 @@ import getUsers from "@/controllers/getUsers";
 import getJuegos from "@/controllers/juegos/getJuegos";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa6";
+import Image from 'next/image';
 
 interface User {
   _id: string;
@@ -94,10 +95,12 @@ const GamesClientsTable: React.FC = () => {
         headerName: "Imagen",
         flex: 1,
         renderCell: (params: GridRenderCellParams) => (
-          <img
+          <Image
             src={params.row.image}
-            alt="imagen"
+            alt =""
             style={{ width: "50px", height: "auto" }}
+            width={500} 
+            height={500}
           />
         ),
       },

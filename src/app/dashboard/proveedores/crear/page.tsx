@@ -7,7 +7,7 @@ import AtrasButton from "@/components/AtrasButton";
 import getSession from "@/controllers/getSession";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import Image from 'next/image';
 export default function CrearProveedores() {
   const [providerId, setProviderId] = useState<number>("Seleccionar"); // Cambiar el ID predeterminado a 68
   const [provider_name, setProvider_name] = useState<string>("");
@@ -155,10 +155,12 @@ export default function CrearProveedores() {
                     Imagen del proveedor
                   </label>
                   {img && (
-                    <img
+                    <Image
                       src={img}
                       alt="Imagen del Proveedor"
                       className="mt-2 w-24 h-24"
+                      width={100}
+                       height={100}
                     />
                   )}
                 </div>

@@ -10,6 +10,7 @@ import getUsuarios from "@/controllers/getUsers";
 import getRooms from "@/controllers/getRooms";
 import getGames from "@/controllers/getGames";
 import DataTable from 'react-data-table-component';
+import Image from 'next/image';
 
 interface Usuario {
   _id: string;
@@ -263,7 +264,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     },
     {
       name: 'Imagen',
-      cell: (row: Game) => <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />,
+      cell: (row: Game) => <Image src={row.image} alt={row.name} className="w-16 h-16 object-cover" width={500} height={500}/>,
     },
     {
       name: 'Proveedor',

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 async function fetchData() {
   try {
@@ -37,7 +38,7 @@ function App() {
           {games.map(game => (
             <li key={game.id}>
               <h2>{game.name}</h2>
-              <img src={game.image} alt={game.name} />
+              <Image src={game.image} alt={game.name} width={500} height={500} />
             </li>
           ))}
         </ul>

@@ -19,9 +19,9 @@ interface MaquinaData {
   status: number;
 }
 
-interface MaquinasTableProps {
-  maquinas: MaquinaData[];
-}
+// interface MaquinasTableProps {
+//   maquinas: MaquinaData[];
+// }
 
 
 

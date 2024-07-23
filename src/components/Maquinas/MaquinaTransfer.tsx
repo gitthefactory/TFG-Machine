@@ -1,41 +1,54 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
-interface EditarSalaProps {
-  sala: any;
-}
-
-const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
-  const [newNombre, setNewNombre] = useState<string>(sala.nombre || '');
-  const [newCurrency, setNewCurrency] = useState<string>(sala.currency || '');
-  const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
-  const [balance, setBalance] = useState<number>(0);
+const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
+  const [newNombre, setNewNombre] = useState<string>(transaction.id_machine || '');
+  const [newCurrency, setNewCurrency] = useState<string>(transaction.currency || '');
   const [newMessage, setNewMessage] = useState<string>('');
-  const [action, setAction] = useState<number>('CREDIT');
-  const [credit, setCredit] = useState<number>();
+  const [action] = useState<string>('DEBIT');
+  const [balance, setNewBalance] = useState<number>(transaction.balance);
+  const [debit, setDebit] = useState<number>();
 
-
-
+  useEffect(() => {
+    // Fetch the latest transactions from the API
+    fetch('/api/transfer')
+      .then(response => response.json())
+      .then(data => {
+        console.log('API response:', data);
+  
+        // Ensure data.data is an array and has at least one element
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          // Find the latest transaction for the specific id_machine
+          const latestTransaction = data.data
+            .filter(item => item.id_machine === transaction.id_machine) // Filter by id_machine
+            .reduce((latest, current) => {
+              return current.transaction > latest.transaction ? current : latest;
+            });
+  
+          // Update the newBalance state with the balance of the latest transaction
+          setNewBalance(latestTransaction.balance);
+        } else {
+          throw new Error('API response data is not in the expected format or no data available.');
+        }
+      })
+      .catch(error => console.error('Error fetching API:', error));
+  }, [transaction.id_machine]); // Include transaction.id_machine in dependency array to fetch when id_machine changes
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log("Valor de newCurrency:", newCurrency); // Verifica el valor de newCurrency
-
     const transferData = {
       currency: newCurrency,
-      id_machine: selectedMachines,
+      id_machine: newNombre,
       balance,
       message: newMessage,
       action,
-      credit,
+      debit,
     };
-
-    console.log("Datos a enviar:", transferData); // Verifica los datos antes de enviarlos
 
     try {
       const response = await fetch(`/api/transfer`, {
@@ -47,7 +60,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
       });
 
       if (response.ok) {
-        window.location.href = "/dashboard/salas";
+        window.location.href = "/dashboard/maquinas";
       } else {
         const errorData = await response.json();
         console.error("Error al hacer la solicitud:", errorData.message);
@@ -57,26 +70,21 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
     }
   };
 
-  const handleMachineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = e.target.value;
-    setSelectedMachines(selectedOption === "" ? undefined : selectedOption);
-  };
-
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
-        <Breadcrumb pageName="Transacción manual de crédito" />
-        <AtrasButton href="/dashboard/salas" />
+        <Breadcrumb pageName="Transacción manual de débito" />
+        <AtrasButton href="/dashboard/maquinas" />
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <form onSubmit={handleSubmit} className="p-6.5">
-            <h1 className="mb-6">DATOS DE LA SALA</h1>
+            <h1 className="mb-6">DATOS DE LA MAQUINA</h1>
             <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-              <div className="w-full xl:w-1/2">
+              <div className="w-full xl:w-1/3">
                 <label
                   htmlFor="newNombre"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Nombre Sala
+                  ID Maquina
                 </label>
                 <input
                   onChange={(e) => setNewNombre(e.target.value)}
@@ -84,13 +92,13 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
                   id="newNombre"
                   name="newNombre"
                   type="text"
-                  placeholder="Ingresa el nombre.."
+                  placeholder="id machine"
                   className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
                   readOnly
                   disabled
                 />
               </div>
-              <div className="w-full xl:w-1/2">
+              <div className="w-full xl:w-1/3">
                 <label
                   htmlFor="currency"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -109,49 +117,39 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
                   disabled
                 />
               </div>
+              <div className="w-full xl:w-1/3">
+                <label
+                  htmlFor="balance"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Balance actual
+                </label>
+                <input
+                  onChange={(e) => setNewbalance(e.target.value)}
+                  value={balance}
+                  id="balance"
+                  name="balance"
+                  type="text"
+                  placeholder="Balante actual"
+                  className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                  readOnly
+                  disabled
+                />
+              </div>
             </div>
-
-            <h1 className="mb-6">SELECCIONAR MÁQUINA</h1>
-
+            <h1 className="mb-6">TRANSACCION DEBITO</h1>
             <div className="mb-4">
               <label
-                htmlFor="id_machine"
-                className="mb-3 block text-sm font-medium text-black dark:text-white"
-              >
-                Seleccionar Máquina <span className="text-red">*</span>
-              </label>
-              <select
-                onChange={handleMachineChange}
-                value={selectedMachines || ""}
-                id="id_machine"
-                name="id_machine"
-                className="w-full rounded mt-2 border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                required
-              >
-                <option value="">Seleccionar</option>
-                {sala.id_machine &&
-                  sala.id_machine.map((id: string, index: number) => (
-                    <option key={index} value={id}>
-                      {id}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <h1 className="mb-6">TRANSACCION</h1>
-
-            <div className="mb-4">
-              <label
-                htmlFor="credit"
+                htmlFor="debit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
                 Ingresa un monto <span className="text-red">*</span>
               </label>
               <input
-                onChange={(e) => setCredit(Number(e.target.value))}
-                value={credit}
-                id="credit"
-                name="credit"
+                onChange={(e) => setDebit(Number(e.target.value))}
+                value={debit}
+                id="debit"
+                name="debit"
                 type="number"
                 placeholder="$0.00"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
@@ -161,7 +159,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
             <div className="mb-4">
               <label
-                htmlFor="credit"
+                htmlFor="debit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
              Mensaje
@@ -179,7 +177,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
             <div className="mt-6 flex justify-end gap-4">
               <Link
-                href="/dashboard/salas"
+                href="/dashboard/maquinas"
                 className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
               >
                 Cancelar
@@ -198,4 +196,4 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
   );
 };
 
-export default EditarSala;
+export default EditTransaction;
