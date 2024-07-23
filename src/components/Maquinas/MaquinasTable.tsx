@@ -13,7 +13,7 @@ interface MaquinaData {
   balance?: number; 
 }
 
-interface TransferData {
+interface TransactionData {
   _id: string;
   id_machine: string;
   balance: number;
@@ -25,53 +25,62 @@ interface MaquinasTableProps {
 
 const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [dataLoaded, setDataLoaded] = useState(false); // Estado para verificar si los datos de transfer se cargaron
-  const [transferData, setTransferData] = useState<TransferData[]>([]); // Estado para almacenar los datos de transferencia
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [transferData, setTransferData] = useState<TransactionData[]>([]);
 
   useEffect(() => {
-    // Llamar a la API para obtener los datos de transferencia
     fetch('/api/transfer')
       .then(response => response.json())
       .then(data => {
-        // Aseguramos que data sea un array de TransferData
+        console.log('API response:', data);
+  
+        let transferDataArray = [];
+  
         if (Array.isArray(data)) {
-          setTransferData(data); // Asignamos directamente si los datos son un array
+          transferDataArray = data;
         } else if (data && Array.isArray(data.data)) {
-          setTransferData(data.data); // Si los datos están encapsulados en un objeto con .data
+          transferDataArray = data.data;
         } else {
           throw new Error('Los datos recibidos de la API no están en el formato esperado.');
         }
+  
+        const latestTransaction = transferDataArray.reduce((latest, current) => {
+          return current.transaction > latest.transaction ? current : latest;
+        }, transferDataArray[0]);
+  
+        setTransferData(transferDataArray);
         setDataLoaded(true);
+  
       })
       .catch(error => {
         console.error('Error fetching transfer data:', error);
       });
   }, []);
   
-
-  // Función para obtener el _id de transferencia según id_machine
-  const getTransferIdByMachineId = (id_machine: string): string | undefined => {
-    const transfer = transferData.find(item => item.id_machine === id_machine);
-    return transfer ? transfer._id : undefined;
-  };
-
-  // Función para obtener el balance según id_machine
-  const getBalanceByIdMachine = (id_machine: string): number | undefined => {
-    const transfer = transferData.find(item => item.id_machine === id_machine);
-    return transfer ? transfer.balance : undefined;
+  const getLatestBalanceByIdMachine = (id_machine: string): number | undefined => {
+    const transactions = transferData.filter(item => item.id_machine === id_machine);
+    if (transactions.length > 0) {
+      return transactions[transactions.length - 1].balance;
+    }
+    return undefined;
   };
 
   const filteredMaquinas = maquinas.filter((maquina) =>
     maquina.id_machine.toLowerCase().includes(searchTerm.toLowerCase())
   ).map((maquina) => ({
     ...maquina,
-    balance: getBalanceByIdMachine(maquina.id_machine) // Agregar el balance desde transferData
+    balance: getLatestBalanceByIdMachine(maquina.id_machine)
   }));
 
   const handleStatusChange = (id: string, newStatus: number) => {
-    // Implementa la lógica para cambiar el estado
     console.log(`Cambiando estado de máquina ${id} a ${newStatus}`);
   };
+
+  // Función para obtener el _id de transferencia según id_machine
+  const getTransferIdByMachineId = (id_machine: string): string | undefined => {
+  const transfer = transferData.find(item => item.id_machine === id_machine);
+  return transfer ? transfer._id : undefined;
+};
 
   const columns = [
     {
@@ -94,7 +103,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
     },
     {
       name: 'Balance',
-      selector: (row: MaquinaData) => row.balance ? row.balance.toFixed(2) : 'No disponible', // Mostrar el balance si está disponible
+      selector: (row: MaquinaData) => row.balance ? row.balance.toFixed(2) : 'No disponible',
       sortable: true,
     },
     {

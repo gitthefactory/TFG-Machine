@@ -1,29 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
-
 const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
-    const [newNombre, setNewNombre] = useState<string>(transaction.id_machine || '');
-    const [newCurrency, setNewCurrency] = useState<string>(transaction.currency || '');
+  const [newNombre, setNewNombre] = useState<string>(transaction.id_machine || '');
+  const [newCurrency, setNewCurrency] = useState<string>(transaction.currency || '');
   const [newMessage, setNewMessage] = useState<string>('');
-  const [action] = useState<number>('DEBIT');
-
-  const [balance, setNewbalance] = useState<number>(transaction.balance);
-
-  // const [credit, setNewCredit] = useState<number>(transaction.balance);
-
+  const [action] = useState<string>('DEBIT');
+  const [balance, setNewBalance] = useState<number>(transaction.balance);
   const [debit, setDebit] = useState<number>();
 
-
-  console.log(transaction);
-
-
-  console.log(transaction);
-
+  useEffect(() => {
+    // Fetch the latest transactions from the API
+    fetch('/api/transfer')
+      .then(response => response.json())
+      .then(data => {
+        console.log('API response:', data);
+  
+        // Ensure data.data is an array and has at least one element
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          // Find the latest transaction for the specific id_machine
+          const latestTransaction = data.data
+            .filter(item => item.id_machine === transaction.id_machine) // Filter by id_machine
+            .reduce((latest, current) => {
+              return current.transaction > latest.transaction ? current : latest;
+            });
+  
+          // Update the newBalance state with the balance of the latest transaction
+          setNewBalance(latestTransaction.balance);
+        } else {
+          throw new Error('API response data is not in the expected format or no data available.');
+        }
+      })
+      .catch(error => console.error('Error fetching API:', error));
+  }, [transaction.id_machine]); // Include transaction.id_machine in dependency array to fetch when id_machine changes
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,11 +47,8 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
       balance,
       message: newMessage,
       action,
-      // credit,
       debit,
     };
-
-    console.log("Datos a enviar:", transferData); 
 
     try {
       const response = await fetch(`/api/transfer`, {
@@ -60,12 +70,11 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
     }
   };
 
-
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
         <Breadcrumb pageName="Transacción manual de débito" />
-        <AtrasButton href="/dashboard/salas" />
+        <AtrasButton href="/dashboard/maquinas" />
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <form onSubmit={handleSubmit} className="p-6.5">
             <h1 className="mb-6">DATOS DE LA MAQUINA</h1>
@@ -168,7 +177,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
 
             <div className="mt-6 flex justify-end gap-4">
               <Link
-                href="/dashboard/salas"
+                href="/dashboard/maquinas"
                 className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
               >
                 Cancelar
