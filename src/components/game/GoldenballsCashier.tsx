@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css"; // Import Swiper styles
+import Image from 'next/image';
 
 const GoldenballsCashier: React.FC = () => {
   useEffect(() => {
@@ -25,7 +26,7 @@ const GoldenballsCashier: React.FC = () => {
           <div className="container">
             <div className="row">
               <div className="col">
-                <img src="assets/img/ezugi/goldenballs_cashier.png" className="cashier" />
+                <Image src="assets/img/ezugi/goldenballs_cashier.png" className="cashier" alt =""width={500} height={500} />
               </div>
             </div>
           </div>

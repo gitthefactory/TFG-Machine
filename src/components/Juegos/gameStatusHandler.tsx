@@ -3,6 +3,7 @@ import getJuegos from "@/controllers/juegos/getJuegos";
 import DataTable from "react-data-table-component";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Image from 'next/image';
 
 export default function DetalleProveedores() {
   const [games, setGames] = useState<any[]>([]);
@@ -163,7 +164,7 @@ export default function DetalleProveedores() {
     {
       name: "Imagen",
       cell: (row: any) => (
-        <img src={row.image} alt={row.name} className="w-16 h-16 object-cover" />
+        <Image src={row.image} alt={row.name} className="w-16 h-16 object-cover"width={500} height={500} />
       ),
       ignoreRowClick: true,
       allowOverflow: true,

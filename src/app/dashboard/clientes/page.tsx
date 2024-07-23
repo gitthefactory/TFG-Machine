@@ -34,7 +34,7 @@ const Clientes: React.FC = () => {
     }
 
     fetchData();
-  }, []);
+  }, [setLoading]);
 
   
 

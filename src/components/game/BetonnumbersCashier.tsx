@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Swiper from "swiper";
 import '/src/css/swiper.css';
+import Image from 'next/image';
 
 const BetonnumbersCashier: React.FC = () => {
   useEffect(() => {
@@ -25,7 +26,7 @@ const BetonnumbersCashier: React.FC = () => {
           <div className="container">
             <div className="row">
               <div className="col">
-                <img src="/images/img/ezugi/betonnumbers_cashier.png" />
+                <Image src="/images/img/ezugi/betonnumbers_cashier.png" alt ="" width={500} height={500}/>
               </div>
             </div>
           </div>
