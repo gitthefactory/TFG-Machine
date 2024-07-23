@@ -9,10 +9,18 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
     const [newNombre, setNewNombre] = useState<string>(transaction.id_machine || '');
     const [newCurrency, setNewCurrency] = useState<string>(transaction.currency || '');
-  const [balance, setBalance] = useState<number>();
-  const [newbalance, setNewbalance] = useState<number>(transaction.balance || '');
   const [newMessage, setNewMessage] = useState<string>('');
   const [action] = useState<number>('DEBIT');
+
+  const [balance, setNewbalance] = useState<number>(transaction.balance);
+
+  // const [credit, setNewCredit] = useState<number>(transaction.balance);
+
+  const [debit, setDebit] = useState<number>();
+
+
+  console.log(transaction);
+
 
   console.log(transaction);
 
@@ -26,6 +34,8 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
       balance,
       message: newMessage,
       action,
+      // credit,
+      debit,
     };
 
     console.log("Datos a enviar:", transferData); 
@@ -100,16 +110,16 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
               </div>
               <div className="w-full xl:w-1/3">
                 <label
-                  htmlFor="newNombre"
+                  htmlFor="balance"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
                   Balance actual
                 </label>
                 <input
                   onChange={(e) => setNewbalance(e.target.value)}
-                  value={newbalance}
-                  id="newbalance"
-                  name="newbalance"
+                  value={balance}
+                  id="balance"
+                  name="balance"
                   type="text"
                   placeholder="Balante actual"
                   className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
@@ -121,16 +131,16 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
             <h1 className="mb-6">TRANSACCION DEBITO</h1>
             <div className="mb-4">
               <label
-                htmlFor="balance"
+                htmlFor="debit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
                 Ingresa un monto <span className="text-red">*</span>
               </label>
               <input
-                onChange={(e) => setBalance(Number(e.target.value))}
-                value={balance}
-                id="balance"
-                name="balance"
+                onChange={(e) => setDebit(Number(e.target.value))}
+                value={debit}
+                id="debit"
+                name="debit"
                 type="number"
                 placeholder="$0.00"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
@@ -140,7 +150,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
 
             <div className="mb-4">
               <label
-                htmlFor="balance"
+                htmlFor="debit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
              Mensaje

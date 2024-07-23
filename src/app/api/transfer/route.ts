@@ -27,21 +27,39 @@ export async function GET() {
 }
 
 
-export async function POST(request: { json: () => PromiseLike<{ status: any; currency: any; id_machine: any; balance: any; message?: any; action: any; }> }) {
+export async function POST(request: { json: () => PromiseLike<{ status: number; currency: string[]; id_machine: string; balance: number; message?: string; action: string; debit?: number; credit: number; }> }) {
   try {
-    const { status, currency, id_machine, balance, message, action } = await request.json();
+    const { status, currency, id_machine, balance, message, action, debit, credit } = await request.json();
 
     // Conectar a la base de datos
     await connectDB();
 
-    // Crea una nueva máquina en base a los datos proporcionados
+    // Crea una nueva transacción en base a los datos proporcionados
     const newTransactionData = {
       status,
       currency,
       id_machine,
-      balance,
       action,
+      credit,
+      balance,
+      debit,
+      message,
     };
+
+       // Add message only if it is provided
+       if (message) {
+        newTransactionData.credit = credit;
+      }
+
+             // Add message only if it is provided
+             if (message) {
+              newTransactionData.balance = balance;
+            }
+  
+    // Add debit only if it is provided
+    if (debit !== undefined) {
+      newTransactionData.debit = debit;
+    }
 
     // Add message only if it is provided
     if (message) {

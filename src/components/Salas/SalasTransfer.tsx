@@ -13,9 +13,11 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
   const [newNombre, setNewNombre] = useState<string>(sala.nombre || '');
   const [newCurrency, setNewCurrency] = useState<string>(sala.currency || '');
   const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
-  const [balance, setBalance] = useState<number>();
+  const [balance, setBalance] = useState<number>(0);
   const [newMessage, setNewMessage] = useState<string>('');
   const [action, setAction] = useState<number>('CREDIT');
+  const [credit, setCredit] = useState<number>();
+
 
 
 
@@ -30,6 +32,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
       balance,
       message: newMessage,
       action,
+      credit,
     };
 
     console.log("Datos a enviar:", transferData); // Verifica los datos antes de enviarlos
@@ -135,18 +138,20 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
               </select>
             </div>
 
+            <h1 className="mb-6">TRANSACCION</h1>
+
             <div className="mb-4">
               <label
-                htmlFor="balance"
+                htmlFor="credit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
                 Ingresa un monto <span className="text-red">*</span>
               </label>
               <input
-                onChange={(e) => setBalance(Number(e.target.value))}
-                value={balance}
-                id="balance"
-                name="balance"
+                onChange={(e) => setCredit(Number(e.target.value))}
+                value={credit}
+                id="credit"
+                name="credit"
                 type="number"
                 placeholder="$0.00"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
@@ -156,7 +161,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
             <div className="mb-4">
               <label
-                htmlFor="balance"
+                htmlFor="credit"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
              Mensaje
