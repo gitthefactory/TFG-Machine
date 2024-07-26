@@ -38,7 +38,9 @@ const SignIn: React.FC = () => {
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        router.replace("/");
+        setTimeout(() => {
+          router.replace("/");
+        }, 500); // Redirigir después de 500 milisegundos (medio segundo)
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
