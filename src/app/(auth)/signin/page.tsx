@@ -29,10 +29,10 @@ const SignIn: React.FC = () => {
     try {
       setPending(true);
       const res = await signIn("credentials", {
-        // nombreCompleto: info.nombreCompleto,
+        
         email: info.email,
         password: info.password,
-        redirect: false
+        redirect: true 
       });
   
       if (res?.error) {
