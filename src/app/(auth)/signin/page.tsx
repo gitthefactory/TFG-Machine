@@ -32,13 +32,13 @@ const SignIn: React.FC = () => {
         
         email: info.email,
         password: info.password,
-        redirect: true 
+        redirect: false  
       });
   
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        await router.replace("/");
+        window.location.reload();
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
