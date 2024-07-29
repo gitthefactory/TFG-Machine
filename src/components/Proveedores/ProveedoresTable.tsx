@@ -7,7 +7,7 @@ interface ProviderData {
   _id: string;
   provider_name: string;
   provider: number;
-  status: number; // Changed to number
+  status: number;
 }
 
 interface ProviderTableProps {}
@@ -20,13 +20,13 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const response = await fetch("/api/providers"); // Update with your actual API endpoint
+        const response = await fetch("/api/providers");
         if (!response.ok) {
           throw new Error("Failed to fetch providers");
         }
         const data = await response.json();
-        setProviders(data.data); // Assuming your API response structure matches { message: "Ok", data: providers }
-        setFilteredProviders(data.data); // Initialize filtered providers with fetched data
+        setProviders(data.data);
+        setFilteredProviders(data.data);
       } catch (error) {
         console.error("Error fetching providers:", error);
         toast.error("Failed to fetch providers");
@@ -36,16 +36,14 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
     fetchProviders();
   }, []);
 
-  const handleToggleStatus = async (row: ProviderData) => {
-    const updatedStatus = row.status === 1 ? 0 : 1;
-
+  const handleToggleStatus = async (row: ProviderData, newStatus: number) => {
     try {
       const response = await fetch(`/api/providers/${row._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: updatedStatus }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) {
@@ -53,10 +51,10 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
       }
 
       const updatedProviders = filteredProviders.map(provider =>
-        provider._id === row._id ? { ...provider, status: updatedStatus } : provider
+        provider._id === row._id ? { ...provider, status: newStatus } : provider
       );
       setFilteredProviders(updatedProviders);
-      toast.success(`Estado de ${row.provider_name} actualizado.`);
+      toast.success(`Estado de ${row.provider_name} actualizado a ${newStatus}.`);
     } catch (error) {
       console.error("Error updating provider status:", error);
       toast.error("Failed to update provider status");
@@ -67,15 +65,22 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
     {
       name: 'Estado',
       cell: (row: ProviderData) => (
-        <input
-          type="checkbox"
-          className="form-checkbox h-5 w-5 text-green-500"
-          checked={row.status === 1}
-          onChange={() => handleToggleStatus(row)}
-        />
+        <select
+          value={row.status}
+          onChange={(e) => handleToggleStatus(row, parseInt(e.target.value))}
+          className="form-select h-5 w-5 text-green-500"
+        >
+          <option value={0}>Inactivo</option>
+          <option value={1}>Activo</option>
+        </select>
       ),
       ignoreRowClick: true,
       allowOverflow: true,
+    },
+    {
+      name: 'numero status',
+      selector: (row: ProviderData) => row.status,
+      sortable: true,
     },
     {
       name: 'N°',
