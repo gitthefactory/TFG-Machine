@@ -5,74 +5,70 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from 'next/image';
 
-interface GameData {
-  id: number;
-  name: string;
-  provider: string;
-  category: string;
-  image: string;
-  status: boolean;
-}
-
 export default function DetalleProveedores() {
-  const [games, setGames] = useState<GameData[]>([]);
+  const [games, setGames] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectAll, setSelectAll] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const gamesData = await getJuegos("", 1);
-        if (gamesData && gamesData.length > 0) {
-          const updatedGames: GameData[] = [];
-          gamesData.forEach((gameData: any) => {
-            gameData.games.forEach((game: any) => {
-              updatedGames.push({
-                id: game.id,
-                name: game.name,
-                provider: game.provider_name,
-                category: game.category,
-                image: game.image,
-                status: game.status === 1, // Convertir a booleano
-              });
-            });
-          });
-          setGames(updatedGames);
-        } else {
-          setGames([]);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error("Error al recuperar juegos");
-      }
-    };
-
     fetchGames();
   }, []);
 
-  const handleRowSelect = async (gameId: number, currentStatus: boolean) => {
+  const fetchGames = async () => {
+    try {
+      const gamesData = await getJuegos("", 1);
+      if (gamesData && gamesData.length > 0) {
+        let updatedGames: any[] = [];
+        gamesData.forEach((gameData: any) => {
+          gameData.games.forEach((game: any) => {
+            updatedGames.push({
+              id: game.id,
+              name: game.name,
+              provider: game.provider_name,
+              category: game.category,
+              image: game.image,
+              status: game.status === 1, // Convertir a booleano
+            });
+          });
+        });
+        setGames(updatedGames);
+      } else {
+        setGames([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRowSelect = async (gameId: number, currentStatus: number) => {
     try {
       const response = await fetch(`/api/juegosApi/${gameId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: currentStatus ? 0 : 1 }), // Cambiar el estado opuesto al actual
+        body: JSON.stringify({ status: currentStatus === 0 ? 1 : 0 }), // Cambiar el estado opuesto al actual
       });
       if (!response.ok) {
         throw new Error(`Error updating game ${gameId}: ${response.statusText}`);
+      }
+      const responseData = await response.json();
+      console.log(`Update response for game ${gameId}:`, responseData);
+      if (currentStatus === 0) {
+        toast.success(`Juego activado exitosamente`);
+      } else {
+        toast.error(`Juego desactivado exitosamente`);
       }
       const updatedGames = games.map((game) => {
         if (game.id === gameId) {
           return {
             ...game,
-            status: !currentStatus,
+            status: currentStatus === 0 ? 1 : 0,
           };
         }
         return game;
       });
       setGames(updatedGames);
-      toast.success(`Juego ${!currentStatus ? 'activado' : 'desactivado'} exitosamente`);
     } catch (error) {
       console.error(`Hubo un error al actualizar estado para el juego ${gameId}:`, error);
       toast.error(`Error al actualizar estado para el juego ${gameId}`);
@@ -93,19 +89,30 @@ export default function DetalleProveedores() {
           if (!response.ok) {
             throw new Error(`Error updating game ${game.id}: ${response.statusText}`);
           }
-          return {
-            ...game,
-            status: !selectAll,
-          };
+          const responseData = await response.json();
+          console.log(`Update response for game ${game.id}:`, responseData);
+          if (!selectAll) {
+            toast.success(`Juego activado globalmente exitosamente`);
+          } else {
+            toast.error(`Juego desactivado globalmente exitosamente`);
+          }
+          const updatedGames = games.map((gameItem) => {
+            if (gameItem.id === game.id) {
+              return {
+                ...gameItem,
+                status: !selectAll ? 1 : 0,
+              };
+            }
+            return gameItem;
+          });
+          setGames(updatedGames);
         } catch (error) {
           console.error(`Hubo un error al actualizar estado para el juego ${game.id}:`, error);
           toast.error(`Error al actualizar estado para el juego ${game.name}`);
         }
       });
-      const updatedGames = await Promise.all(promises);
-      setGames(updatedGames);
+      await Promise.all(promises);
       setSelectAll(!selectAll);
-      toast.success(`Juegos ${!selectAll ? 'activados' : 'desactivados'} globalmente exitosamente`);
     } catch (error) {
       console.error("Hubo un error al actualizar estado global:", error);
       toast.error("Error al actualizar estado global");
@@ -130,11 +137,11 @@ export default function DetalleProveedores() {
           Estado
         </>
       ),
-      cell: (row: GameData) => (
+      selector: (row: any) => (
         <input
           type="checkbox"
           checked={row.status}
-          onChange={() => handleRowSelect(row.id, row.status)}
+          onChange={() => handleRowSelect(row.id, row.status ? 1 : 0)}
         />
       ),
       ignoreRowClick: true,
@@ -145,19 +152,19 @@ export default function DetalleProveedores() {
     },
     {
       name: "ID Juegos",
-      selector: (row: GameData) => row.id,
+      selector: (row: any) => row.id,
       sortable: true,
       width: '100px',
     },
     {
       name: "Categoría",
-      selector: (row: GameData) => row.category,
+      selector: (row: any) => row.category,
       sortable: true,
     },
     {
       name: "Imagen",
-      cell: (row: GameData) => (
-        <Image src={row.image} alt={row.name} className="w-16 h-16 object-cover" width={500} height={500} />
+      cell: (row: any) => (
+        <Image src={row.image} alt={row.name} className="w-16 h-16 object-cover"width={500} height={500} />
       ),
       ignoreRowClick: true,
       allowOverflow: true,
@@ -165,12 +172,12 @@ export default function DetalleProveedores() {
     },
     {
       name: "Proveedor",
-      selector: (row: GameData) => row.provider,
+      cell: (row: any) => row.provider,
       sortable: true,
     },
     {
       name: "Nombre Juegos",
-      selector: (row: GameData) => row.name,
+      selector: (row: any) => row.name,
       sortable: true,
     },
   ];
