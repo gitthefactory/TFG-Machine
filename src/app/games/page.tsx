@@ -21,7 +21,7 @@ const Games = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1100);
+    }, 4100);
 
     return () => clearTimeout(timer);
   }, []);
@@ -32,7 +32,7 @@ const Games = () => {
     setTimeout(() => {
       setVisibleSection(section);
       setIsLoading(false);
-    }, 1000); // Simulación del tiempo de carga
+    }, 5000);
   };
 
   const handleCrash = () => handleSectionChange('crash');
