@@ -38,7 +38,7 @@ const SignIn: React.FC = () => {
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        await router.replace("/");
+        router.replace("/");
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
