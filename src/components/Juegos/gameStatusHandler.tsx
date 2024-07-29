@@ -5,41 +5,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from 'next/image';
 
-export async function getServerSideProps() {
-  try {
-    const gamesData = await getJuegos("", 1);
-    let updatedGames: any[] = [];
-    if (gamesData && gamesData.length > 0) {
-      gamesData.forEach((gameData: any) => {
-        gameData.games.forEach((game: any) => {
-          updatedGames.push({
-            id: game.id,
-            name: game.name,
-            provider: game.provider_name,
-            category: game.category,
-            image: game.image,
-            status: game.status === 1, // Convertir a booleano
-          });
-        });
-      });
-    }
-    return {
-      props: {
-        initialGames: updatedGames,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        initialGames: [],
-      },
-    };
-  }
-}
-
-export default function DetalleProveedores({ initialGames }: { initialGames: any[] }) {
-  const [games, setGames] = useState<any[]>(initialGames || []);
+export default function DetalleProveedores() {
+  const [games, setGames] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectAll, setSelectAll] = useState<boolean>(false);
 
