@@ -3,19 +3,24 @@ import DataTable from 'react-data-table-component';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-interface ProviderData {
+interface ProvidersData {
   _id: string;
   provider_name: string;
   provider: number;
   status: number;
 }
 
-interface ProviderTableProps {}
+interface ProviderTableProps {
+providers: ProvidersData[];
 
-const ProviderTable: React.FC<ProviderTableProps> = () => {
+}
+
+const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [providers, setProviders] = useState<ProviderData[]>([]);
-  const [filteredProviders, setFilteredProviders] = useState<ProviderData[]>([]);
+  const [provider, setProviders] = useState<ProvidersData[]>([]);
+  const [filteredProviders, setFilteredProviders] = useState<ProvidersData[]>([]);
+
+  console.log(providers);
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -36,20 +41,20 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
     fetchProviders();
   }, []);
 
-  const handleToggleStatus = async (row: ProviderData, newStatus: number) => {
+  const handleToggleStatus = async (row: ProvidersData, newStatus: number) => {
     try {
       const response = await fetch(`/api/providers/${row._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ newStatus }), 
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to update provider status");
       }
-
+  
       const updatedProviders = filteredProviders.map(provider =>
         provider._id === row._id ? { ...provider, status: newStatus } : provider
       );
@@ -60,11 +65,11 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
       toast.error("Failed to update provider status");
     }
   };
-
+  
   const columns = [
     {
       name: 'Estado',
-      cell: (row: ProviderData) => (
+      cell: (row: ProvidersData) => (
         <select
           value={row.status}
           onChange={(e) => handleToggleStatus(row, parseInt(e.target.value))}
@@ -78,23 +83,23 @@ const ProviderTable: React.FC<ProviderTableProps> = () => {
       allowOverflow: true,
     },
     {
-      name: 'numero status',
-      selector: (row: ProviderData) => row.status,
+      name: 'Número status',
+      selector: (row: ProvidersData) => row.status,
       sortable: true,
     },
     {
       name: 'N°',
-      selector: (row: ProviderData) => row._id,
+      selector: (row: ProvidersData) => row._id,
       sortable: true,
     },
     {
       name: 'Nombre Proveedor',
-      selector: (row: ProviderData) => row.provider_name,
+      selector: (row: ProvidersData) => row.provider_name,
       sortable: true,
     },
     {
       name: 'N° Proveedor',
-      selector: (row: ProviderData) => row.provider,
+      selector: (row: ProvidersData) => row.provider,
       sortable: true,
     },
   ];
