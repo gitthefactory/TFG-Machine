@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation"; // Importa useSearchParams
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
 
 const SignIn: React.FC = () => {
@@ -14,7 +14,6 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams(); // Obtén los parámetros de búsqueda
 
   function handleInput(e: any) {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -30,16 +29,16 @@ const SignIn: React.FC = () => {
     try {
       setPending(true);
       const res = await signIn("credentials", {
+        
         email: info.email,
         password: info.password,
-        redirect: false,
-        callbackUrl: searchParams.get('callbackUrl') || undefined // Pasa el callbackUrl a la función signIn
+        redirect: false  
       });
   
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        router.replace(searchParams.get('callbackUrl') || "/"); // Redirige a la URL de callback o a la página principal
+        router.replace("/");
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
@@ -47,6 +46,7 @@ const SignIn: React.FC = () => {
       setPending(false);
     }
   }
+  
 
   return (
     <>
@@ -75,7 +75,10 @@ const SignIn: React.FC = () => {
         background-color: rgb(227, 17, 108);
         max-width: 250px;
       }    
+
     `}</style>
+      {/* <Breadcrumb pageName="Sign In" /> */}
+
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center" >
             <div className="px-26 py-17.5 text-center">
@@ -88,45 +91,47 @@ const SignIn: React.FC = () => {
                   height={350}
                 />
               </Link>
-              <div className="w-full border-stroke dark:border-strokedark">
-                <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
-                  <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                      <label className="mb-2.5 block font-medium"></label>
-                      <div className="relative">
-                        <input
-                          onChange={(e) => handleInput(e)}
-                          name="email"
-                          type="email"
-                          placeholder="Correo Electrónico"
-                          className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                    <div className="mb-6">
-                      <label className="mb-2.5 block font-medium"></label>
-                      <div className="relative">
-                        <input
-                          onChange={(e) => handleInput(e)}
-                          name="password"
-                          type="password"
-                          placeholder="Contraseña"
-                          className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                    {error && <span className="message">{error}</span>}
-                    <div className="mb-5">
-                      <input
-                        type="submit"
-                        value="Iniciar Sesión"
-                        className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+          <div className="w-full border-stroke dark:border-strokedark">
+            <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
+              <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                  <label className="mb-2.5 block font-medium">
+                  </label>
+                  <div className="relative">
+                    <input
+                      onChange={(e) => handleInput(e)}
+                      name="email"
+                      type="email"
+                      placeholder="Correo Electrónico"
+                      className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       />
-                    </div>
-                  </form>
+                  </div>
                 </div>
-              </div>
+                <div className="mb-6">
+                  <label className="mb-2.5 block font-medium">
+                  </label>
+                  <div className="relative">
+                    <input
+                      onChange={(e) => handleInput(e)}
+                      name="password"
+                      type="password"
+                      placeholder="Contraseña"
+                      className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                  </div>
+                </div>
+                {error && <span className="message">{error}</span>}
+                <div className="mb-5">
+                  <input
+                    type="submit"
+                    value="Iniciar Sesión"
+                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                  />
+                </div>
+              </form>
             </div>
+          </div>
+        </div>
         </div>
       </div>
     </>
