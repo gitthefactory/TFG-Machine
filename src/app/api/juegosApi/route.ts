@@ -1,25 +1,62 @@
-import { NextResponse } from "next/server";
-import { connectDB } from "@/libs/mongodb";
-import ProvidersModel from "@/models/providers"; // Cambiado el nombre de la importación para evitar conflictos de nombres
+import GamesModel from '@/models/games';
+import { NextResponse } from 'next/server';
+import { connectDB } from '@/libs/mongodb';
 
-export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
+export const dynamic = 'force-dynamic'; // Asegura que la API sea dinámica
 
-export async function GET(request: Request) {
+// GET ALL GAMES
+export async function GET() {
+    try {
+      // Conectar a la base de datos
+      await connectDB();
+  
+      // Obtener todos los juegos
+      const juegos = await GamesModel.find();
+  
+      // Devolver la respuesta con los datos de los juegos
+      return NextResponse.json({
+        message: "Ok",
+        data: juegos,
+      }, {
+        status: 200
+      });
+    } catch (error) {
+      // Manejar cualquier error que pueda ocurrir durante el proceso
+      return NextResponse.json({
+        message: "Failed to get juegos",
+        error,
+      }, {
+        status: 500,
+      });
+    }
+}
+
+// CREAR JUEGOS
+export async function POST(request: { json: () => PromiseLike<{ provider_name: string; provider: number; games: string[]; status: boolean; img: string; }> }) {
   try {
+    const { provider_name, provider, games, status, img } = await request.json();
+
+    // Conecta a la base de datos
     await connectDB();
-    const providers = await ProvidersModel.find();
-    console.log('Datos obtenidos:', providers); // Añade este log para verificar los datos obtenidos
-    return NextResponse.json({
-      message: "Ok",
-      data: providers,
-    }, {
-      status: 200
+
+    // Crea un nuevo proveedor de juegos en base a los datos proporcionados
+    const newGameProvider = await GamesModel.create({
+      provider_name: provider_name,
+      provider: provider,
+      games: games,
+      status: status,
+      img: img,
     });
-  } catch (error) {
-    console.error('Error al obtener los proveedores:', error);
+
     return NextResponse.json({
-      message: "Error al obtener los proveedores",
-      error: error.message,
+      message: "Proveedor de Juegos Creado con Éxito",
+      data: newGameProvider
+    }, { status: 201 });
+  } catch (error) {
+    console.error("Error al crear el proveedor de juegos:", error);
+    return NextResponse.json({
+      message: "Error al crear el proveedor de juegos",
+      error,
     }, {
       status: 500,
     });
