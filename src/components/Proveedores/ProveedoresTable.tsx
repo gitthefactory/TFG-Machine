@@ -123,11 +123,11 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
             Listado de proveedores
           </h2>
         </header>
-        <div className="p-6">
+        <div className="p-6 ">
           <input
             type="text"
             placeholder="Buscar proveedor..."
-            className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark"
+            className="w-full mb-4 px-3 py-2 rounded border border-stroke focus:outline-none focus:border-primary dark:bg-boxdark "
             value={searchTerm}
             onChange={handleSearchChange}
           />

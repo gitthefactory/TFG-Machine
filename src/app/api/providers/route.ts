@@ -1,30 +1,27 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
-import Providers from "@/models/providers"; // Cambiado el nombre de la importación para evitar conflictos de nombres
+import ProvidersModel from "@/models/providers"; // Cambiado el nombre de la importación para evitar conflictos de nombres
 
-//GET ALL OPERADORES
-export async function GET() {
+export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
+
+export async function GET(request: Request) {
   try {
-      // Conectar a la base de datos
-      await connectDB();
-
-      // Obtener todos los operadores
-      const providers = await Providers.find();
-
-      // Devolver la respuesta con los datos de los operadores
-      return NextResponse.json({
-          message: "Ok",
-          data: providers,
-      }, {
-          status: 200
-      });
+    await connectDB();
+    const providers = await ProvidersModel.find();
+    console.log('Datos obtenidos:', providers); // Añade este log para verificar los datos obtenidos
+    return NextResponse.json({
+      message: "Ok",
+      data: providers,
+    }, {
+      status: 200
+    });
   } catch (error) {
-      // Manejar cualquier error que pueda ocurrir durante el proceso
-      return NextResponse.json({
-          message: "Error al obtener los operadores",
-          error,
-      }, {
-          status: 500,
-      });
+    console.error('Error al obtener los proveedores:', error);
+    return NextResponse.json({
+      message: "Error al obtener los proveedores",
+      error: error.message,
+    }, {
+      status: 500,
+    });
   }
 }
