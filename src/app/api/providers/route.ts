@@ -4,7 +4,7 @@ import ProvidersModel from "@/models/providers"; // Cambiado el nombre de la imp
 
 export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
     const providers = await ProvidersModel.find();
