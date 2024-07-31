@@ -5,15 +5,15 @@ interface Provider {
   provider: number;
   provider_name: string;
   status: number;
-  user: Types.ObjectId;
+  // user: Types.ObjectId;
 }
 
 // Define el esquema para el proveedor
 const ProvidersSchema = new Schema<Provider>({
   provider: { type: Number, required: true },
   provider_name: { type: String, required: true },
-  status: { type: Number, default: 1 },
-  user: { type: Schema.Types.ObjectId, ref: "User" }
+  status: { type: Number, default: 0 },
+  // user: { type: Schema.Types.ObjectId, ref: "User" }
 }, {
   timestamps: true // Opcional: agrega campos de fecha de creación y actualización automáticamente
 });
