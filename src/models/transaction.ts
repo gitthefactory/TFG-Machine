@@ -4,7 +4,7 @@ interface Transaction extends Document {
   status: number;
   id_machine: string;
   currency: string[];
-  balance?: number;
+  balance: number; // Aseguramos que balance siempre sea un número (no opcional)
   message?: string;
   action: string;
   debit?: number;
@@ -26,7 +26,12 @@ const TransactionSchema = new Schema<Transaction>({
   status: { type: Number, default: 1 },
   id_machine: { type: String, required: true },
   currency: { type: [String], required: true },
-  balance: { type: Number, required: false },
+  balance: {
+    type: Number,
+    required: true, // Hacemos balance obligatorio
+    get: (value: number) => parseFloat(value.toFixed(2)), // Getter para asegurar que se recupere como decimal
+    set: (value: number) => truncateToDecimals(value, 2), // Setter para truncar a 2 decimales antes de guardar
+  },
   message: { type: String, required: false },
   action: { type: String, required: true },
   debit: { type: Number, required: false },
@@ -37,24 +42,26 @@ const TransactionSchema = new Schema<Transaction>({
 // Middleware para actualizar el balance antes de guardar
 TransactionSchema.pre('save', async function (next) {
   if (this.isModified('debit') || this.isModified('credit') || this.isNew) {
-    // Solo actualiza el balance si se modifican debit, credit o si es una nueva transacción
     if (this.isNew) {
       try {
         const lastTransaction = await this.constructor.findOne({ id_machine: this.id_machine }).sort({ transaction: -1 });
-        
+
         if (lastTransaction) {
           this.transaction = lastTransaction.transaction + 1;
-          this.balance = truncateToDecimals(lastTransaction.balance + (this.credit || 0) - (this.debit || 0), 2);
+          this.balance = (lastTransaction.balance || 0) + (this.credit || 0) - (this.debit || 0);
         } else {
           this.transaction = 1; // Primera transacción
-          this.balance = truncateToDecimals(this.credit || 0, 2);
+          this.balance = this.credit || 0; // Empezar con el crédito
         }
       } catch (error) {
         return next(error);
       }
     } else {
-      this.balance = truncateToDecimals((this.balance || 0) + (this.credit || 0) - (this.debit || 0), 2);
+      this.balance = (this.balance || 0) + (this.credit || 0) - (this.debit || 0);
     }
+
+    // Truncar balance después de la modificación
+    this.balance = truncateToDecimals(this.balance, 2);
   }
   next();
 });
