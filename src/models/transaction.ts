@@ -7,13 +7,19 @@ interface Transaction extends Document {
   balance?: number;
   message?: string;
   action: string;
-  debit?: number;  // Cambiado a número
-  credit?: number;  // Cambiado a número
+  debit?: number;
+  credit?: number;
   transaction: number;
 }
 
 interface TransactionModel extends mongoose.Model<Transaction> {
   formatBalance(balance: number): string;
+}
+
+// Función para truncar el número a un número específico de decimales
+function truncateToDecimals(value: number, decimals: number): number {
+  const factor = Math.pow(10, decimals);
+  return Math.floor(value * factor) / factor;
 }
 
 const TransactionSchema = new Schema<Transaction>({
@@ -23,51 +29,45 @@ const TransactionSchema = new Schema<Transaction>({
   balance: { type: Number, required: false },
   message: { type: String, required: false },
   action: { type: String, required: true },
-  debit: { type: Number, required: false },  
-  credit: { type: Number, required: false },  
-  transaction: { type: Number, required: true, default: 1}, 
+  debit: { type: Number, required: false },
+  credit: { type: Number, required: false },
+  transaction: { type: Number, required: true, default: 1 },
 });
 
 // Middleware para actualizar el balance antes de guardar
-TransactionSchema.pre('save', function (next) {
-  if (this.isModified('debit') || this.isModified('credit')) {
-    this.balance += (this.credit || 0) - (this.debit || 0);
-  }
-  next();
-});
-
-// Agregar el método estático al esquema
-TransactionSchema.statics.formatBalance = function (balance: number): string {
-  const formatter = new Intl.NumberFormat('es-ES', {
-    style: 'decimal',
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  });
-  return formatter.format(balance);
-};
-
-// Middleware para actualizar el campo balance
 TransactionSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    try {
-      // Buscar la última transacción para la máquina especificada
-      const lastTransaction = await this.constructor.findOne({ id_machine: this.id_machine }).sort({ transaction: -1 });
-      
-      if (lastTransaction) {
-        this.transaction = lastTransaction.transaction + 1;
+  if (this.isModified('debit') || this.isModified('credit') || this.isNew) {
+    // Solo actualiza el balance si se modifican debit, credit o si es una nueva transacción
+    if (this.isNew) {
+      try {
+        const lastTransaction = await this.constructor.findOne({ id_machine: this.id_machine }).sort({ transaction: -1 });
         
-        // Actualizar el balance en función de los créditos y débitos
-        this.balance = lastTransaction.balance + (this.credit || 0) - (this.debit || 0);
-      } else {
-        this.transaction = 0;
-        this.balance = this.credit || 0; // Si es la primera transacción, el balance será igual al crédito
+        if (lastTransaction) {
+          this.transaction = lastTransaction.transaction + 1;
+          this.balance = truncateToDecimals(lastTransaction.balance + (this.credit || 0) - (this.debit || 0), 2);
+        } else {
+          this.transaction = 1; // Primera transacción
+          this.balance = truncateToDecimals(this.credit || 0, 2);
+        }
+      } catch (error) {
+        return next(error);
       }
-    } catch (error) {
-      return next(error);
+    } else {
+      this.balance = truncateToDecimals((this.balance || 0) + (this.credit || 0) - (this.debit || 0), 2);
     }
   }
   next();
 });
+
+// Método estático para formatear balance
+TransactionSchema.statics.formatBalance = function (balance: number): string {
+  const formatter = new Intl.NumberFormat('es-ES', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return formatter.format(balance);
+};
 
 const Transaction = mongoose.models.Transaction || model<Transaction, TransactionModel>("Transaction", TransactionSchema);
 
