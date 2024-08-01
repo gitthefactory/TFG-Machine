@@ -4,17 +4,18 @@ import { FaRegRectangleXmark } from "react-icons/fa6";
 interface GameUrlProps {
   game: any;
   token: string;
+  idMachine: string; // Nueva prop para idMachineFromURL
   onClose: () => void;
 }
 
-const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
+const GameUrl: React.FC<GameUrlProps> = ({ game, token, idMachine, onClose }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [gameUrl, setGameUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGameUrl = async () => {
       try {
-        const url = `https://aggregator.casinoenruta.com/api/game?SessionToken=${token}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=1&username=usertest&balance=0&country=CL&currency=CLP&game=${game.id}&return_url=https://google.com&language=es_ES&mobile=false`;
+        const url = `https://aggregator.casinoenruta.com/api/game?SessionToken=${token}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=${idMachine}&username=${idMachine}&balance=0&country=CL&currency=CLP&game=${game.id}&return_url=https://google.com&language=es_ES&mobile=false`;
         console.log("AQUI game URL:", url);
 
         const response = await fetch(url);
@@ -37,7 +38,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
     if (game) {
       fetchGameUrl();
     }
-  }, [game, token]);
+  }, [game, token, idMachine]);
 
   const closeGame = () => {
     onClose();
