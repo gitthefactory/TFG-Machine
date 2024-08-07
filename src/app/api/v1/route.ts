@@ -2,29 +2,42 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 
-
-//GET ALL Transaction
+// GET ALL Transaction
 export async function GET() {
   try {
     await connectDB();
 
-    const transaction = await Transaction.find();
+    // Obtiene todas las transacciones
+    const transactions = await Transaction.find();
 
-    return NextResponse.json({
-      message: "Ok",
-      data: transaction,
-    }, {
-      status: 200
+    // Genera respuestas simuladas
+    const simulatedResponse = transactions.length > 0 ? {
+      status: "OK",
+      data: {
+        balance: transactions[0].balance // Devolvemos el balance de la primera transacción
+      }
+    } : {
+      status: "No transactions found",
+      data: {}
+    };
+
+    return NextResponse.json(simulatedResponse, {
+      status: 200,
     });
   } catch (error) {
     return NextResponse.json({
-      message: "Failed to get transaction",
-      error,
+      status: "Failed to get transactions",
+      error: error.message,
     }, {
       status: 500,
     });
   }
 }
+
+
+
+
+
 
 
 export async function POST(request: { json: () => PromiseLike<{ status: number; currency: string[]; id_machine: string; balance: number; message?: string; action: string; debit?: number; credit: number; }> }) {
