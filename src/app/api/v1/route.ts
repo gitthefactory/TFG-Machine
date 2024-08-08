@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 
-// GET ALL Transaction
+// GET ALL Transactions
 export async function GET() {
   try {
     await connectDB();
@@ -13,12 +13,20 @@ export async function GET() {
     // Genera respuestas simuladas
     const simulatedResponse = transactions.length > 0 ? {
       status: "OK",
-      data: {
-        balance: transactions[0].balance // Devolvemos el balance de la primera transacción
-      }
+      data: transactions.map(transaction => ({
+        // _id: transaction._id,
+        // status: transaction.status,
+        // id_machine: transaction.id_machine,
+        // currency: transaction.currency,
+        balance: transaction.balance,
+        // message: transaction.message,
+        // action: transaction.action,
+        // credit: transaction.credit,
+        // transaction: transaction.transaction
+      }))
     } : {
       status: "No transactions found",
-      data: {}
+      data: []
     };
 
     return NextResponse.json(simulatedResponse, {
@@ -33,7 +41,6 @@ export async function GET() {
     });
   }
 }
-
 
 
 
