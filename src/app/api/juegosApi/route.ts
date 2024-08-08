@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
-import ProvidersModel from "@/models/providers"; // Cambiado el nombre de la importación para evitar conflictos de nombres
+ // Cambiado el nombre de la importación para evitar conflictos de nombres
+import GamesModel from "@/models/games";
 
 export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 
 export async function GET(request: Request) {
   try {
     await connectDB();
-    const providers = await ProvidersModel.find();
-    console.log('Datos obtenidos:', providers); // Añade este log para verificar los datos obtenidos
+    const Games = await GamesModel.find();
+    console.log('Datos obtenidos:', Games); // Añade este log para verificar los datos obtenidos
     return NextResponse.json({
       message: "Ok",
-      data: providers,
+      data: Games,
     }, {
       status: 200
     });
