@@ -10,23 +10,23 @@ export async function GET() {
     // Obtiene todas las transacciones
     const transactions = await Transaction.find();
 
-    // Genera respuestas simuladas
+    // Crear un objeto 'data' donde cada transacción es un objeto anidado
+    let data = {};
+
+    transactions.forEach((transaction, index) => {
+      data = {
+        balance: transaction.balance,
+        // Agrega más campos si es necesario
+      };
+    });
+
     const simulatedResponse = transactions.length > 0 ? {
       status: "OK",
-      data: transactions.map(transaction => ({
-        // _id: transaction._id,
-        // status: transaction.status,
-        // id_machine: transaction.id_machine,
-        // currency: transaction.currency,
-        balance: transaction.balance,
-        // message: transaction.message,
-        // action: transaction.action,
-        // credit: transaction.credit,
-        // transaction: transaction.transaction
-      }))
+      code: 200,
+      data: data
     } : {
       status: "No transactions found",
-      data: []
+      data: {}
     };
 
     return NextResponse.json(simulatedResponse, {
@@ -41,7 +41,6 @@ export async function GET() {
     });
   }
 }
-
 
 
 
