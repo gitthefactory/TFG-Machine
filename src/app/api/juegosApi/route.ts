@@ -7,9 +7,6 @@ export const dynamic = 'force-dynamic'; // Asegura que la página o API sea din�
 
 export async function GET(request: Request) {
   try {
-    const { provider_name, provider, games, status, img } = await request.json();
-
-    // Conecta a la base de datos
     await connectDB();
     const Games = await GamesModel.find();
     console.log('Datos obtenidos:', Games); // Añade este log para verificar los datos obtenidos
@@ -20,10 +17,10 @@ export async function GET(request: Request) {
       status: 200
     });
   } catch (error) {
-    console.error("Error al crear el proveedor de juegos:", error);
+    console.error('Error al obtener los proveedores:', error);
     return NextResponse.json({
-      message: "Error al crear el proveedor de juegos",
-      error,
+      message: "Error al obtener los proveedores",
+      error: error.message,
     }, {
       status: 500,
     });
