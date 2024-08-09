@@ -15,6 +15,7 @@ export async function GET() {
 
     transactions.forEach((transaction, index) => {
       data = {
+        // transaction: transaction._id,
         balance: transaction.balance,
         // Agrega más campos si es necesario
       };
