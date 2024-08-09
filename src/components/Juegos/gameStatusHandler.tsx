@@ -39,6 +39,7 @@ export default function DetalleProveedores() {
       console.error(error);
     }
   };
+ 
 
   const handleRowSelect = async (gameId: number, currentStatus: number) => {
     try {
