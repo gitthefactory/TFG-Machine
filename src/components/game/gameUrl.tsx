@@ -25,6 +25,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
         const url = `https://aggregator.casinoenruta.com/api/game?SessionToken=${token}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=${idMachine}&username=${idMachine}&balance=0&country=CL&currency=CLP&game=${game.id}&return_url=https://google.com&language=es_ES&mobile=false`;
         console.log("AQUI game URL:", url);
 
+
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();

@@ -15,7 +15,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
   const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<number>(0);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [action, setAction] = useState<number>('CREDIT');
+  const [action, setAction] = useState<number>('BALANCE');
   const [credit, setCredit] = useState<number>();
 
 
