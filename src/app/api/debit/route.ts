@@ -15,7 +15,7 @@ export async function GET() {
 
     transactions.forEach((transaction, index) => {
       data = {
-        // transaction_id: transaction.transaction,
+        transaction_id: transaction.transaction,
         balance: transaction.balance,
         // Agrega más campos si es necesario
       };
@@ -122,30 +122,3 @@ export async function POST(request: { json: () => PromiseLike<{ status?: number;
   }
 }
 
-
-
-// export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: string) => any; }; }; }){
-//   try {
-//       const id = request.nextUrl.searchParams.get("_id");
-//       await connectDB();
-//       await  Room.findByIdAndDelete(id);
-      
-//       return NextResponse.json(
-//           {
-//             message: "Sala eliminada Satisfactoriamente",
-//           },
-//           { status: 200 }
-//         );
-      
-//   } catch (error) {
-//       return NextResponse.json(
-//           {
-//             message: "Fallo al eliminar Sala",
-//             error,
-//           },
-//           {
-//             status: 500,
-//           }
-//         );
-//   }
-// }
