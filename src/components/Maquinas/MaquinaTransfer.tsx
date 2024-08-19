@@ -6,37 +6,31 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
-  const [newNombre, setNewNombre] = useState<string>(transaction.id_machine || '');
-  const [newCurrency, setNewCurrency] = useState<string>(transaction.currency || '');
+  const [newNombre, setNewNombre] = useState<string>(transaction.user || '');
+  const [newCurrency, setNewCurrency] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
   const [action] = useState<string>('DEBIT');
   const [balance, setNewBalance] = useState<number>(transaction.balance);
   const [debit, setDebit] = useState<number>();
 
   useEffect(() => {
-    // Fetch the latest transactions from the API
-    fetch('/api/v1')
+    // Fetch the balance and currency from the API
+    fetch(`/api/v1`)
       .then(response => response.json())
       .then(data => {
-        console.log('API response:', data);
-  
-        // Ensure data.data is an array and has at least one element
-        if (Array.isArray(data.data) && data.data.length > 0) {
-          // Find the latest transaction for the specific id_machine
-          const latestTransaction = data.data
-            .filter(item => item.id_machine === transaction.id_machine) // Filter by id_machine
-            .reduce((latest, current) => {
-              return current.transaction > latest.transaction ? current : latest;
-            });
-  
-          // Update the newBalance state with the balance of the latest transaction
-          setNewBalance(latestTransaction.balance);
+        if (data.status === 'OK') {
+          // Find the data for the specific machine
+          const machineData = data.data.find((item: any) => item.user === transaction.user);
+          if (machineData) {
+            setNewBalance(machineData.balance);
+            setNewCurrency(machineData.currency || 'Unknown');
+          }
         } else {
-          throw new Error('API response data is not in the expected format or no data available.');
+          throw new Error('Error fetching transaction details.');
         }
       })
       .catch(error => console.error('Error fetching API:', error));
-  }, [transaction.id_machine]); // Include transaction.id_machine in dependency array to fetch when id_machine changes
+  }, [transaction.user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +45,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
     };
 
     try {
-      const response = await fetch(`/api/v1`, {
+      const response = await fetch(`/api/debit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +100,6 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
                   Moneda
                 </label>
                 <input
-                  onChange={(e) => setNewCurrency(e.target.value)}
                   value={newCurrency}
                   id="currency"
                   name="currency"
@@ -125,19 +118,19 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
                   Balance actual
                 </label>
                 <input
-                  onChange={(e) => setNewbalance(e.target.value)}
+                  onChange={(e) => setNewBalance(Number(e.target.value))}
                   value={balance}
                   id="balance"
                   name="balance"
                   type="text"
-                  placeholder="Balante actual"
+                  placeholder="Balance actual"
                   className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
                   readOnly
                   disabled
                 />
               </div>
             </div>
-            <h1 className="mb-6">TRANSACCION DEBITO</h1>
+            <h1 className="mb-6">TRANSACCIÓN DÉBITO</h1>
             <div className="mb-4">
               <label
                 htmlFor="debit"
@@ -159,17 +152,17 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
 
             <div className="mb-4">
               <label
-                htmlFor="debit"
+                htmlFor="message"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
-             Mensaje
+                Mensaje
               </label>
               <input
                 onChange={(e) => setNewMessage(e.target.value)}
                 value={newMessage}
                 id="message"
                 name="message"
-                type="string"
+                type="text"
                 placeholder="Escribe un mensaje"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
               />

@@ -15,7 +15,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
   const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<number>(0);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [action, setAction] = useState<number>('BALANCE');
+  const [action, setAction] = useState<number>('CREDIT');
   const [credit, setCredit] = useState<number>();
 
 
@@ -35,10 +35,9 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
       credit,
     };
 
-    console.log("Datos a enviar:", transferData); // Verifica los datos antes de enviarlos
 
     try {
-      const response = await fetch(`/api/v1`, {
+      const response = await fetch(`/api/credit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

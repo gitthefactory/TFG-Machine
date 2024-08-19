@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
+import Room from "@/models/room";
 
-// GET ALL Machines and Their Balances
+// GET ALL Machines and Their Balances with Currency
 export async function GET() {
   try {
     await connectDB();
@@ -19,9 +20,25 @@ export async function GET() {
       return acc;
     }, {});
 
+    // Obtener la moneda para cada máquina
+    const machineIds = Object.keys(machineBalances);
+    const rooms = await Room.find({ id_machine: { $in: machineIds } });
+
+    // Crear un mapa para cada máquina con su moneda asociada
+    const roomMap = rooms.reduce((acc, room) => {
+      room.id_machine.forEach(id => {
+        if (machineBalances[id]) {
+          acc[id] = room.currency[0] || 'Unknown'; // Asumimos que queremos la primera moneda del array
+        }
+      });
+      return acc;
+    }, {});
+
+    // Crear los datos de respuesta incluyendo la moneda
     const data = Object.keys(machineBalances).map(user => ({
       user,
       balance: machineBalances[user].balance,
+      currency: roomMap[user] || 'Unknown' // Default to 'Unknown' if no currency found
     }));
 
     const simulatedResponse = data.length > 0 ? {
