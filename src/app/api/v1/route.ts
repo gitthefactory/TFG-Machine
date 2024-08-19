@@ -3,6 +3,7 @@ import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 import Room from "@/models/room";
 
+export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 // GET ALL Machines and Their Balances with Currency
 export async function GET() {
   try {

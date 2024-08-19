@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 
-export async function POST(request: { json: () => Promise<{ currency?: string[]; id_machine?: string; balance?: number; message?: string; action: string; debit?: number; credit?: number; user?: string; amount?: number; round?: number; transaction?: number; extra_data?: any[]; game?: number; type?: number; provider?: number; }> }) {
+export async function POST(request) {
   try {
     const data = await request.json();
     console.log("Datos recibidos:", data);
@@ -12,6 +12,9 @@ export async function POST(request: { json: () => Promise<{ currency?: string[];
     if (data.action !== 'CREDIT') {
       throw new Error('Acción no permitida. Solo se permite CREDIT en este endpoint.');
     }
+
+    // Asegúrate de que el campo 'user' esté en mayúsculas
+    const user = data.user ? data.user.toUpperCase() : (data.id_machine || '').toUpperCase();
 
     // Buscar la última transacción para obtener el balance actual
     const lastTransaction = await Transaction.findOne({ id_machine: data.id_machine }).sort({ transaction: -1 });
@@ -29,7 +32,7 @@ export async function POST(request: { json: () => Promise<{ currency?: string[];
       message: data.message || '',
       debit: 0, // No hay débito en una transacción de crédito
       credit: data.credit || 0, // Asigna el valor de crédito ingresado
-      user: data.user || data.id_machine,
+      user: user, // Asigna el campo 'user' en mayúsculas
       amount: data.credit || 0, // El monto de la transacción es igual al crédito ingresado
       round: data.round || 0,
       transaction: (lastTransaction?.transaction || 0) + 1, // Incrementa el número de transacción
