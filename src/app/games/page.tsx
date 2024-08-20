@@ -103,11 +103,11 @@ const Games: React.FC = () => {
             </div>
             <div className="nav">
               <div className="navbar">
-                <div className="jackpot"><span>000.000.000</span></div>
-                <div className="acumulado"><span>000.000.000</span></div>
-                <div className="gran"><span>000.000.000</span></div>
-                <div className="menor"><span>000.000.000</span></div>
-                <div className="express"><span>000.000.000</span></div>
+                <div className="jackpot"><span>78.000.000</span></div>
+                <div className="acumulado"><span>000.556.970</span></div>
+                <div className="gran"><span>010.000.000</span></div>
+                <div className="menor"><span>000.250.000</span></div>
+                <div className="express"><span>000.080.000</span></div>
               </div>
               <div className="menu">
                 <button className="all" onClick={handleAll}></button>

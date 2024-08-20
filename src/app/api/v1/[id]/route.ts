@@ -31,7 +31,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       status: 'OK',
       code: 200,
       data: {
-        user: lastTransaction.user,
+       // user: lastTransaction.user,
         balance: lastTransaction.balance
       }
     });
