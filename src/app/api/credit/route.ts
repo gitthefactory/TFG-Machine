@@ -5,7 +5,7 @@ import Transaction from "@/models/transaction";
 export async function POST(request) {
   try {
     const data = await request.json();
-    console.log("Datos recibidos:", data);
+    // console.log("Datos recibidos:", data);
 
     await connectDB();
 
@@ -43,7 +43,7 @@ export async function POST(request) {
       provider: data.provider || 0,
     };
 
-    console.log("Datos de transacción antes de crear:", newTransactionData);
+    // console.log("Datos de transacción antes de crear:", newTransactionData);
 
     // Crear la transacción para la máquina específica
     const newTransaction = await Transaction.create(newTransactionData);
@@ -57,7 +57,7 @@ export async function POST(request) {
       }
     }, { status: 201 });
   } catch (error) {
-    console.error("Error al crear la Transacción:", error.message || error);
+    // console.error("Error al crear la Transacción:", error.message || error);
     return NextResponse.json(
       {
         status: "FAILED",
