@@ -16,11 +16,12 @@ export async function POST(request) {
     // Asegúrate de que el campo 'user' esté en mayúsculas
     const user = data.user ? data.user.toUpperCase() : (data.id_machine || '').toUpperCase();
 
-    // Buscar la última transacción para obtener el balance actual
+    // Buscar la última transacción de la máquina específica para obtener el balance actual
     const lastTransaction = await Transaction.findOne({ id_machine: data.id_machine }).sort({ transaction: -1 });
 
-    // Calcular el nuevo balance sumando el crédito al balance existente
-    const newBalance = (lastTransaction?.balance || 0) + (data.credit || 0);
+    // Calcular el nuevo balance sumando el crédito al balance existente para esa máquina específica
+    const previousBalance = lastTransaction?.balance || 0;
+    const newBalance = previousBalance + (data.credit || 0);
 
     // Crear los datos de la nueva transacción
     const newTransactionData = {
@@ -28,7 +29,7 @@ export async function POST(request) {
       status: 1,
       currency: data.currency || ['CLP'],
       id_machine: data.id_machine,
-      balance: newBalance, // Nuevo balance calculado
+      balance: newBalance, // Nuevo balance calculado para la máquina específica
       message: data.message || '',
       debit: 0, // No hay débito en una transacción de crédito
       credit: data.credit || 0, // Asigna el valor de crédito ingresado
@@ -44,7 +45,7 @@ export async function POST(request) {
 
     console.log("Datos de transacción antes de crear:", newTransactionData);
 
-    // Crear la transacción
+    // Crear la transacción para la máquina específica
     const newTransaction = await Transaction.create(newTransactionData);
 
     return NextResponse.json({
