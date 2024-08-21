@@ -7,37 +7,43 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
   const [newNombre, setNewNombre] = useState<string>(transaction.user || '');
-  const [newCurrency, setNewCurrency] = useState<string>('');
+  const [newCurrency, setNewCurrency] = useState<string>("CLP" || '');
   const [newMessage, setNewMessage] = useState<string>('');
   const [action] = useState<string>('DEBIT');
   const [balance, setNewBalance] = useState<number>(transaction.balance);
   const [debit, setDebit] = useState<number>();
+  const [idMachine, setIdMachine] = useState<string>("");
 
   useEffect(() => {
+    // Extract id_machine from the URL
+    const urlParts = window.location.href.split("/");
+    const id = urlParts[urlParts.length - 1];
+    setIdMachine(id);
+
     // Fetch the balance and currency from the API
     fetch(`/api/v1`)
       .then(response => response.json())
       .then(data => {
         if (data.status === 'OK') {
-          // Find the data for the specific machine
-          const machineData = data.data.find((item: any) => item.user === transaction.user);
+          const machineData = data.data.find((item: any) => item.user === id);
           if (machineData) {
             setNewBalance(machineData.balance);
             setNewCurrency(machineData.currency || 'Unknown');
+            setNewNombre(machineData.user); // Update the name based on API data
           }
         } else {
           throw new Error('Error fetching transaction details.');
         }
       })
       .catch(error => console.error('Error fetching API:', error));
-  }, [transaction.user]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const transferData = {
       currency: newCurrency,
-      id_machine: newNombre,
+      id_machine: idMachine,
       balance,
       message: newMessage,
       action,
@@ -81,7 +87,6 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
                   ID Maquina
                 </label>
                 <input
-                  onChange={(e) => setNewNombre(e.target.value)}
                   value={newNombre}
                   id="newNombre"
                   name="newNombre"

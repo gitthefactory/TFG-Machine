@@ -37,7 +37,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
 
     try {
-      const response = await fetch(`/api/credit`, {
+      const response = await fetch(`/api/credit/${selectedMachines}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
