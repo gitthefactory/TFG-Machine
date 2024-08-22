@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 
-
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
@@ -14,8 +13,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     await connectDB();
 
-    // Hacer una solicitud para obtener el balance actual de la API
-    const response = await fetch(`http://localhost:3000/api/v1/${id}`);
+    // Hacer una solicitud para obtener el balance actual de la API usando una ruta relativa
+    const response = await fetch(`https://casinoenruta.com/api/v1/${id}`);
     
     if (!response.ok) {
       throw new Error(`Error en la solicitud al obtener balance: ${response.statusText}`);
@@ -26,12 +25,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
     // Log para ver el contenido de balanceData
     console.log("Respuesta de la API balance:", balanceData);
 
-    // Como balanceData.data es un objeto, accedemos directamente a sus propiedades
     const machineBalance = balanceData.data;
 
     console.log("Balance de la máquina encontrado:", machineBalance);
 
-    // Asigna el balance anterior y calcula el nuevo balance
     const previousBalance = machineBalance ? machineBalance.balance : 0;
     const newBalance = previousBalance + (data.credit || 0);
 
@@ -46,7 +43,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       credit: data.credit || 0,
       amount: data.credit || 0,
       round: data.round || 0,
-      transaction: (machineBalance.transaction || 0) + 1, // Utiliza el balance de la máquina específica
+      transaction: (machineBalance.transaction || 0) + 1,
       extra_data: data.extra_data || [],
       game: data.game || 0,
       type: 1,
