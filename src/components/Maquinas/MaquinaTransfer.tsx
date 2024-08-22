@@ -51,7 +51,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
     };
 
     try {
-      const response = await fetch(`/api/debit`, {
+      const response = await fetch(`/api/debit/${idMachine}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
