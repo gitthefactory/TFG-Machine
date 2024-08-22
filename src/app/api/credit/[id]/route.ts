@@ -15,7 +15,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     await connectDB();
 
     // Hacer una solicitud para obtener el balance actual de la API
-    const response = await fetch(`/api/v1/${id}`);
+    const response = await fetch(`http://localhost:3000/api/v1/${id}`);
     
     if (!response.ok) {
       throw new Error(`Error en la solicitud al obtener balance: ${response.statusText}`);
