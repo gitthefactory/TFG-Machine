@@ -6,30 +6,40 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
-  const [newNombre, setNewNombre] = useState<string>(transaction.user || '');
-  const [newCurrency, setNewCurrency] = useState<string>("CLP" || '');
+  const [newNombre, setNewNombre] = useState<string>(transaction?.user || '');
+  const [newCurrency, setNewCurrency] = useState<string>("CLP");
   const [newMessage, setNewMessage] = useState<string>('');
   const [action] = useState<string>('DEBIT');
-  const [balance, setNewBalance] = useState<number>(transaction.balance);
-  const [debit, setDebit] = useState<number>();
+  const [balance, setNewBalance] = useState<number>(transaction?.balance || 0);
+  const [debit, setDebit] = useState<number>(0);
   const [idMachine, setIdMachine] = useState<string>("");
 
   useEffect(() => {
-    // Extract id_machine from the URL
-    const urlParts = window.location.href.split("/");
+    // Extract id_machine from the pathname
+    const pathname = window.location.pathname;
+    const urlParts = pathname.split("/");
     const id = urlParts[urlParts.length - 1];
     setIdMachine(id);
+
+    if (!id) {
+      console.error('No ID found in pathname.');
+      return;
+    }
 
     // Fetch the balance and currency from the API
     fetch(`/api/v1`)
       .then(response => response.json())
       .then(data => {
+        console.log('API Response:', data); // Add this line to debug the response
         if (data.status === 'OK') {
+          // Assuming data.data is an array of machine data
           const machineData = data.data.find((item: any) => item.user === id);
           if (machineData) {
             setNewBalance(machineData.balance);
             setNewCurrency(machineData.currency || 'Unknown');
             setNewNombre(machineData.user); // Update the name based on API data
+          } else {
+            console.error('Machine data not found for ID:', id);
           }
         } else {
           throw new Error('Error fetching transaction details.');
@@ -40,6 +50,11 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!idMachine) {
+      console.error('ID Machine is missing.');
+      return;
+    }
 
     const transferData = {
       currency: newCurrency,
