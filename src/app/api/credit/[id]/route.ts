@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Transaction from "@/models/transaction";
 
+
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
@@ -13,34 +14,45 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     await connectDB();
 
-    // Buscar la última transacción de la máquina específica para obtener el balance actual
-    const lastTransaction = await Transaction.findOne({ id_machine: id }).sort({ transaction: -1 });
+    // Hacer una solicitud para obtener el balance actual de la API
+    const response = await fetch(`http://localhost:3000/api/v1/${id}`);
+    
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud al obtener balance: ${response.statusText}`);
+    }
 
-    // Calcular el nuevo balance sumando el crédito al balance existente para esa máquina específica
-    const previousBalance = lastTransaction?.balance || 0;
+    const balanceData = await response.json();
+
+    // Log para ver el contenido de balanceData
+    console.log("Respuesta de la API balance:", balanceData);
+
+    // Como balanceData.data es un objeto, accedemos directamente a sus propiedades
+    const machineBalance = balanceData.data;
+
+    console.log("Balance de la máquina encontrado:", machineBalance);
+
+    // Asigna el balance anterior y calcula el nuevo balance
+    const previousBalance = machineBalance ? machineBalance.balance : 0;
     const newBalance = previousBalance + (data.credit || 0);
 
-    // Crear los datos de la nueva transacción
     const newTransactionData = {
       action: data.action,
       status: 1,
       currency: data.currency || 'CLP',
-      id_machine: id,
-      balance: newBalance, // Nuevo balance calculado para la máquina específica
+      user: id,
+      balance: newBalance,
       message: data.message || '',
-      debit: 0, // No hay débito en una transacción de crédito
-      credit: data.credit || 0, // Asigna el valor de crédito ingresado
-      user: data.user ? data.user.toUpperCase() : id.toUpperCase(), // Asigna el campo 'user' en mayúsculas
-      amount: data.credit || 0, // El monto de la transacción es igual al crédito ingresado
+      debit: 0,
+      credit: data.credit || 0,
+      amount: data.credit || 0,
       round: data.round || 0,
-      transaction: (lastTransaction?.transaction || 0) + 1, // Incrementa el número de transacción
+      transaction: (machineBalance.transaction || 0) + 1, // Utiliza el balance de la máquina específica
       extra_data: data.extra_data || [],
       game: data.game || 0,
       type: 1,
       provider: data.provider || 0,
     };
 
-    // Crear la transacción para la máquina específica
     const newTransaction = await Transaction.create(newTransactionData);
 
     return NextResponse.json({
@@ -52,6 +64,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       }
     }, { status: 201 });
   } catch (error) {
+    console.error("Error al procesar la solicitud:", error.message);
     return NextResponse.json(
       {
         status: "FAILED",

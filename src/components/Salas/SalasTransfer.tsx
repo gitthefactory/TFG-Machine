@@ -28,11 +28,11 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
     const transferData = {
       currency: newCurrency,
-      id_machine: selectedMachines,
+      user: selectedMachines,
       balance,
       message: newMessage,
       action,
-      credit,
+      credit : credit,
     };
 
 
@@ -46,7 +46,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
       });
 
       if (response.ok) {
-        window.location.href = "/dashboard/salas";
+        //window.location.href = "/dashboard/salas";
       } else {
         const errorData = await response.json();
         console.error("Error al hacer la solicitud:", errorData.message);
