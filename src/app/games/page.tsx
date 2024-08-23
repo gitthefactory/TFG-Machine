@@ -17,7 +17,7 @@ import Image from 'next/image';
 interface MachineBalance {
   user: string;
   balance: number;
-  currency?: string ; 
+  currency?: string; 
 }
 
 const Games: React.FC = () => {
@@ -33,16 +33,30 @@ const Games: React.FC = () => {
   
       if (idMachine) {
         try {
-          const response = await axios.get(`/api/v1/${idMachine}`);
+          // Llama a la API para obtener todos los balances
+          const response = await axios.get(`/api/v1`);
+          
           if (response.data.code === 200) {
-            // Actualiza el estado con los datos de la API
-            setSelectedMachineBalance({
-              user: response.data.data.user,
-              balance: response.data.data.balance,
-              currency: response.data.data.currency || 'CLP'  // Usa 'USD' como moneda predeterminada si no está presente
-            });
+            // Encuentra el balance que corresponde al idMachine (user)
+            const machineData = response.data.data.find((machine: any) => machine.user === idMachine);
+            
+            if (machineData) {
+              // Actualiza el estado con los datos de la máquina encontrada
+              setSelectedMachineBalance({
+                user: machineData.user,
+                balance: machineData.balance,
+                currency: machineData.currency || 'USD'  // Usa 'USD' como moneda predeterminada si no está presente
+              });
+            } else {
+              // Si no se encuentra, usa valores predeterminados
+              setSelectedMachineBalance({
+                user: idMachine,
+                balance: 0,
+                currency: 'USD'
+              });
+            }
           } else {
-            // Establece valores predeterminados
+            // Maneja errores de la API
             setSelectedMachineBalance({
               user: idMachine,
               balance: 0,
@@ -72,7 +86,6 @@ const Games: React.FC = () => {
   
     fetchSelectedMachineBalance();
   }, []);
-  
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
@@ -90,6 +103,14 @@ const Games: React.FC = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const formatBalance = (balance: number, currency: string | undefined) => {
+    if (currency === 'CLP') {
+      return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    } else {
+      return balance.toFixed(2);
+    }
   };
 
   return (
@@ -136,15 +157,14 @@ const Games: React.FC = () => {
   
           <div className="footer d-flex justify-content-center">
             <div className="bgcreditos">
-              <span className="credit">{selectedMachineBalance ? selectedMachineBalance.balance.toFixed(0) : '000'}</span>
-              <span className="amount">{selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} ${selectedMachineBalance.balance.toFixed(2)}` : 'USD $0.00'}</span>
+              <span className="credit">{selectedMachineBalance ? formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency) : '000'}</span>
+              <span className="amount">{selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} ${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}</span>
             </div>
           </div>
         </>
       )}
     </div>
   );
-  
 };
 
 export default Games;
