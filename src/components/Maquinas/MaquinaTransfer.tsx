@@ -11,7 +11,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [action] = useState<string>('DEBIT');
   const [balance, setNewBalance] = useState<number>(transaction?.balance || 0);
-  const [debit, setDebit] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
   const [idMachine, setIdMachine] = useState<string>("");
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
       balance,
       message: newMessage,
       action,
-      debit,
+      amount,
     };
 
     try {
@@ -153,16 +153,16 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
             <h1 className="mb-6">TRANSACCIÓN DÉBITO</h1>
             <div className="mb-4">
               <label
-                htmlFor="debit"
+                htmlFor="amount"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
                 Ingresa un monto <span className="text-red">*</span>
               </label>
               <input
-                onChange={(e) => setDebit(Number(e.target.value))}
-                value={debit}
-                id="debit"
-                name="debit"
+                onChange={(e) => setAmount(Number(e.target.value))}
+                value={amount}
+                id="amount"
+                name="amount"
                 type="number"
                 placeholder="$0.00"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
