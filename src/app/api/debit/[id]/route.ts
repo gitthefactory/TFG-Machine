@@ -32,7 +32,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     // Asigna el balance anterior y calcula el nuevo balance
     const previousBalance = machineBalance ? machineBalance.balance : 0;
-    const newBalance = previousBalance - (data.debit || 0); // Restamos el débito
+    const newBalance = previousBalance - (data.amount || 0); // Restamos el débito
 
     const newTransactionData = {
       action: data.action,
@@ -41,9 +41,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
       user: id,
       balance: newBalance,
       message: data.message || '',
-      debit: data.debit || 0, // Asigna el valor de débito ingresado
+      debit: data.amount || 0, // Asigna el valor de débito ingresado
       credit: 0, // No hay crédito en una transacción de débito
-      amount: data.debit || 0,
+      amount: data.amount || 0,
       round: data.round || 0,
       transaction: (machineBalance.transaction || 0) + 1, // Utiliza el balance de la máquina específica
       extra_data: data.extra_data || [],

@@ -30,7 +30,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     console.log("Balance de la máquina encontrado:", machineBalance);
 
     const previousBalance = machineBalance ? machineBalance.balance : 0;
-    const newBalance = previousBalance + (data.credit || 0);
+    const newBalance = previousBalance + (data.amount || 0);
 
     const newTransactionData = {
       action: data.action,
@@ -40,8 +40,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
       balance: newBalance,
       message: data.message || '',
       debit: 0,
-      credit: data.credit || 0,
-      amount: data.credit || 0,
+      credit: data.amount || 0,
+      amount: data.amount || 0,
       round: data.round || 0,
       transaction: (machineBalance.transaction || 0) + 1,
       extra_data: data.extra_data || [],
