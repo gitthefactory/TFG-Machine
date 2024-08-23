@@ -158,7 +158,7 @@ const Games: React.FC = () => {
           <div className="footer d-flex justify-content-center">
             <div className="bgcreditos">
               <span className="credit">{selectedMachineBalance ? formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency) : '000'}</span>
-              <span className="amount">{selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} ${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}</span>
+              <span className="amount">{selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}</span>
             </div>
           </div>
         </>
