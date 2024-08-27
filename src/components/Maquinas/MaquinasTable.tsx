@@ -26,7 +26,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dataLoaded, setDataLoaded] = useState(true);
   const [transferData, setTransferData] = useState<TransactionData[]>([]);
-
+  const [maquinasData, setMaquinasData] = useState<MaquinaData[]>(maquinas); // Estado local de las máquinas
   useEffect(() => {
     fetch('/api/v1')
       .then(response => response.json())
@@ -67,8 +67,30 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
     balance: getLatestBalanceByIdMachine(maquina.id_machine)
   }));
 
-  const handleStatusChange = (id: string, newStatus: number) => {
-    // console.log(`Cambiando estado de máquina ${id} a ${newStatus}`);
+  const handleStatusChange = async (id: string, newStatus: number) => {
+    try {
+      const response = await fetch(`/api/maquinas/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Actualizar el estado local para reflejar el cambio
+        setMaquinasData(prevData =>
+          prevData.map(maquina =>
+            maquina._id === id ? { ...maquina, status: newStatus } : maquina
+          )
+        );
+      } else {
+        console.error('Error al actualizar estado:', data);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de actualización de estado:', error);
+    }
   };
 
   const getTransferIdByMachineId = (id_machine: string): string | undefined => {

@@ -108,3 +108,47 @@ export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: s
         );
   }
 }
+
+
+
+
+// PUT (Actualizar una máquina)
+export async function PUT(request: Request) {
+  try {
+    const { id } = request.nextUrl.searchParams;
+    const { nombre, descripcion, status, games, operator, client, room, pais, direccion, ciudad } = await request.json();
+    await connectDB();
+    
+    const machine = await Machine.findById(id);
+    if (!machine) {
+      return NextResponse.json({ message: "Máquina no encontrada" }, { status: 404 });
+    }
+
+    // Actualizar los campos de la máquina
+    if (nombre) machine.nombre = nombre;
+    if (descripcion) machine.descripcion = descripcion;
+    if (status !== undefined) machine.status = status;
+    if (games) machine.games = games;
+    if (operator) machine.operator = operator;
+    if (client) machine.client = client;
+    if (room) machine.room = room;
+    if (pais) machine.pais = pais;
+    if (direccion) machine.direccion = direccion;
+    if (ciudad) machine.ciudad = ciudad;
+    
+    machine.updatedAt = new Date();
+    const updatedMachine = await machine.save();
+
+    return NextResponse.json({
+      message: "Máquina Actualizada con Éxito",
+      data: updatedMachine
+    }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({
+      message: "Error al actualizar la máquina",
+      error,
+    }, {
+      status: 500,
+    });
+  }
+}
