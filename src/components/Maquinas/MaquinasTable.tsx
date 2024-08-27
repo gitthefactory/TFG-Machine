@@ -67,8 +67,26 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
     balance: getLatestBalanceByIdMachine(maquina.id_machine)
   }));
 
-  const handleStatusChange = (id: string, newStatus: number) => {
-    // console.log(`Cambiando estado de máquina ${id} a ${newStatus}`);
+  const handleStatusChange = async (id_machine: string, newStatus: number) => {
+    try {
+      const response = await fetch(`/api/maquinas/${id_machine}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al actualizar el estado de la máquina');
+      }
+  
+      // Opcional: actualiza el estado en el estado local si es necesario
+      const data = await response.json();
+      console.log('Respuesta de la actualización:', data);
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+    }
   };
 
   const getTransferIdByMachineId = (id_machine: string): string | undefined => {

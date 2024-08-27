@@ -44,9 +44,29 @@ const OperadoresTable: React.FC = () => {
     fetchUsuariosClientes();
   }, []);
 
-  const handleStatusChange = (userId: string, newStatus: number) => {
-    // Lógica para cambiar el estado
-    console.log(`Cambiar estado de usuario ${userId} a ${newStatus}`);
+  const handleStatusChange = async (userId: string, newStatus: number) => {
+    try {
+      const response = await fetch(`/api/usuarios/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el estado');
+      }
+
+      // Actualizar el estado localmente para reflejar el cambio
+      setUsuariosClientes(prevState =>
+        prevState.map(user =>
+          user._id === userId ? { ...user, status: newStatus } : user
+        )
+      );
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+    }
   };
 
   const columns = [

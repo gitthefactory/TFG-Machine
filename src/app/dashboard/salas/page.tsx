@@ -7,6 +7,7 @@ import SalasTable from "@/components/Salas/SalasTable";
 import React, { useEffect, useState } from "react";
 import getRooms from "@/controllers/getRooms";
 import AddButton from "@/components/AddButton";
+import { SocketProvider } from "@/app/socket.io/socketContext";
 
 const Salas: React.FC = () => {
   const [salas, setSalas] = useState<UsuarioData[]>([]);
@@ -32,6 +33,7 @@ const Salas: React.FC = () => {
 
   return (
     <>
+     <SocketProvider>
       <DefaultLayout>
         <Breadcrumb pageName="Salas" />
         <div className="flex justify-between items-center mb-4">
@@ -46,6 +48,7 @@ const Salas: React.FC = () => {
         </div>
         <SalasTable salas={salas} />
       </DefaultLayout>
+      </SocketProvider>
     </>
   );
 };

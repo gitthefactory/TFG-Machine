@@ -7,6 +7,7 @@ import OperadoresTable from "@/components/Operadores/OperadoresTable";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getOperators from "@/controllers/getOperators";
 import React, { useEffect, useState } from "react";
+import { SocketProvider } from "@/app/socket.io/socketContext";
 
 interface RowData {
   id: number;
@@ -37,6 +38,7 @@ const Operadores: React.FC = () => {
   
   return (
     <>
+    <SocketProvider>
       <DefaultLayout>
         <Breadcrumb pageName="Operadores" />
         <div className="flex justify-between items-center mb-4">
@@ -52,6 +54,7 @@ const Operadores: React.FC = () => {
           </div>
         <OperadoresTable rows={rows}  />
       </DefaultLayout>
+      </SocketProvider>
     </>
   );
 };
