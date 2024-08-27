@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from "react";
 import CardDataStats from "../CardDataStats";
 import getUsers from "@/controllers/getUsers";
-import getClients from "@/controllers/getClients";
+
 import getOperators from "@/controllers/getOperators";
 import getRooms from "@/controllers/getRooms";
 import getMachines from "@/controllers/getMachines";
 import getGames from "@/controllers/getGames";
-import Client from "@/models/client";
+
 import { FaLaptop, FaServer, FaUser, FaShop, FaUserGroup } from "react-icons/fa6";
 import getSessionData from "@/controllers/getSession"; 
 
@@ -44,7 +44,7 @@ enum LoadingState {
 
 const ECommerce: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
+ 
   const [games, setGames] = useState<Game[]>([]);
   const [operators, setOperators] = useState<[]>([]);
   const [rooms, setRooms] = useState<[]>([]);
