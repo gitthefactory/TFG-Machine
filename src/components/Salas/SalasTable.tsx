@@ -75,17 +75,9 @@ const SalasTable: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          newNombre: salaToUpdate.nombre,
+        
           newStatus: newStatus,
-          newPais: salaToUpdate.pais,
-          newCiudad: salaToUpdate.comuna, // Cambia según el campo correcto
-          newComuna: salaToUpdate.comuna, // Cambia según el campo correcto
-          newClient: salaToUpdate.client,
-          id_machine: salaToUpdate.operator, // Ajusta si es el campo correcto
-          newOperator: salaToUpdate.operator, // Cambia según el campo correcto
-          newCurrency: salaToUpdate.currency,
-          newAddress: salaToUpdate.address,
-          newPhone: salaToUpdate.phone,
+         
         }),
       });
 
