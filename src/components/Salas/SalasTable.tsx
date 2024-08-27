@@ -11,13 +11,13 @@ interface SalaData {
   _id: string;
   nombre: string;
   comuna: string;
-  pais: string;
+  pais: string[];
   status: number;
-  currency: string;
+  currency: string[];
   address: string;
   phone: number;
-  client?: string; // Añade los campos opcionales para tipo de cliente
-  operator?: string[]; // Añade los campos opcionales para tipo de operador
+  client?: string;
+  operator?: string[];
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -56,8 +56,61 @@ const SalasTable: React.FC = () => {
     setFilteredSalas(filteredData);
   }, [searchTerm, salas]);
 
-  const handleStatusChange = (id: string, newStatus: number) => {
-    console.log(`Cambiar estado de ${id} a ${newStatus}`);
+  const handleStatusChange = async (id: string, currentStatus: number) => {
+    const newStatus = currentStatus === 1 ? 0 : 1;
+    
+    // Encuentra la sala actual en el estado
+    const salaToUpdate = salas.find(sala => sala._id === id);
+    
+    if (!salaToUpdate) {
+      console.error('Sala no encontrada en el estado.');
+      return;
+    }
+
+    try {
+      console.log(`Actualizando sala con ID ${id} a nuevo estado ${newStatus}`);
+      const response = await fetch(`/api/salas/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newNombre: salaToUpdate.nombre,
+          newStatus: newStatus,
+          newPais: salaToUpdate.pais,
+          newCiudad: salaToUpdate.comuna, // Cambia según el campo correcto
+          newComuna: salaToUpdate.comuna, // Cambia según el campo correcto
+          newClient: salaToUpdate.client,
+          id_machine: salaToUpdate.operator, // Ajusta si es el campo correcto
+          newOperator: salaToUpdate.operator, // Cambia según el campo correcto
+          newCurrency: salaToUpdate.currency,
+          newAddress: salaToUpdate.address,
+          newPhone: salaToUpdate.phone,
+        }),
+      });
+
+      const result = await response.json();
+      console.log('Respuesta del backend:', result);
+
+      if (response.ok) {
+        console.log('Estado actualizado correctamente');
+        // Actualizar el estado local del componente
+        setSalas(prevSalas =>
+          prevSalas.map(sala =>
+            sala._id === id ? { ...sala, status: newStatus } : sala
+          )
+        );
+        setFilteredSalas(prevFilteredSalas =>
+          prevFilteredSalas.map(sala =>
+            sala._id === id ? { ...sala, status: newStatus } : sala
+          )
+        );
+      } else {
+        console.error('Error al actualizar estado', result);
+      }
+    } catch (error) {
+      console.error('Error al enviar solicitud de actualización', error);
+    }
   };
 
   const columns = [
@@ -68,7 +121,7 @@ const SalasTable: React.FC = () => {
           type="checkbox"
           checked={row.status === 1}
           className="form-checkbox h-5 w-5 text-green-500"
-          onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
+          onChange={() => handleStatusChange(row._id, row.status)}
         />
       ),
       ignoreRowClick: true,
@@ -82,7 +135,7 @@ const SalasTable: React.FC = () => {
     },
     {
       name: 'Pais',
-      selector: (row: SalaData) => row.pais,
+      selector: (row: SalaData) => row.pais.join(', '), // Une los elementos del array si es necesario
       sortable: true,
     },
     {
@@ -97,7 +150,7 @@ const SalasTable: React.FC = () => {
     },
     {
       name: 'Moneda',
-      selector: (row: SalaData) => row.currency,
+      selector: (row: SalaData) => row.currency.join(', '), // Une los elementos del array si es necesario
       sortable: true,
     },
     {
