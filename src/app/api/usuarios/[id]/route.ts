@@ -31,8 +31,10 @@ export async function GET(request: any, { params: { id } }: any) {
 
 
 
+// PUT - Actualizar un usuario
 export async function PUT(request: any, { params: { id } }: any) {
   try {
+    // Obtener datos de la solicitud
     const {
       nombreCompleto,
       email,
@@ -43,10 +45,10 @@ export async function PUT(request: any, { params: { id } }: any) {
       games,
     } = await request.json();
 
-    // Conecta a la base de datos
+    // Conectar a la base de datos
     await connectDB();
 
-    // Construye el objeto de actualización
+    // Construir objeto de actualización
     const updateData: any = {};
 
     if (nombreCompleto !== undefined) updateData.nombreCompleto = nombreCompleto;
@@ -56,18 +58,18 @@ export async function PUT(request: any, { params: { id } }: any) {
     if (status !== undefined) updateData.status = status;
     if (games !== undefined) updateData.games = games;
 
-    // Agrega los nuevos id_machine si se proporcionan
+    // Agregar nuevos id_machine si se proporcionan
     if (id_machine !== undefined && Array.isArray(id_machine)) {
       updateData.$addToSet = { id_machine: { $each: id_machine } };
     }
 
-    // Actualiza el usuario utilizando el método findByIdAndUpdate
-    await User.findByIdAndUpdate(id, updateData);
+    // Actualizar usuario y devolver el documento actualizado
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
 
     return NextResponse.json(
       {
         message: "Usuario Actualizado con Éxito",
-        data: updateData,
+        data: updatedUser,
       },
       { status: 200 }
     );
@@ -77,9 +79,7 @@ export async function PUT(request: any, { params: { id } }: any) {
         message: "Error al actualizar el usuario",
         error,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }

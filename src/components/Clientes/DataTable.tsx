@@ -15,6 +15,7 @@ interface User {
   };
   games: { provider: string }[];
   id_machine: string;
+  status: number;
 }
 
 const UserDataTable: React.FC = () => {
@@ -38,12 +39,36 @@ const UserDataTable: React.FC = () => {
     fetchUsuariosClientes();
   }, []);
 
-  const handleStatusChange = (id: string, newStatus: number) => {
-    setUsuariosClientes((prevUsuarios) =>
-      prevUsuarios.map((usuario) =>
-        usuario._id === id ? { ...usuario, status: newStatus } : usuario
-      )
-    );
+  const handleStatusChange = async (id: string, newStatus: number) => {
+    try {
+      console.log(`Changing status of ${id} to ${newStatus}`);
+
+      // Realiza una solicitud PUT para actualizar el estado del usuario
+      const response = await fetch(`/api/usuarios/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error al actualizar el estado del usuario: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      // Actualiza el estado local
+      setUsuariosClientes((prevUsuarios) =>
+        prevUsuarios.map((usuario) =>
+          usuario._id === id ? { ...usuario, status: newStatus } : usuario
+        )
+      );
+
+      console.log(result.message);
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
 
   const filteredUsuarios = usuariosClientes.filter(
