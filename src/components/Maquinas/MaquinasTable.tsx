@@ -26,14 +26,15 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dataLoaded, setDataLoaded] = useState(true);
   const [transferData, setTransferData] = useState<TransactionData[]>([]);
-  const [maquinasData, setMaquinasData] = useState<MaquinaData[]>(maquinas); // Estado local de las máquinas
 
   useEffect(() => {
     fetch('/api/v1')
       .then(response => response.json())
       .then(data => {
+        // console.log('todos los balances:', data);
+  
         let transferDataArray = [];
-
+  
         if (Array.isArray(data)) {
           transferDataArray = data;
         } else if (data && Array.isArray(data.data)) {
@@ -41,67 +42,42 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
         } else {
           throw new Error('Los datos recibidos de la API no están en el formato esperado.');
         }
-
+  
         setTransferData(transferDataArray);
         setDataLoaded(true);
-
+  
       })
       .catch(error => {
         console.error('Error fetching transfer data:', error);
       });
   }, []);
-
-  useEffect(() => {
-    // Recalcular balances cuando transferData cambie
-    const updatedMaquinasData = maquinas.map(maquina => ({
-      ...maquina,
-      balance: getLatestBalanceByIdMachine(maquina.id_machine)
-    }));
-    setMaquinasData(updatedMaquinasData);
-  }, [transferData]);
-
+  
   const getLatestBalanceByIdMachine = (id_machine: string): number | undefined => {
-    const transactions = transferData.filter(item => item.user === id_machine);
+    const transactions = transferData.filter(item => item.user === id_machine); // Cambiado `id_machine` a `user`
     if (transactions.length > 0) {
       return transactions[transactions.length - 1].balance;
     }
     return undefined;
   };
 
-  const filteredMaquinas = maquinasData.filter((maquina) =>
+  const filteredMaquinas = maquinas.filter((maquina) =>
     maquina.id_machine.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).map((maquina) => ({
+    ...maquina,
+    balance: getLatestBalanceByIdMachine(maquina.id_machine)
+  }));
 
-  const handleStatusChange = async (id: string, newStatus: number) => {
-    try {
-      const response = await fetch(`/api/maquinas/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (response.ok) {
-        setMaquinasData(prevData => {
-          const updatedData = prevData.map(maquina =>
-            maquina._id === id ? { ...maquina, status: newStatus } : maquina
-          );
-          return updatedData;
-        });
-      } else {
-        console.error('Error al actualizar estado');
-      }
-    } catch (error) {
-      console.error('Error en la solicitud de actualización de estado:', error);
-    }
+  const handleStatusChange = (id: string, newStatus: number) => {
+    // console.log(`Cambiando estado de máquina ${id} a ${newStatus}`);
   };
 
   const getTransferIdByMachineId = (id_machine: string): string | undefined => {
+    // console.log(`Buscando transfer para id_machine: ${id_machine}`);
     const transfer = transferData.find(item => item.user === id_machine);
+    // console.log('Transfer encontrado:', transfer);
     return transfer ? transfer.user : undefined;
   };
-
+  
   const columns = [
     {
       name: 'Estado',
@@ -155,11 +131,11 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
 
   return (
     <div className="mx-auto max-w-270">
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
-          <h2 className="font-medium text-black dark:text-white">
-            Listado de Máquinas
-          </h2>
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <header className="border-b border-stroke py-4 px-6 dark:border-strokedark">
+                <h2 className="font-medium text-black dark:text-white">
+                  Listado de Máquinas
+                </h2>
         </header>
         <div className="p-6">
           <input
