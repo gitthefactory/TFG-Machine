@@ -15,7 +15,7 @@ export default async function getOperators(query: string, currentPage: number) {
     });
 
     const operators = await response.json();
-
+    // console.log('Operators Data:', operators.data); // Añade esta línea para verificar los datos
     // Return the operator data
     return operators.data;
   } catch (error) {
