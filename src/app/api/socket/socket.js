@@ -23,7 +23,14 @@ io.on('connection', (socket) => {
         console.log('Message received:', data);
     socket.emit('response', 'Message received');
   });
+  
+  socket.on('checkboxChange', (data) => {
+    console.log('Checkbox state changed:', data);
+    io.emit('response', `Checkbox state for operator with id ${data.id} is now ${data.checked}`);
+  });
+  
 });
+
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

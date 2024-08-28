@@ -7,7 +7,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import MaquinasTable from "@/components/Maquinas/MaquinasTable";
 import getMachines from "@/controllers/getMachines";
 import React, { useEffect, useState } from "react";
-import { SocketProvider } from "@/app/socket.io/socketContext";
+import { SocketProvider } from "@/app/api/socket/socketContext";
 
 interface MaquinaData {
   _id: string; // Añade la propiedad id a UsuarioData

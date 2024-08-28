@@ -7,7 +7,7 @@ import OperadoresTable from "@/components/Operadores/OperadoresTable";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import getOperators from "@/controllers/getOperators";
 import React, { useEffect, useState } from "react";
-import { SocketProvider } from "@/app/socket.io/socketContext";
+import { SocketProvider } from "@/app/api/socket/socketContext";
 
 interface RowData {
   id: number;

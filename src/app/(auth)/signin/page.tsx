@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
-import { useSocket } from "@/app/socket.io/socketContext";
+import { useSocket } from "@/app/api/socket/socketContext";
 
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({

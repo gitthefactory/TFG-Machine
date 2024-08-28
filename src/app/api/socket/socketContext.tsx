@@ -2,50 +2,46 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { SocketEvent, SOCKET_EVENTS } from '@/app/api/socket/event'; // Ajusta la ruta según tu estructura
 
-// Define la interfaz para el contexto
 interface SocketContextProps {
     socket: Socket | null;
+    emit: (event: SocketEvent, ...args: any[]) => void;
 }
 
-// Crea el contexto de Socket
-const SocketContext = createContext<SocketContextProps>({});
+const SocketContext = createContext<SocketContextProps>({ socket: null, emit: () => {} });
 
-// Hook personalizado para usar el contexto de Socket
 export const useSocket = () => useContext(SocketContext);
 
-// Proveedor de contexto de Socket
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        // Conecta al servidor Socket.IO
-        const socketConnection = io('http://localhost:3001');// dos opciones en las pages o layout  // api/ socket.io
-        // Socketio-client, server, prilo state, importar el useContext 
+        const socketConnection = io('http://localhost:3001');
 
-        // Muestra mensajes en la consola para verificar la conexión
-        socketConnection.on('connect', (e) => {
-            console.log(e)
+        socketConnection.on(SOCKET_EVENTS.CONNECT, () => {
             console.log('Socket.IO client connected');
         });
 
-        socketConnection.on('disconnect', () => {
+        socketConnection.on(SOCKET_EVENTS.DISCONNECT, () => {
             console.log('Socket.IO client disconnected');
         });
 
-        // Establece el socket en el estado
         setSocket(socketConnection);
 
-        // Desconecta el socket al desmontar el componente
         return () => {
             socketConnection.disconnect();
             console.log('Socket.IO client disconnected from provider');
-            
         };
+
     }, []);
 
+    const emit = (event: SocketEvent, ...args: any[]) => {
+        socket?.emit(event, ...args);
+    };
+
     return (
-        <SocketContext.Provider value={{ socket }}>
+        <SocketContext.Provider value={{ socket, emit }}>
             {children}
         </SocketContext.Provider>
     );

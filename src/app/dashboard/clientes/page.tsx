@@ -6,8 +6,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useEffect, useState } from "react";
 import getClients from "@/controllers/getClients";
 import AddButton from "@/components/AddButton";
-import { useContext } from "react";
-import { useSocket } from "@/app/socket.io/socketContext";
+import { useSocket } from "@/app/api/socket/socketContext";
 interface RowData {
   id: number;
   nombreCompleto: string;
