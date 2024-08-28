@@ -1,5 +1,5 @@
 // server.js (o index.js si prefieres)
-const express = require('express');
+
 const http = require('http');
 const socketIo = require('socket.io');
 
@@ -22,11 +22,12 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
         console.log('Message received:', data);
     socket.emit('response', 'Message received');
+
   });
   
-  socket.on('checkboxChange', (data) => {
-    console.log('Checkbox state changed:', data);
-    io.emit('response', `Checkbox state for operator with id ${data.id} is now ${data.checked}`);
+  socket.on('UpdateSala', (data) =>{
+    console.log('Sala updated:', data);
+    io.emit('SalaUpdated', data);
   });
   
 });
