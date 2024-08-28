@@ -9,7 +9,7 @@ interface SocketContextProps {
 }
 
 // Crea el contexto de Socket
-const SocketContext = createContext<SocketContextProps>({ socket: null });
+const SocketContext = createContext<SocketContextProps>({});
 
 // Hook personalizado para usar el contexto de Socket
 export const useSocket = () => useContext(SocketContext);
@@ -20,10 +20,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     useEffect(() => {
         // Conecta al servidor Socket.IO
-        const socketConnection = io('http://localhost:3001');
+        const socketConnection = io('http://localhost:3001');// dos opciones en las pages o layout  // api/ socket.io
+        // Socketio-client, server, prilo state, importar el useContext 
 
         // Muestra mensajes en la consola para verificar la conexión
-        socketConnection.on('connect', () => {
+        socketConnection.on('connect', (e) => {
+            console.log(e)
             console.log('Socket.IO client connected');
         });
 
@@ -38,6 +40,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return () => {
             socketConnection.disconnect();
             console.log('Socket.IO client disconnected from provider');
+            
         };
     }, []);
 

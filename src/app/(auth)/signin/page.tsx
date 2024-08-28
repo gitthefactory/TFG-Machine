@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
+import { useSocket } from "@/app/socket.io/socketContext";
 
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
@@ -14,6 +15,8 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
+  const socket  = useSocket();// el contexto esta funcionando esta declarando la variable
+  console.log(socket);
 
   function handleInput(e: any) {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
