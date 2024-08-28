@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { io } from 'socket.io-client';
 import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
 import DeleteButtonSalas from '@/components/Salas/DeleteButtonSalas';
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { getSession } from "next-auth/react";
-import getRooms from '@/controllers/getRooms'; // Asegúrate de que esta función esté bien importada
+import getRooms from '@/controllers/getRooms';
 
 interface SalaData {
   _id: string;
@@ -27,6 +28,7 @@ const SalasTable: React.FC = () => {
   const [userRole, setUserRole] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredSalas, setFilteredSalas] = useState<SalaData[]>([]);
+  const socket = io('http://localhost:3001'); // Conectar al servidor Socket.IO
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +58,29 @@ const SalasTable: React.FC = () => {
     setFilteredSalas(filteredData);
   }, [searchTerm, salas]);
 
+  useEffect(() => {
+    socket.on('salaActualizada', (data) => {
+      console.log('Sala actualizada recibida:', data);
+  
+      setSalas((prevSalas) =>
+        prevSalas.map((sala) =>
+          sala._id === data._id ? { ...sala, status: data.status } : sala
+        )
+      );
+  
+      setFilteredSalas((prevFilteredSalas) =>
+        prevFilteredSalas.map((sala) =>
+          sala._id === data._id ? { ...sala, status: data.status } : sala
+        )
+      );
+    });
+  
+    return () => {
+      socket.off('salaActualizada');
+    };
+  }, [socket]);
+  
+
   const handleStatusChange = async (id: string, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     
@@ -75,9 +100,7 @@ const SalasTable: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-        
           newStatus: newStatus,
-         
         }),
       });
 
@@ -86,17 +109,8 @@ const SalasTable: React.FC = () => {
 
       if (response.ok) {
         console.log('Estado actualizado correctamente');
-        // Actualizar el estado local del componente
-        setSalas(prevSalas =>
-          prevSalas.map(sala =>
-            sala._id === id ? { ...sala, status: newStatus } : sala
-          )
-        );
-        setFilteredSalas(prevFilteredSalas =>
-          prevFilteredSalas.map(sala =>
-            sala._id === id ? { ...sala, status: newStatus } : sala
-          )
-        );
+        // Emitir evento al servidor Socket.IO
+        socket.emit('updateSala', { _id: id, status: newStatus });
       } else {
         console.error('Error al actualizar estado', result);
       }
@@ -127,7 +141,7 @@ const SalasTable: React.FC = () => {
     },
     {
       name: 'Pais',
-      selector: (row: SalaData) => row.pais.join(', '), // Une los elementos del array si es necesario
+      selector: (row: SalaData) => row.pais.join(', '),
       sortable: true,
     },
     {
@@ -142,7 +156,7 @@ const SalasTable: React.FC = () => {
     },
     {
       name: 'Moneda',
-      selector: (row: SalaData) => row.currency.join(', '), // Une los elementos del array si es necesario
+      selector: (row: SalaData) => row.currency.join(', '),
       sortable: true,
     },
     {
