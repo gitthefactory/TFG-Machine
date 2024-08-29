@@ -1,4 +1,3 @@
-// socketContext.tsx
 "use client";  // Asegúrate de que esta línea esté al principio del archivo
 
 import React, { createContext, useContext, useEffect, useState } from 'react';

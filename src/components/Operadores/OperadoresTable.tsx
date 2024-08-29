@@ -13,7 +13,6 @@ interface User {
   typeProfile: {
     _id: string;
   };
-  
   games: { provider: string }[];
   id_machine: string;
   cantidadMaquinas: number;
@@ -23,13 +22,13 @@ interface User {
 const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true); // Estado para manejar el loading
   const { socket } = useSocket();
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
-        console.log(usuarios); // Verifica la estructura de los datos
         const usuariosClientesFiltrados = usuarios
           .filter(usuario => usuario.typeProfile._id === "660ebaa7b02ce973cad66552")
           .map(usuario => ({
@@ -37,9 +36,10 @@ const OperadoresTable: React.FC = () => {
             cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
           }));
         setUsuariosClientes(usuariosClientesFiltrados);
+        setLoading(false); // Deja de cargar cuando los datos están listos
       } catch (error) {
         console.error(error);
-        // Manejo de errores
+        setLoading(false); // Asegúrate de desactivar el loading en caso de error
       }
     };
 
@@ -47,6 +47,7 @@ const OperadoresTable: React.FC = () => {
 
     if (socket) {
       socket.on('SalaUpdated', (updatedUser: User) => {
+        console.log('Operador actualizado recibido:', updatedUser);
         setUsuariosClientes(prevState =>
           prevState.map(user =>
             user._id === updatedUser._id ? updatedUser : user
@@ -64,6 +65,8 @@ const OperadoresTable: React.FC = () => {
 
   const handleStatusChange = async (userId: string, newStatus: number) => {
     try {
+      setLoading(true); // Muestra el loading antes de realizar la actualización
+
       const response = await fetch(`/api/usuarios/${userId}`, {
         method: 'PUT',
         headers: {
@@ -75,7 +78,7 @@ const OperadoresTable: React.FC = () => {
       if (!response.ok) {
         throw new Error('Error al actualizar el estado');
       }
-      
+
       if (socket) {
         socket.emit('UpdateSala', { _id: userId, status: newStatus });
       }
@@ -86,8 +89,11 @@ const OperadoresTable: React.FC = () => {
           user._id === userId ? { ...user, status: newStatus } : user
         )
       );
+
+      setLoading(false); // Deja de cargar después de realizar la actualización
     } catch (error) {
       console.error('Error al cambiar el estado:', error);
+      setLoading(false); // Asegúrate de desactivar el loading en caso de error
     }
   };
 
@@ -151,7 +157,6 @@ const OperadoresTable: React.FC = () => {
           </h2>
         </header>
         <div className="p-6.5">
-          {/* Agrega el campo de búsqueda */}
           <input
             type="text"
             placeholder="Buscar operadores..."
@@ -159,14 +164,17 @@ const OperadoresTable: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          {/* Renderiza la DataTable con los datos filtrados */}
-          <DataTable
-            columns={columns}
-            data={Array.isArray(filteredUsers) ? filteredUsers : []}
-            pagination
-            highlightOnHover
-            responsive
-          />
+          {loading ? (
+            <p>Cargando...</p> // Muestra un mensaje de loading
+          ) : (
+            <DataTable
+              columns={columns}
+              data={Array.isArray(filteredUsers) ? filteredUsers : []}
+              pagination
+              highlightOnHover
+              responsive
+            />
+          )}
         </div>
       </div>
     </div>

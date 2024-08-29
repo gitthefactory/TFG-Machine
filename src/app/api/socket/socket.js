@@ -15,11 +15,11 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('UpdateSala', (data) => {
-    // Actualiza el usuario en la base de datos
-    // Aquí deberías hacer la actualización en la base de datos
+    // Aquí deberías actualizar el usuario en la base de datos
+    // Por simplicidad, simplemente emitiremos el evento de actualización
 
     // Luego emite el evento para todos los clientes
-    io.emit('SalaUpdated', data);
+    io.emit('SalaUpdated', data); // Asegúrate de que 'data' contenga el usuario actualizado
   });
 
   socket.on('disconnect', () => {
