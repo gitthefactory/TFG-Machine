@@ -1,10 +1,10 @@
+import { useSocket } from "@/app/api/socket/socketContext";
 import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
 import Link from "next/link";
 import DeleteButtonOperadores from '@/components/Operadores/DeleteButtonOperadores';
 import { FaPen } from "react-icons/fa";
-
 
 interface User {
   _id: string;
@@ -23,11 +23,13 @@ interface User {
 const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
       try {
         const usuarios = await getUsers();
+        console.log(usuarios); // Verifica la estructura de los datos
         const usuariosClientesFiltrados = usuarios
           .filter(usuario => usuario.typeProfile._id === "660ebaa7b02ce973cad66552")
           .map(usuario => ({
@@ -42,7 +44,23 @@ const OperadoresTable: React.FC = () => {
     };
 
     fetchUsuariosClientes();
-  }, []);
+
+    if (socket) {
+      socket.on('SalaUpdated', (updatedUser: User) => {
+        setUsuariosClientes(prevState =>
+          prevState.map(user =>
+            user._id === updatedUser._id ? updatedUser : user
+          )
+        );
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('SalaUpdated');
+      }
+    };
+  }, [socket]);
 
   const handleStatusChange = async (userId: string, newStatus: number) => {
     try {
@@ -56,6 +74,10 @@ const OperadoresTable: React.FC = () => {
 
       if (!response.ok) {
         throw new Error('Error al actualizar el estado');
+      }
+      
+      if (socket) {
+        socket.emit('UpdateSala', { _id: userId, status: newStatus });
       }
 
       // Actualizar el estado localmente para reflejar el cambio
@@ -76,7 +98,6 @@ const OperadoresTable: React.FC = () => {
         <input
           type="checkbox"
           className="form-checkbox h-5 w-5 text-green-500"
-
           checked={row.status === 1}
           onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
         />
@@ -104,23 +125,22 @@ const OperadoresTable: React.FC = () => {
       name: 'Acciones',
       cell: (row: User) => (
         <div className="flex items-center space-x-3.5">
-        <DeleteButtonOperadores id={row._id} />
-        <Link href={`/dashboard/operadores/editar/${row._id}`}
-            className="edit"
-            title="Editar"
-            style={{ fontSize: '20px' }}
-          >
+          <DeleteButtonOperadores id={row._id} />
+          <Link href={`/dashboard/operadores/editar/${row._id}`}
+                className="edit"
+                title="Editar"
+                style={{ fontSize: '20px' }}>
             <FaPen />
           </Link>
-          </div>
+        </div>
       ),
       sortable: true,
     },
   ];
 
-  const filteredUsers = usuariosClientes.filter(user =>
-    user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = Array.isArray(usuariosClientes) ? usuariosClientes.filter(user => 
+    user.nombreCompleto && user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   return (
     <div className="mx-auto max-w-270">
@@ -142,7 +162,7 @@ const OperadoresTable: React.FC = () => {
           {/* Renderiza la DataTable con los datos filtrados */}
           <DataTable
             columns={columns}
-            data={filteredUsers}
+            data={Array.isArray(filteredUsers) ? filteredUsers : []}
             pagination
             highlightOnHover
             responsive

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Operator from "@/models/operator";
-
+import { getIO } from "@/app/api/socket/socket";
 
 
 //GET A ONE OPERATOR
@@ -64,6 +64,11 @@ export async function GET(request: any, { params: { id } }: any) {
         user: usuarioSeleccionado,
         client: clienteSeleccionado
       });
+
+      const io = getIO();
+    
+    // Emite el evento de actualización
+    io.emit('operatorUpdated', updatedOperator);
   
       return NextResponse.json(
         {

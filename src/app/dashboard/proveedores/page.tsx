@@ -1,5 +1,6 @@
 "use client";
 
+import { SocketProvider } from "@/app/api/socket/socketContext";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 // import ProveedoresDetalle from "@/components/ProveedoresDetalle";
@@ -10,6 +11,7 @@ import React from "react";
 const Proveedores: React.FC = () => {
   return (
     <>
+    <SocketProvider>
       <DefaultLayout>
         
         <Breadcrumb pageName="Proveedores" />
@@ -18,6 +20,7 @@ const Proveedores: React.FC = () => {
         <ProveedoresTable query={""} currentPage={0} />
         {/* <ProveedoresDetalle query={""} currentPage={0} /> */}
       </DefaultLayout>
+      </SocketProvider>
     </>
   );
 };

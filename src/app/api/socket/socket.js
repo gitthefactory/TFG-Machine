@@ -1,5 +1,4 @@
-// server.js (o index.js si prefieres)
-
+const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
@@ -14,26 +13,32 @@ const io = socketIo(server, {
 
 io.on('connection', (socket) => {
   console.log('A user connected');
-  
+
+  socket.on('UpdateSala', (data) => {
+    // Actualiza el usuario en la base de datos
+    // Aquí deberías hacer la actualización en la base de datos
+
+    // Luego emite el evento para todos los clientes
+    io.emit('SalaUpdated', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
 
   socket.on('message', (data) => {
-        console.log('Message received:', data);
+    console.log('Message received:', data);
     socket.emit('response', 'Message received');
-
   });
-  
-  socket.on('UpdateSala', (data) =>{
-    console.log('Sala updated:', data);
-    io.emit('SalaUpdated', data);
-  });
-  
 });
-
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = {
+  getIO() {
+    return io;
+  }
+};
