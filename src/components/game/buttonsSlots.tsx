@@ -30,7 +30,7 @@ const ButtonsSlots: React.FC<ButtonsSlotsProps> = ({ providerId }) => {
           const { id_machine } = sessionData.data.user;
           const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${providerId}`);
           const data = await response.json();
-          // console.log(response)
+          console.log("DATA : ",data)
 
           if (data.data && data.data.token) {
             setToken(data.data.token);

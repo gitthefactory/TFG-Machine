@@ -42,15 +42,13 @@ const Providers: React.FC = () => {
 
                 if (belatraProvider) {
                   setBelatraStatus(belatraProvider.status);
+                  setShowBelatraButton(belatraProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'belatra gaming' && p.status === 1));
                 }
 
                 if (bgamingProvider) {
                   setBgamingStatus(bgamingProvider.status);
+                  setShowBgamingButton(bgamingProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'bgaming' && p.status === 1));
                 }
-
-                // Verificar si ambos proveedores tienen status 1 en ambas APIs
-                setShowBelatraButton(belatraProvider?.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'belatra gaming' && p.status === 1));
-                setShowBgamingButton(bgamingProvider?.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'bgaming' && p.status === 1));
               } else {
                 console.error("La API /api/juegosApi no devolvió un estado válido.");
               }
@@ -87,6 +85,7 @@ const Providers: React.FC = () => {
             onClick={() => handleProvider('belatra')}
             style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
           >
+           
           </button>
         )}
         {showBgamingButton && (
@@ -95,7 +94,7 @@ const Providers: React.FC = () => {
             onClick={() => handleProvider('bgaming')}
             style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
           >
-            {/* BGAMING */}
+            
           </button>
         )}
       </div>

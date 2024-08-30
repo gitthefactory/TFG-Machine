@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react'; // Importa la función signOut
 
-const Belatra: React.FC = () => {
+const Bgaming: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -70,7 +70,7 @@ const Belatra: React.FC = () => {
         }
 
         // Llamar a la API con el idMachine
-        const provider = 68;
+        const provider = 68; // ID del proveedor actualizado
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
 
@@ -89,13 +89,16 @@ const Belatra: React.FC = () => {
         // Filtrar juegos activos
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
-
-          const finalBelatraGames = activeBelatraGames.filter(belatraGame => 
-            activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
+          console.log("Active Global Games:", activeGlobalGames);
+          
+          const activeBgamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming' && game.status === 1);
+          console.log("Active Bgaming Games:", activeBgamingGames);
+          
+          const finalBgamingGames = activeBgamingGames.filter(bgamingGame => 
+            activeGlobalGames.some(globalGame => globalGame.id === bgamingGame.id)
           );
 
-          setGames(finalBelatraGames);
+          setGames(finalBgamingGames);
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
         }
@@ -120,7 +123,7 @@ const Belatra: React.FC = () => {
   };
 
   return (
-    <div className="belatra-container">
+    <div className="bgaming-container">
       {loading ? (
         <p>Loading...</p> 
       ) : (
@@ -158,4 +161,4 @@ const Belatra: React.FC = () => {
   );
 }
 
-export default Belatra;
+export default Bgaming;
