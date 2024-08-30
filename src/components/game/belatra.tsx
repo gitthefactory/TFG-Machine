@@ -5,6 +5,7 @@ import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
+import { signOut } from 'next-auth/react'; // Importa signOut
 
 const Belatra: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
@@ -57,8 +58,8 @@ const Belatra: React.FC = () => {
                 });
 
                 if (result.isConfirmed) {
-                  // Redirigir al usuario a la página de juegos
-                  window.location.href = `/games/?idMachine=${machine.id_machine}`;
+                  // Cierra la sesión del usuario cuando la máquina está deshabilitada
+                  await signOut({ callbackUrl: '/' });
                 }
                 setLoading(false);
               }, 1000);
