@@ -41,6 +41,19 @@ const Games: React.FC = () => {
             const machineData = response.data.data.find((machine: any) => machine.user === idMachine);
             
             if (machineData) {
+              // Verifica el status de la máquina
+              const machineResponse = await axios.get(`/api/maquinas`);
+              const machine = machineResponse.data.data.find((m: any) => m.id_machine === idMachine);
+              
+              if (machine && machine.status === 0) {
+                // Borra todas las cookies (incluyendo el token) y redirige
+                document.cookie.split(';').forEach(cookie => {
+                  document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+                });
+                window.location.href = '/maquinas';
+                return; // Termina la función si redirige
+              }
+
               // Actualiza el estado con los datos de la máquina encontrada
               setSelectedMachineBalance({
                 user: machineData.user,
@@ -112,9 +125,11 @@ const Games: React.FC = () => {
       return balance.toFixed(2);
     }
   };
+
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
+
   return (
     <div>
       {isLoading && <Loader />}
@@ -146,16 +161,16 @@ const Games: React.FC = () => {
           {visibleSection === 'crash' && <CrashSection />}
   
           <div className="dc" id="dreamcatcher" onClick={toggleModal}>
-            <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
+            {/* <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} /> */}
           </div>
   
-          {isModalOpen && (
+          {/* {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
                 <DreamcatcherCashier />
               </div>
             </div>
-          )}
+          )} */}
   
           <div className="footer d-flex justify-content-center">
             <div className="bgcreditos">
