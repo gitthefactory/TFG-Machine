@@ -32,10 +32,10 @@ export async function GET() {
 }
 
 // POST request
-export async function POST(request: { json: () => PromiseLike<{ nombre: string; descripcion: string; status: number; games?: any[]; operator: string; client: string; room: string; pais: string; direccion: string; ciudad: string; }> }) {
+export async function POST(request: { json: () => PromiseLike<{ nombre: string; descripcion: string; status: number; games?: any[]; operator: string; client: string; room: string; pais: string; direccion: string; ciudad: string;  balance: number;}> }) {
   try {
     // Obtener datos del cuerpo de la solicitud
-    const { nombre, descripcion, status, games = [], operator, client, room, pais, direccion, ciudad } = await request.json();
+    const { nombre, descripcion, status, games = [], operator, client, room, pais, direccion, ciudad, balance } = await request.json();
 
     // Conectar a la base de datos (si aún no está conectada)
     await connectDB();
@@ -57,7 +57,8 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: string; 
       pais,
       direccion,
       ciudad,
-      token
+      token,
+      balance
     });
 
     // Devolver una respuesta con la máquina recién creada
@@ -116,7 +117,7 @@ export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: s
 export async function PUT(request: Request) {
   try {
     const { id } = request.nextUrl.searchParams;
-    const { nombre, descripcion, status, games, operator, client, room, pais, direccion, ciudad } = await request.json();
+    const { nombre, descripcion, status, games, operator, client, room, pais, direccion, ciudad, balance } = await request.json();
     await connectDB();
     
     const machine = await Machine.findById(id);
@@ -135,7 +136,7 @@ export async function PUT(request: Request) {
     if (pais) machine.pais = pais;
     if (direccion) machine.direccion = direccion;
     if (ciudad) machine.ciudad = ciudad;
-    
+    if (balance) machine.balance = balance;
     machine.updatedAt = new Date();
     const updatedMachine = await machine.save();
 
