@@ -4,6 +4,7 @@ import DataTable from 'react-data-table-component';
 import DeleteButton from '@/components/Clientes/DeleteButton'
 import Link from "next/link";
 import { FaPen } from "react-icons/fa";
+import { useSocket } from "@/app/api/socket/socketContext";
 
 
 interface User {
@@ -20,6 +21,8 @@ interface User {
 const UserDataTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const {socket} = useSocket();
+
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
@@ -36,7 +39,11 @@ const UserDataTable: React.FC = () => {
     };
 
     fetchUsuariosClientes();
-  }, []);
+
+    if (socket) {
+      socket.on("")
+    }
+  }, [socket]);
 
   const handleStatusChange = (id: string, newStatus: number) => {
     setUsuariosClientes((prevUsuarios) =>

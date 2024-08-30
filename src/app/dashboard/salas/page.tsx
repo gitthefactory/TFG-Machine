@@ -6,7 +6,7 @@ import SalasTable from "@/components/Salas/SalasTable";
 import React, { useEffect, useState } from "react";
 import getRooms from "@/controllers/getRooms";
 import AddButton from "@/components/AddButton";
-import { SocketProvider, useSocket } from "@/app/api/socket/socketContext";
+import { SocketProvider} from "@/app/api/socket/socketContext";
 
 // Define el tipo para la sala
 interface Sala {
@@ -16,7 +16,6 @@ interface Sala {
 
 // Componente para el contenido de Salas
 const SalasContent: React.FC = () => {
-  const { socket } = useSocket(); // Obtén el socket del contexto
   const [salas, setSalas] = useState<Sala[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -37,19 +36,8 @@ const SalasContent: React.FC = () => {
 
     fetchData();
 
-    if (socket) {
-      // Escucha el evento de actualización de salas
-      socket.on('salasUpdated', (updatedSalas: Sala[]) => {
-        console.log('Salas data received:', updatedSalas);
-        setSalas(updatedSalas); // Actualiza el estado con los nuevos datos
-      });
-
-      // Cleanup listener on component unmount
-      return () => {
-        socket.off('salasUpdated');
-      };
-    }
-  }, [socket]);
+  
+  }, []);
 
   return (
     <>

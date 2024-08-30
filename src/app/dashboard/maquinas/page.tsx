@@ -38,6 +38,8 @@ const Maquinas: React.FC = () => {
     }
 
     fetchData();
+    
+
   }, []);
 
   return (

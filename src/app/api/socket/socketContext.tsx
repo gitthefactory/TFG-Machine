@@ -15,15 +15,29 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:3001");
-     console.log('Cliente conectado')// Conectar al servidor de Socket.IO
+    const socketInstance = io("http://localhost:3001", {
+      reconnectionAttempts: 5, // Número de intentos de reconexión
+      timeout: 10000, // Tiempo máximo para establecer la conexión
+    });
+    
+    console.log('Cliente conectado');
     setSocket(socketInstance);
-
+  
+    // Manejo de eventos de conexión y desconexión
+    socketInstance.on('connect', () => {
+      console.log('Conectado al servidor');
+    });
+  
+    socketInstance.on('disconnect', () => {
+      console.log('Desconectado del servidor');
+    });
+  
     return () => {
-      socketInstance.disconnect(); // Desconectar al desmontar
+      socketInstance.disconnect();
+      console.log('Cliente desconectado');
     };
   }, []);
-
+  
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>
       {children}

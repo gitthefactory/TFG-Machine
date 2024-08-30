@@ -3,8 +3,8 @@
 import { NextResponse } from "next/server";
 import {connectDB} from "@/libs/mongodb";
 import User from "@/models/user";
-
 import ProfileType from "@/models/profileType";
+import { getIO } from "@/app/api/socket/socket";
 
 
 
@@ -27,6 +27,11 @@ export async function GET() {
     }));
 
     // Devolver la respuesta con los datos de los usuarios poblados
+ /*    const io = getIO();
+
+    // Emite el evento de actualización
+    io.emit('operatorUpdated', updatedOperator); */
+
     return NextResponse.json({
       message: "Ok",
       data: populatedUsuarios,
@@ -34,7 +39,11 @@ export async function GET() {
       status: 200
     });
   } catch (error) {
-    // Manejar cualquier error que pueda ocurrir durante el proceso
+
+    const io = getIO();
+
+    // Emite el evento de actualización
+    io.emit('operatorUpdated', updatedOperator);
     return NextResponse.json({
       message: "Failed to get users",
       error,

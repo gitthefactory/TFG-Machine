@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/user";
-
+import { getIO } from "@/app/api/socket/socket";
 //GET A ONE USER
 export async function GET(request: any, { params: { id } }: any) {
   try {
@@ -63,6 +63,11 @@ export async function PUT(request: any, { params: { id } }: any) {
 
     // Actualiza el usuario utilizando el método findByIdAndUpdate
     await User.findByIdAndUpdate(id, updateData);
+
+    const io = getIO();
+
+    // Emite el evento de actualización
+    io.emit('operatorUpdated', {id, updateData });
 
     return NextResponse.json(
       {

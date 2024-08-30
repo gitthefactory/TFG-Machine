@@ -6,7 +6,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useEffect, useState } from "react";
 import getClients from "@/controllers/getClients";
 import AddButton from "@/components/AddButton";
-import { SocketProvider, useSocket } from "@/app/api/socket/socketContext";
+
 interface RowData {
   id: number;
   nombreCompleto: string;
@@ -20,8 +20,7 @@ const Clientes: React.FC = () => {
   const [rows, setRows] = useState<RowData[]>([]);
   const [session, setSession] = useState();
   const [setLoading] = useState<boolean>(true);
-  const socket = useSocket()
-  console.log(socket);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -42,14 +41,14 @@ const Clientes: React.FC = () => {
 
   return (
     <>
-      <SocketProvider>
+     
       <DefaultLayout>
         <Breadcrumb pageName="Clientes" />
         {/* Botón de agregar */}
         <AddButton href="/dashboard/clientes/crear" />
        <DataTable rows={rows} />
       </DefaultLayout>
-      </SocketProvider>
+    
     </>
   );
 };

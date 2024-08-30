@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Room from "@/models/room";
+import { getIO } from "../../socket/socket";
 
 
 //GET A ONE MACHINE
@@ -69,6 +70,9 @@ export async function GET(request: any, { params: { id } }: any) {
   
       // Asegúrate de que id_machine esté incluido en la respuesta
       updatedMachine.id_machine = id_machine;
+
+      const io = getIO();
+      io.emit("updateMachine", updatedMachine);
   
       return NextResponse.json(
         {
