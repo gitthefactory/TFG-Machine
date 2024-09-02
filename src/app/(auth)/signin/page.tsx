@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
-
+import { useEffect } from "react";
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
     email: "",
@@ -18,27 +18,36 @@ const SignIn: React.FC = () => {
   function handleInput(e: any) {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
-
+useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('callbackUrl')) {
+        url.searchParams.delete('callbackUrl');
+        window.history.replaceState({}, document.title, url.toString());
+      }
+    }
+  }, []);
   async function handleSubmit(e: any) {
     e.preventDefault();  
     if (!info.email || !info.password) {
       setError("Todos los campos son obligatorios");
       return;
     }
-    
+
     try {
       setPending(true);
       const res = await signIn("credentials", {
         
         email: info.email,
         password: info.password,
-        redirect: false  
+        redirect: false,  
+        
       });
   
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        router.replace("/");
+        router.push("/");
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");

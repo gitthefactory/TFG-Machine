@@ -1,11 +1,10 @@
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/user";
-
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-
+import {withAuth} from "next-auth/middleware";
 
 // Definir el proveedor de credenciales para el inicio de sesión con correo electrónico y contraseña
 const emailProvider = CredentialsProvider({
@@ -71,46 +70,45 @@ const machineProvider = CredentialsProvider({
 
 // PARA CLIENTES
 
-const clientProvider = CredentialsProvider({
-  name: "CredentialsClient",
-  id: "credentialsclient",
-  credentials: {
-    email: { label: "Email", type: "text", placeholder: "correo@ejemplo.com" },
-    password: { label: "Password", type: "password" },
-  },
-  async authorize(credentials) {
-    await connectDB();
-    const clientFound = await Client.findOne({
-      email: credentials?.email,
-    }).select("+password");
+// const clientProvider = CredentialsProvider({
+//   name: "CredentialsClient",
+//   id: "credentialsclient",
+//   credentials: {
+//     email: { label: "Email", type: "text", placeholder: "correo@ejemplo.com" },
+//     password: { label: "Password", type: "password" },
+//   },
+//   async authorize(credentials) {
+//     await connectDB();
+//     const clientFound = await Client.findOne({
+//       email: credentials?.email,
+//     }).select("+password");
 
-    if (!clientFound) throw new Error("Invalid credentials");
+//     if (!clientFound) throw new Error("Invalid credentials");
 
-    const passwordMatch = await bcrypt.compare(
-      credentials!.password,
-      clientFound.password
-    );
+//     const passwordMatch = await bcrypt.compare(
+//       credentials!.password,
+//       clientFound.password
+//     );
 
-    if (!passwordMatch) throw new Error("Invalid credentials");
+//     if (!passwordMatch) throw new Error("Invalid credentials");
 
-    // Elimina la línea que agrega nombreCompleto al objeto devuelto
-    return clientFound.toObject();
-  },
-});
+//     // Elimina la línea que agrega nombreCompleto al objeto devuelto
+//     return clientFound.toObject();
+//   },
+// });
 
 
 
 
 // Combinar las configuraciones de los proveedores
 const handlers = NextAuth({
-  providers: [emailProvider, machineProvider, clientProvider],
+  providers: [emailProvider, machineProvider],
   pages: {
-    signIn: "/signin", 
-    maquinas: "/maquinas", 
+    signIn: "/signin",
+    maquinas: "/maquinas",
   },
   session: {
     strategy: "jwt",
-    
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -120,6 +118,11 @@ const handlers = NextAuth({
     async session({ session, token }) {
       session.user = token.user as any;
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Redirige a la URL base o a una página específica sin el parámetro callbackUrl
+      if (url.startsWith(baseUrl)) return baseUrl; // o redirige a una página específica si lo prefieres
+      return baseUrl;
     },
   },
 });
