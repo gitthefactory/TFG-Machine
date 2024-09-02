@@ -46,21 +46,17 @@ const OperadoresTable: React.FC = () => {
     fetchUsuariosClientes();
 
     if (socket) {
-      socket.on('SalaUpdated', (updatedUser: User) => {
+      const handleUpdateSala = async (updatedUser: User) => {
         console.log('Operador actualizado recibido:', updatedUser);
-        setUsuariosClientes(prevState =>
-          prevState.map(user =>
-            user._id === updatedUser._id ? updatedUser : user
-          )
-        );
-      });
-    }
+        await fetchUsuariosClientes(); // Actualiza la lista de usuarios
+      };
 
-    return () => {
-      if (socket) {
-        socket.off('SalaUpdated');
-      }
-    };
+      socket.on('SalaUpdated', handleUpdateSala);
+
+      return () => {
+        socket.off('SalaUpdated', handleUpdateSala);
+      };
+    }
   }, [socket]);
 
   const handleStatusChange = async (userId: string, newStatus: number) => {

@@ -55,31 +55,20 @@ const SalasTable: React.FC = () => {
     fetchData();
 
     if (socket) {
+      const handleUpdateSala = async (updatedSala: SalaData) => {
+        console.log('Sala actualizada recibida:', updatedSala);
+        await fetchData(); // Actualiza la lista de salas
+      }
       console.log("Socket conectado:", socket);
   
       // Escucha el evento de actualización de salas
-      socket.on('updateMachine', (updateMachine: SalaData) => {
-        console.log('Datos recibidos del socket:', updateMachine);
-        setLoading(true); // Inicia el indicador de carga
-      
-        setSalas(prevState => prevState.map(sala =>
-          sala._id === updateMachine._id ? updateMachine : sala
-        ));
-      
-        setFilteredSalas(prevState => prevState.map(sala =>
-          sala._id === updateMachine._id ? updateMachine : sala
-        ));
-      
-        setLoading(false); // Detiene el indicador de carga
-      });
-    }
+      socket.on('MachineUpdated', handleUpdateSala);
   
-    return () => {
-      if (socket) {
-        console.log("Desconectando evento de socket");
-        socket.off('updateMachine');
+      return () => {
+        socket.off('MachineUpdated', handleUpdateSala);
       }
-    };
+      
+    }
   }, [socket]);
 
   useEffect(() => {

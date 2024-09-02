@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import {connectDB} from "@/libs/mongodb";
 import User from "@/models/user";
 import ProfileType from "@/models/profileType";
-import { getIO } from "@/app/api/socket/socket";
 
 
 
@@ -40,10 +39,7 @@ export async function GET() {
     });
   } catch (error) {
 
-    const io = getIO();
-
-    // Emite el evento de actualización
-    io.emit('operatorUpdated', updatedOperator);
+  
     return NextResponse.json({
       message: "Failed to get users",
       error,
