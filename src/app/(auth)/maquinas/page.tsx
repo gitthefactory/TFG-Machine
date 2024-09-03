@@ -86,6 +86,19 @@ const Maquinas: React.FC = () => {
 
       if (res?.error) {
         setError("ID de máquina o contraseña incorrectos");
+        await Swal.fire({
+          title: 'ERROR',
+          text: 'DATOS INGRESADOS INCORRECTAMENTE POR FAVOR REINTENTAR',
+          icon: 'error',
+          confirmButtonColor: 'rgb(227, 17, 108)',
+          confirmButtonText: 'OK',
+          customClass: {
+              title: 'custom-title',
+              htmlContainer: 'custom-html',
+          },
+          
+      });
+      setLoading(false);
       } else {
         // Obtener información de la sala asociada a la máquina
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
@@ -166,6 +179,7 @@ const Maquinas: React.FC = () => {
                 alt="Logo"
                 width={200}
                 height={32}
+                hidden={true}
               />
             </div>
           </div>
@@ -181,6 +195,7 @@ const Maquinas: React.FC = () => {
                       type="id_machine"
                       placeholder="Id Máquina"
                       className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black"
+                      
                     />   
                    </div>
                 </div>
@@ -204,7 +219,7 @@ const Maquinas: React.FC = () => {
                   style={{display: 'flex', alignItems: 'center', fontSize: '16px', backgroundColor: '#a11069'}}
                 >
                   <span style={{ marginRight: '8px' }}>VALIDAR DATOS</span>
-                  <FaCircleCheck style={{ color: '#4CAF50', fontSize: '17px' }} />
+                  <FaCircleCheck style={{ color: '#4CAF50', fontSize: '17px', width:'50px' }} />
                 </button>
                 </div>
               </form>
