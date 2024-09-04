@@ -72,7 +72,7 @@ const Bgaming: React.FC = () => {
         }
 
         // Llamar a la API con el idMachine
-        const provider = 29;
+        const provider = 68;
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
 
