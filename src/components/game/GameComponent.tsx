@@ -21,6 +21,15 @@ interface MachineBalance {
   currency?: string; 
 }
 
+/* interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+} */
+
 const GameComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [visibleSection, setVisibleSection] = useState('providers');
@@ -29,12 +38,30 @@ const GameComponent: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const { socket } = useSocket();
 
+/*   useEffect(() => {
+    const fetchSetGames = async () => {
+      try {
+        const response = await axios.get('/api/v1/games');
+        
+        if (response.data.code === 200) {
+          const gamesData = response.data.data.filter((game: Game) => game.status === 1);
+          setGames(gamesData);
+        }
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    };
+
+    fetchSetGames();
+  }, [socket]);  */
+
   
 
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
       const query = new URLSearchParams(window.location.search);
       const idMachine = query.get('idMachine');
+      
   
       if (idMachine) {
         try {
@@ -83,21 +110,6 @@ const GameComponent: React.FC = () => {
     };
 
     fetchSelectedMachineBalance();
-    /* if (socket) {
-      const handleGameStatusUpdated = (data: any) => {
-        setGames(prevGames =>
-          prevGames.map(game =>
-            game.id === data.gameId ? { ...game, status: data.status } : game
-          )
-        );
-      };
-  
-      socket.on('gameStatusUpdated', handleGameStatusUpdated);
-  
-      return () => {
-        socket.off('gameStatusUpdated', handleGameStatusUpdated);
-      };
-    } */
 
     if (socket) {
       const handleBalanceUpdate = (updatedBalance: MachineBalance) => {
@@ -110,13 +122,25 @@ const GameComponent: React.FC = () => {
         }
       };
 
+   /*    const handleGameStatusUpdated = (gameStatusChange: Game) => {
+        console.log('Game status changed:', gameStatusChange);
+        setGames(prevGames =>
+          prevGames.map(game =>
+            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+          )
+        );
+      };
+ */
       socket.on('balanceUpdated', handleBalanceUpdate);
-
+      /* socket.on('gameStatusUpdated', handleGameStatusUpdated);
+ */
       return () => {
         socket.off('balanceUpdated', handleBalanceUpdate);
+      /*   socket.off('gameStatusUpdated', handleGameStatusUpdated); */
       };
     }
   }, [socket, selectedMachineBalance]);
+  
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
@@ -173,10 +197,10 @@ const GameComponent: React.FC = () => {
               </div>
             </div>
           </div>
-          {visibleSection === 'providers' && <Providers />}
-          {visibleSection === 'slots' && <Slots />}
-          {visibleSection === 'live' && <Live />}
-          {visibleSection === 'crash' && <CrashSection />}
+          {visibleSection === 'providers' && <Providers/>}
+        {visibleSection === 'slots' && <Slots/>}
+        {visibleSection === 'live' && <Live/>}
+        {visibleSection === 'crash' && <CrashSection/>}
   
           <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />

@@ -8,6 +8,7 @@ const GamePage: React.FC = () => {
   return (
     <SocketProvider>
       <GameComponent />
+      
     </SocketProvider>
   );
 };

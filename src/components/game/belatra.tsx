@@ -4,6 +4,17 @@ import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
+import { useSocket } from "@/app/api/socket/socketContext";
+
+interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+}
+
 
 const Belatra: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
@@ -11,6 +22,7 @@ const Belatra: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const swiperRef = useRef<any>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +68,21 @@ const Belatra: React.FC = () => {
           );
 
           setGames(finalBelatraGames);
+          if (socket) {
+            const handleGameStatusUpdated = (gameStatusChange: Game) => {
+               console.log('Game status changed:', gameStatusChange);
+               setGames(prevGames =>
+                 prevGames.map(game =>
+                   game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+                 )
+               );
+             };
+             socket.on('gameStatusUpdated', handleGameStatusUpdated);
+             return () => {
+               socket.off('gameStatusUpdated', handleGameStatusUpdated);
+             };
+           }
+          
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
         }
@@ -65,7 +92,8 @@ const Belatra: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+
+  }, [socket]);
 
   const handleGameClick = (game: any) => {
     setSelectedGame(game);

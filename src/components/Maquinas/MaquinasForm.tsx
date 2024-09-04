@@ -115,6 +115,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     };
 
     fetchProviders();
+    
   }, [maquina.providers]);
 
 
