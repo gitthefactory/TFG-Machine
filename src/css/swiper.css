@@ -104,3 +104,10 @@ margin-bottom: 4%;
   --swiper-navigation-color: transparent;
 }
 
+
+.bgaming-container .swiper-button-next-img {
+  position: absolute;
+  right: 34%!important; /* Ajusta este valor para mover más a la derecha */
+
+}
+

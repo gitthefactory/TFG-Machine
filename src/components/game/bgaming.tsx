@@ -5,7 +5,7 @@ import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
-import { signOut } from 'next-auth/react'; // Importa la función signOut
+import { signOut } from 'next-auth/react'; // Importa signOut
 
 const Bgaming: React.FC = () => {
   const [games, setGames] = useState<any[]>([]);
@@ -44,7 +44,7 @@ const Bgaming: React.FC = () => {
             // Mostrar alerta y cerrar sesión si la máquina está deshabilitada
             if (machine.status === 0) {
               setTimeout(async () => {
-                await Swal.fire({
+                const result = await Swal.fire({
                   title: 'ALERTA',
                   html: `<p><span class="bold-text" style="color: black;">SU MAQUINA HA SIDO DESHABILITADA :</span></p>`,
                   icon: 'warning',
@@ -57,8 +57,10 @@ const Bgaming: React.FC = () => {
                   },
                 });
 
-                // Cerrar sesión después de mostrar la alerta
-                signOut(); 
+                if (result.isConfirmed) {
+                  // Cierra la sesión del usuario cuando la máquina está deshabilitada
+                  await signOut({ callbackUrl: '/' });
+                }
                 setLoading(false);
               }, 1000);
 
@@ -70,7 +72,7 @@ const Bgaming: React.FC = () => {
         }
 
         // Llamar a la API con el idMachine
-        const provider = 68; // ID del proveedor actualizado
+        const provider = 29;
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
 
@@ -89,11 +91,8 @@ const Bgaming: React.FC = () => {
         // Filtrar juegos activos
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          console.log("Active Global Games:", activeGlobalGames);
-          
           const activeBgamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming' && game.status === 1);
-          console.log("Active Bgaming Games:", activeBgamingGames);
-          
+
           const finalBgamingGames = activeBgamingGames.filter(bgamingGame => 
             activeGlobalGames.some(globalGame => globalGame.id === bgamingGame.id)
           );
@@ -114,6 +113,18 @@ const Bgaming: React.FC = () => {
     fetchData();
   }, []);
 
+  const handlePrevButtonClick = () => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slidePrev();
+    }
+  };
+
+  const handleNextButtonClick = () => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slideNext();
+    }
+  };
+
   const handleGameClick = (game: any) => {
     setSelectedGame(game);
   };
@@ -123,11 +134,15 @@ const Bgaming: React.FC = () => {
   };
 
   return (
-    <div className="bgaming-container">
+    <div className="belatra-container">
       {loading ? (
         <p>Loading...</p> 
       ) : (
         <>
+          <div className="navigation-buttons">
+            <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
+            <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
+          </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
@@ -138,7 +153,7 @@ const Bgaming: React.FC = () => {
                         <Image
                           src={game.image}
                           alt={game.name}
-                          style={{width:'100%'}}
+                          style={{ width: '100%' }}
                           width={500}
                           height={500}
                         />
