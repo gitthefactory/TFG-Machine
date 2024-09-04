@@ -26,7 +26,10 @@ const GameComponent: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState('providers');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMachineBalance, setSelectedMachineBalance] = useState<MachineBalance | null>(null);
+  const [games, setGames] = useState<Game[]>([]);
   const { socket } = useSocket();
+
+  
 
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
@@ -80,11 +83,31 @@ const GameComponent: React.FC = () => {
     };
 
     fetchSelectedMachineBalance();
+    /* if (socket) {
+      const handleGameStatusUpdated = (data: any) => {
+        setGames(prevGames =>
+          prevGames.map(game =>
+            game.id === data.gameId ? { ...game, status: data.status } : game
+          )
+        );
+      };
+  
+      socket.on('gameStatusUpdated', handleGameStatusUpdated);
+  
+      return () => {
+        socket.off('gameStatusUpdated', handleGameStatusUpdated);
+      };
+    } */
 
     if (socket) {
       const handleBalanceUpdate = (updatedBalance: MachineBalance) => {
         console.log('Balance actualizado recibido:', updatedBalance);
-        setSelectedMachineBalance(updatedBalance);
+        if (selectedMachineBalance?.user === updatedBalance.user) {
+          setSelectedMachineBalance(prev => ({
+            ...prev,
+            balance: updatedBalance.balance,
+          }));
+        }
       };
 
       socket.on('balanceUpdated', handleBalanceUpdate);
@@ -93,7 +116,7 @@ const GameComponent: React.FC = () => {
         socket.off('balanceUpdated', handleBalanceUpdate);
       };
     }
-  }, [socket]);
+  }, [socket, selectedMachineBalance]);
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
@@ -120,6 +143,7 @@ const GameComponent: React.FC = () => {
       return balance.toFixed(2);
     }
   };
+
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };

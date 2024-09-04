@@ -6,6 +6,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useEffect, useState } from "react";
 import getClients from "@/controllers/getClients";
 import AddButton from "@/components/AddButton";
+import { SocketProvider } from "@/app/api/socket/socketContext";
 
 interface RowData {
   id: number;
@@ -41,14 +42,14 @@ const Clientes: React.FC = () => {
 
   return (
     <>
-     
+     <SocketProvider>
       <DefaultLayout>
         <Breadcrumb pageName="Clientes" />
         {/* Botón de agregar */}
         <AddButton href="/dashboard/clientes/crear" />
        <DataTable rows={rows} />
       </DefaultLayout>
-    
+      </SocketProvider>
     </>
   );
 };

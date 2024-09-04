@@ -41,6 +41,7 @@ const SalasContent: React.FC = () => {
 
   return (
     <>
+    <SocketProvider>
       <Breadcrumb pageName="Salas" />
       <div className="flex justify-between items-center mb-4">
         {/* Botón de agregar */}
@@ -53,6 +54,7 @@ const SalasContent: React.FC = () => {
         </Link> */}
       </div>
       <SalasTable salas={salas} />
+      </SocketProvider>
     </>
   );
 };
