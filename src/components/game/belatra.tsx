@@ -113,6 +113,18 @@ const Belatra: React.FC = () => {
     fetchData();
   }, []);
 
+  const handlePrevButtonClick = () => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slidePrev();
+    }
+  };
+
+  const handleNextButtonClick = () => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slideNext();
+    }
+  };
+
   const handleGameClick = (game: any) => {
     setSelectedGame(game);
   };
@@ -127,6 +139,10 @@ const Belatra: React.FC = () => {
         <p>Loading...</p> 
       ) : (
         <>
+          <div className="navigation-buttons">
+            <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
+            <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
+          </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>

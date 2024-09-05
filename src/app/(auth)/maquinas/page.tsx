@@ -153,30 +153,30 @@ const Maquinas: React.FC = () => {
                     Scanea el QRCode o ingresa los datos correspondientes a la máquina:
                 </p>
                 <form onSubmit={handleSubmit}>
-  <div className="mb-4">
-    {error && (
-      <span className="message" style={{ marginBottom: 10 }}>
-        {error}
-      </span>
-    )}
-    <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
-    <div className="relative">
-      <input onChange={(e) => handleInput(e)} name="id_machine" type="id_machine" placeholder="Id Máquina" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
-    </div>
-  </div>
-  <div className="mb-6">
-    <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
-    <div className="relative">
-      <input onChange={(e) => handleInput(e)} name="password" type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
-    </div>
-  </div>
-  <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-    <button type="submit" className="cursor-pointer rounded-lg bg-primary p-3 text-white transition hover:bg-opacity-90" style={{ display: "flex", alignItems: "center", fontSize: "16px", backgroundColor: "#a11069" }}>
-      <span style={{ marginRight: "8px" }}>VALIDAR DATOS</span>
-      <FaCircleCheck style={{ color: "#4CAF50", fontSize: "17px", width: "50px" }} />
-    </button>
-  </div>
-</form>
+                    <div className="mb-4">
+                        {error && (
+                            <span className="message" style={{ marginBottom: 10 }}>
+                                {error}
+                            </span>
+                        )}
+                        <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
+                        <div className="relative">
+                            <input onChange={(e) => handleInput(e)} name="id_machine" type="id_machine" placeholder="Id Máquina" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                        </div>
+                    </div>
+                    <div className="mb-6">
+                        <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
+                        <div className="relative">
+                            <input onChange={(e) => handleInput(e)} name="password" type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                        </div>
+                    </div>
+                    <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <button type="submit" className="cursor-pointer rounded-lg bg-primary p-3 text-white transition hover:bg-opacity-90" style={{ display: "flex", alignItems: "center", fontSize: "16px", backgroundColor: "#a11069" }}>
+                            <span style={{ marginRight: "8px" }}>VALIDAR DATOS</span>
+                            <FaCircleCheck style={{ color: "#4CAF50", fontSize: "17px", width: "50px" }} />
+                        </button>
+                    </div>
+                </form>
             </div>
         </>
     );
