@@ -48,6 +48,7 @@ useEffect(() => {
         setError("Correo o contraseña incorrectos");
       } else {
         router.replace("/");
+        router.refresh();
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
