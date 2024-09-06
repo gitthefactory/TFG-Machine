@@ -57,7 +57,6 @@ const SignIn: React.FC = () => {
       setPending(false);
       // Refresca la página después de intentar iniciar sesión
       router.refresh();
-      router.push("/");
     }
   }
 
