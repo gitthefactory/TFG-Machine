@@ -50,6 +50,7 @@ const SignIn: React.FC = () => {
       } else {
         // Redirige a la página principal
         router.replace("/");
+        router.refresh();
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
