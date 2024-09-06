@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
 import { useEffect } from "react";
+
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
     email: "",
@@ -18,7 +19,8 @@ const SignIn: React.FC = () => {
   function handleInput(e: any) {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
-useEffect(() => {
+
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       if (url.searchParams.has('callbackUrl')) {
@@ -27,6 +29,7 @@ useEffect(() => {
       }
     }
   }, []);
+
   async function handleSubmit(e: any) {
     e.preventDefault();  
     if (!info.email || !info.password) {
@@ -37,28 +40,25 @@ useEffect(() => {
     try {
       setPending(true);
       const res = await signIn("credentials", {
-        
         email: info.email,
         password: info.password,
         redirect: false,  
-        
       });
-  
+
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
+        // Redirige a la página principal
         router.replace("/");
-        
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
     } finally {
-      router.refresh();
       setPending(false);
+      // Refresca la página después de intentar iniciar sesión
+      router.refresh();
     }
-    router.refresh();
   }
-  
 
   return (
     <>
@@ -106,7 +106,7 @@ useEffect(() => {
           <div className="w-full border-stroke dark:border-strokedark">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <form onSubmit={handleSubmit}>
-              <div className="mb-4">
+                <div className="mb-4">
                   <label className="mb-2.5 block font-medium">
                   </label>
                   <div className="relative">
@@ -116,7 +116,7 @@ useEffect(() => {
                       type="email"
                       placeholder="Correo Electrónico"
                       className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
+                    />
                   </div>
                 </div>
                 <div className="mb-6">
@@ -129,7 +129,7 @@ useEffect(() => {
                       type="password"
                       placeholder="Contraseña"
                       className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
+                    />
                   </div>
                 </div>
                 {error && <span className="message">{error}</span>}
