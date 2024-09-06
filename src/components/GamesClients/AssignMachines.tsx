@@ -11,6 +11,7 @@ import getRooms from "@/controllers/getRooms";
 import getGames from "@/controllers/getGames";
 import DataTable from 'react-data-table-component';
 import Image from 'next/image';
+import { useSocket } from "@/app/api/socket/socketContext";
 
 interface Usuario {
   _id: string;
@@ -34,6 +35,7 @@ interface Room {
 const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   const [newNombre, setNewNombre] = useState(maquina.id_machine);
   const [newStatus, setNewStatus] = useState(maquina.status);
+  const { socket } = useSocket();
 
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [newClient, setNewClient] = useState<{ _id: string; nombreCompleto: string }>({
@@ -141,6 +143,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
   }, [providerId, maquina.games]);
 
   const handleStatusChange = async (gameId: number, newStatus: number) => {
+    
     try {
       // Encontrar el juego específico dentro de los proveedores
       const updatedProvider = providers.find((provider) => provider.id === gameId);
@@ -163,9 +166,13 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
           ...maquina,
           games: updatedGame, // Enviar solo el juego actualizado como un arreglo
         }),
+        
       });
 
       if (response.ok) {
+        console.log('Emitiendo evento gameStatusUpdated:', updatedGame);
+
+        socket?.emit('gameStatusUpdated', updatedGame);
         // Mostrar un mensaje de éxito según el nuevo estado
         if (newStatus === 1) {
           toast.success(`Juego ${updatedGame.name} activado exitosamente`);

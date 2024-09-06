@@ -1,10 +1,10 @@
+import { useSocket } from "@/app/api/socket/socketContext";
 import React, { useEffect, useState } from "react";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
 import Link from "next/link";
 import DeleteButtonOperadores from '@/components/Operadores/DeleteButtonOperadores';
 import { FaPen } from "react-icons/fa";
-
 
 interface User {
   _id: string;
@@ -13,7 +13,6 @@ interface User {
   typeProfile: {
     _id: string;
   };
-  
   games: { provider: string }[];
   id_machine: string;
   cantidadMaquinas: number;
@@ -23,6 +22,8 @@ interface User {
 const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true); // Estado para manejar el loading
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchUsuariosClientes = async () => {
@@ -35,15 +36,61 @@ const OperadoresTable: React.FC = () => {
             cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
           }));
         setUsuariosClientes(usuariosClientesFiltrados);
+        setLoading(false); // Deja de cargar cuando los datos están listos
       } catch (error) {
         console.error(error);
-        // Manejo de errores
+        setLoading(false); // Asegúrate de desactivar el loading en caso de error
       }
     };
 
     fetchUsuariosClientes();
-  }, []);
 
+    if (socket) {
+      const handleUpdateSala = async (updatedUser: User) => {
+        console.log('Operador actualizado recibido:', updatedUser);
+        await fetchUsuariosClientes(); // Actualiza la lista de usuarios
+      };
+
+      socket.on('SalaUpdated', handleUpdateSala);
+
+      return () => {
+        socket.off('SalaUpdated', handleUpdateSala);
+      };
+    }
+  }, [socket]);
+
+  const handleStatusChange = async (userId: string, newStatus: number) => {
+    try {
+      setLoading(true); // Muestra el loading antes de realizar la actualización
+
+      const response = await fetch(`/api/usuarios/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el estado');
+      }
+
+      if (socket) {
+        socket.emit('UpdateSala', { _id: userId, status: newStatus });
+      }
+
+      // Actualizar el estado localmente para reflejar el cambio
+      setUsuariosClientes(prevState =>
+        prevState.map(user =>
+          user._id === userId ? { ...user, status: newStatus } : user
+        )
+      );
+
+      setLoading(false); // Deja de cargar después de realizar la actualización
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+      setLoading(false); // Asegúrate de desactivar el loading en caso de error
+    }
   const handleStatusChange = async (userId: string, newStatus: number) => {
     try {
       const response = await fetch(`/api/usuarios/${userId}`, {
@@ -76,7 +123,6 @@ const OperadoresTable: React.FC = () => {
         <input
           type="checkbox"
           className="form-checkbox h-5 w-5 text-green-500"
-
           checked={row.status === 1}
           onChange={() => handleStatusChange(row._id, row.status === 1 ? 0 : 1)}
         />
@@ -104,23 +150,22 @@ const OperadoresTable: React.FC = () => {
       name: 'Acciones',
       cell: (row: User) => (
         <div className="flex items-center space-x-3.5">
-        <DeleteButtonOperadores id={row._id} />
-        <Link href={`/dashboard/operadores/editar/${row._id}`}
-            className="edit"
-            title="Editar"
-            style={{ fontSize: '20px' }}
-          >
+          <DeleteButtonOperadores id={row._id} />
+          <Link href={`/dashboard/operadores/editar/${row._id}`}
+                className="edit"
+                title="Editar"
+                style={{ fontSize: '20px' }}>
             <FaPen />
           </Link>
-          </div>
+        </div>
       ),
       sortable: true,
     },
   ];
 
-  const filteredUsers = usuariosClientes.filter(user =>
-    user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = Array.isArray(usuariosClientes) ? usuariosClientes.filter(user => 
+    user.nombreCompleto && user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   return (
     <div className="mx-auto max-w-270">
@@ -131,7 +176,6 @@ const OperadoresTable: React.FC = () => {
           </h2>
         </header>
         <div className="p-6.5">
-          {/* Agrega el campo de búsqueda */}
           <input
             type="text"
             placeholder="Buscar operadores..."
@@ -139,14 +183,17 @@ const OperadoresTable: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          {/* Renderiza la DataTable con los datos filtrados */}
-          <DataTable
-            columns={columns}
-            data={filteredUsers}
-            pagination
-            highlightOnHover
-            responsive
-          />
+          {loading ? (
+            <p>Cargando...</p> // Muestra un mensaje de loading
+          ) : (
+            <DataTable
+              columns={columns}
+              data={Array.isArray(filteredUsers) ? filteredUsers : []}
+              pagination
+              highlightOnHover
+              responsive
+            />
+          )}
         </div>
       </div>
     </div>

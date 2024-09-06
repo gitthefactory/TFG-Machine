@@ -1,7 +1,7 @@
 const Loader = () => {
   return (
     <div id="loader" style={{ 
-      zIndex: 9999,
+      zIndex: 99,
       position: "fixed", 
       top: 0, 
       left: 0, 

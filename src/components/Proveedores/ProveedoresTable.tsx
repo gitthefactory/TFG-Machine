@@ -1,3 +1,4 @@
+import { useSocket } from "@/app/api/socket/socketContext";
 import React, { useEffect, useState } from "react";
 import DataTable from 'react-data-table-component';
 import { ToastContainer, toast } from "react-toastify";
@@ -19,6 +20,7 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [provider, setProviders] = useState<ProvidersData[]>([]);
   const [filteredProviders, setFilteredProviders] = useState<ProvidersData[]>([]);
+  const { socket } = useSocket()
 
   console.log(providers);
 
@@ -39,7 +41,23 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
     };
 
     fetchProviders();
-  }, []);
+      // Escucha eventos de actualización de proveedores
+      socket?.on('providerUpdated', (updatedProvider: ProvidersData) => {
+        setFilteredProviders((prevProviders) =>
+          prevProviders.map(provider =>
+            provider._id === updatedProvider._id ? updatedProvider : provider
+          )
+        );
+        toast.success(`Estado de ${updatedProvider.provider_name} actualizado.`);
+      });
+  
+      // Limpia los listeners cuando el componente se desmonte
+      return () => {
+        socket?.off('providerUpdated');
+      };
+  
+  }, [socket]);
+  
 
   const handleToggleStatus = async (row: ProvidersData, newStatus: number) => {
     try {
@@ -55,10 +73,16 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
         throw new Error("Failed to update provider status");
       }
   
-      const updatedProviders = filteredProviders.map(provider =>
-        provider._id === row._id ? { ...provider, status: newStatus } : provider
+      const updatedProvider = await response.json();
+
+      // Emite un evento para notificar a otros clientes
+      socket?.emit('providerUpdated', updatedProvider);
+
+      setFilteredProviders((prevProviders) =>
+        prevProviders.map(provider =>
+          provider._id === row._id ? { ...provider, status: newStatus } : provider
+        )
       );
-      setFilteredProviders(updatedProviders);
       toast.success(`Estado de ${row.provider_name} actualizado a ${newStatus}.`);
     } catch (error) {
       console.error("Error updating provider status:", error);

@@ -4,17 +4,29 @@ import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
+import { useSocket } from "@/app/api/socket/socketContext";  // Importa el contexto del socket
+
+interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+}
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react'; // Importa signOut
 
-const Bgaming: React.FC = () => {
-  const [games, setGames] = useState<any[]>([]);
-  const [selectedGame, setSelectedGame] = useState<any>(null);
+const Belatra: React.FC = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const swiperRef = useRef<any>(null);
+  const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
+  const { socket } = useSocket();  // Usa el contexto del socket
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +41,13 @@ const Bgaming: React.FC = () => {
 
         // Obtener idMachine de la URL
         const params = new URLSearchParams(window.location.search);
+        const idMachine = params.get('idMachine');
+        setIdMachineFromURL(idMachine);
+
+        if (sessionData.status === 200) {
+          const provider = 68;
+          const response = await fetch(`/api/juegosApi/${idMachine}/${provider}`);
+          const data = await response.json();
         const idMachineFromURL = params.get('idMachine');
         setIdMachine(idMachineFromURL);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
@@ -111,7 +130,26 @@ const Bgaming: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+
+    // Manejo de eventos de actualización de estado de los juegos vía socket
+    if (socket) {
+      const handleGameStatusUpdated = (gameStatusChange: Game) => {
+        console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
+        setGames(prevGames => {
+          const updatedGames = prevGames.map(game =>
+            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+          );
+          return updatedGames;
+        });
+      };
+
+      socket.on('gameStatusUpdated', handleGameStatusUpdated);
+
+      return () => {
+        socket.off('gameStatusUpdated', handleGameStatusUpdated);
+      };
+    }
+  }, [socket]);
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -125,13 +163,16 @@ const Bgaming: React.FC = () => {
     }
   };
 
-  const handleGameClick = (game: any) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
 
   const closeGameUrl = () => {
     setSelectedGame(null);
   };
+
+  // Filtrar juegos que están activos
+  const filteredGames = games.filter(game => game.status === 1);
 
   return (
     <div className="belatra-container">
@@ -171,6 +212,41 @@ const Bgaming: React.FC = () => {
             <GameUrl game={selectedGame} token={token} onClose={closeGameUrl} />
           )}
         </>
+      <div className="navigation-buttons">
+        <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
+        <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
+      </div>
+      <Swiper
+        slidesPerView={1}
+        spaceBetween={10}
+        ref={swiperRef}
+        navigation={true}
+      >
+        {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
+          <SwiperSlide key={pageIndex}>
+            <div className="swiper-slide-content">
+              {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
+                <div key={index} className="col-3 col-md-3">
+                  <div className="btn-game" onClick={() => handleGameClick(game)}>
+                    <Image
+                      src={game.image}
+                      alt={game.name}
+                      style={{ width: '100%' }}
+                      width={500}
+                      height={500}
+                    />
+                    <div className="subtitle">
+                      {game.name}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      {selectedGame && token && idMachineFromURL && (
+        <GameUrl game={selectedGame} token={token} idMachine={idMachineFromURL} onClose={closeGameUrl} />
       )}
     </div>
   );
