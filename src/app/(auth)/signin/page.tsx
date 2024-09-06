@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; 
 import { useEffect } from "react";
+export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
