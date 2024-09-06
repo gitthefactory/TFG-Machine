@@ -1,5 +1,5 @@
-import { useSocket } from "@/app/api/socket/socketContext";
 import React, { useEffect, useState } from "react";
+import { useSocket } from "@/app/api/socket/socketContext";
 import getUsers from "@/controllers/getUsers";
 import DataTable from 'react-data-table-component';
 import Link from "next/link";
@@ -22,7 +22,7 @@ interface User {
 const OperadoresTable: React.FC = () => {
   const [usuariosClientes, setUsuariosClientes] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true); // Estado para manejar el loading
+  const [loading, setLoading] = useState<boolean>(true);
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -36,10 +36,10 @@ const OperadoresTable: React.FC = () => {
             cantidadMaquinas: usuarios.filter(u => u.id_machine === usuario.id_machine).length,
           }));
         setUsuariosClientes(usuariosClientesFiltrados);
-        setLoading(false); // Deja de cargar cuando los datos están listos
       } catch (error) {
         console.error(error);
-        setLoading(false); // Asegúrate de desactivar el loading en caso de error
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -48,7 +48,7 @@ const OperadoresTable: React.FC = () => {
     if (socket) {
       const handleUpdateSala = async (updatedUser: User) => {
         console.log('Operador actualizado recibido:', updatedUser);
-        await fetchUsuariosClientes(); // Actualiza la lista de usuarios
+        await fetchUsuariosClientes();
       };
 
       socket.on('SalaUpdated', handleUpdateSala);
@@ -61,8 +61,7 @@ const OperadoresTable: React.FC = () => {
 
   const handleStatusChange = async (userId: string, newStatus: number) => {
     try {
-      setLoading(true); // Muestra el loading antes de realizar la actualización
-
+      setLoading(true);
       const response = await fetch(`/api/usuarios/${userId}`, {
         method: 'PUT',
         headers: {
@@ -79,33 +78,6 @@ const OperadoresTable: React.FC = () => {
         socket.emit('UpdateSala', { _id: userId, status: newStatus });
       }
 
-      // Actualizar el estado localmente para reflejar el cambio
-      setUsuariosClientes(prevState =>
-        prevState.map(user =>
-          user._id === userId ? { ...user, status: newStatus } : user
-        )
-      );
-
-      setLoading(false); // Deja de cargar después de realizar la actualización
-    } catch (error) {
-      console.error('Error al cambiar el estado:', error);
-      setLoading(false); // Asegúrate de desactivar el loading en caso de error
-    }
-  const handleStatusChange = async (userId: string, newStatus: number) => {
-    try {
-      const response = await fetch(`/api/usuarios/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar el estado');
-      }
-
-      // Actualizar el estado localmente para reflejar el cambio
       setUsuariosClientes(prevState =>
         prevState.map(user =>
           user._id === userId ? { ...user, status: newStatus } : user
@@ -113,6 +85,8 @@ const OperadoresTable: React.FC = () => {
       );
     } catch (error) {
       console.error('Error al cambiar el estado:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,9 +137,9 @@ const OperadoresTable: React.FC = () => {
     },
   ];
 
-  const filteredUsers = Array.isArray(usuariosClientes) ? usuariosClientes.filter(user => 
+  const filteredUsers = usuariosClientes.filter(user => 
     user.nombreCompleto && user.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
+  );
 
   return (
     <div className="mx-auto max-w-270">
@@ -184,11 +158,11 @@ const OperadoresTable: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {loading ? (
-            <p>Cargando...</p> // Muestra un mensaje de loading
+            <p>Cargando...</p>
           ) : (
             <DataTable
               columns={columns}
-              data={Array.isArray(filteredUsers) ? filteredUsers : []}
+              data={filteredUsers}
               pagination
               highlightOnHover
               responsive

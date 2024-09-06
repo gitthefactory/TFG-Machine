@@ -5,7 +5,17 @@ import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
-import { signOut } from 'next-auth/react'; // Importa signOut
+import { signOut } from 'next-auth/react';
+import { useSocket } from "@/app/api/socket/socketContext"; // Importa signOut
+
+interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+}
 
 const Belatra: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -131,6 +141,12 @@ const Belatra: React.FC = () => {
     }
   }, [socket]);
 
+  const handlePrevButtonClick = () => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.slidePrev();
+    }
+  };
+
   const handleNextButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
       swiperRef.current.swiper.slideNext();
@@ -161,24 +177,24 @@ const Belatra: React.FC = () => {
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
-                <div className="swiper-slide-content">
-                  {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
-                    <div key={index} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
-                        <Image
-                          src={game.image}
-                          alt={game.name}
-                          style={{width:'100%'}}
-                          width={500}
-                          height={500}
-                        />
-                        <div className="subtitle">
-                          {game.name}
-                        </div>
-                      </div>
+               <div className="swiper-slide-content">
+              {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
+                <div key={index} className="col-3 col-md-3">
+                  <div className="btn-game" onClick={() => handleGameClick(game)}>
+                    <Image
+                      src={game.image}
+                      alt={game.name}
+                      style={{ width: '100%' }}
+                      width={500}
+                      height={500}
+                    />
+                    <div className="subtitle">
+                      {game.name}
                     </div>
-                  ))}
+                  </div>
                 </div>
+              ))}
+            </div>
               </SwiperSlide>
             ))}
           </Swiper>

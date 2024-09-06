@@ -21,7 +21,6 @@ interface MachineBalance {
   currency?: string; 
 }
 
-
 const GameComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [visibleSection, setVisibleSection] = useState('providers');
@@ -29,34 +28,32 @@ const GameComponent: React.FC = () => {
   const [selectedMachineBalance, setSelectedMachineBalance] = useState<MachineBalance | null>(null);
   const { socket } = useSocket();
 
-  
-
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
       const query = new URLSearchParams(window.location.search);
       const idMachine = query.get('idMachine');
       
-  
       if (idMachine) {
         try {
-          const response = await axios.get(`/api/v1`);
+          const [balanceResponse, machineResponse] = await Promise.all([
+            axios.get(`/api/v1`),
+            axios.get(`/api/maquinas`)
+          ]);
+
+          const machine = machineResponse.data.data.find((m: any) => m.id_machine === idMachine);
           
-          if (response.data.code === 200) {
-            const machineData = response.data.data.find((machine: any) => machine.user === idMachine);
-            
-            if (machineData) {
-              setSelectedMachineBalance({
-                user: machineData.user,
-                balance: machineData.balance,
-                currency: machineData.currency || 'USD'
-              });
-            } else {
-              setSelectedMachineBalance({
-                user: idMachine,
-                balance: 0,
-                currency: 'USD'
-              });
-            }
+          if (machine && machine.status === 0) {
+            clearCookiesAndRedirect('/maquinas');
+            return; // Termina la función si redirige
+          }
+
+          if (balanceResponse.data.code === 200) {
+            const machineData = balanceResponse.data.data.find((machine: any) => machine.user === idMachine);
+            setSelectedMachineBalance({
+              user: machineData ? machineData.user : idMachine,
+              balance: machineData ? machineData.balance : 0,
+              currency: machineData ? machineData.currency : 'USD'
+            });
           } else {
             setSelectedMachineBalance({
               user: idMachine,
@@ -96,25 +93,20 @@ const GameComponent: React.FC = () => {
         }
       };
 
-   /*    const handleGameStatusUpdated = (gameStatusChange: Game) => {
-        console.log('Game status changed:', gameStatusChange);
-        setGames(prevGames =>
-          prevGames.map(game =>
-            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
-          )
-        );
-      };
- */
       socket.on('balanceUpdated', handleBalanceUpdate);
-      /* socket.on('gameStatusUpdated', handleGameStatusUpdated);
- */
+
       return () => {
         socket.off('balanceUpdated', handleBalanceUpdate);
-      /*   socket.off('gameStatusUpdated', handleGameStatusUpdated); */
       };
     }
   }, [socket, selectedMachineBalance]);
-  
+
+  const clearCookiesAndRedirect = (url: string) => {
+    document.cookie.split(';').forEach(cookie => {
+      document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
+    window.location.href = url;
+  };
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
@@ -135,11 +127,9 @@ const GameComponent: React.FC = () => {
   };
 
   const formatBalance = (balance: number, currency: string | undefined) => {
-    if (currency === 'CLP') {
-      return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    } else {
-      return balance.toFixed(2);
-    }
+    return currency === 'CLP' 
+      ? balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      : balance.toFixed(2);
   };
 
   const formatBalanceWithoutDecimals = (balance: number) => {
@@ -171,15 +161,16 @@ const GameComponent: React.FC = () => {
               </div>
             </div>
           </div>
-          {visibleSection === 'providers' && <Providers/>}
-        {visibleSection === 'slots' && <Slots/>}
-        {visibleSection === 'live' && <Live/>}
-        {visibleSection === 'crash' && <CrashSection/>}
-  
+
+          {visibleSection === 'providers' && <Providers />}
+          {visibleSection === 'slots' && <Slots />}
+          {visibleSection === 'live' && <Live />}
+          {visibleSection === 'crash' && <CrashSection />}
+
           <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
           </div>
-  
+
           {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
@@ -187,10 +178,15 @@ const GameComponent: React.FC = () => {
               </div>
             </div>
           )}
+
           <div className="footer d-flex justify-content-center">
             <div className="bgcreditos">
-              <span className="credit">{selectedMachineBalance ? formatBalanceWithoutDecimals(selectedMachineBalance.balance) : '000'}</span>
-              <span className="amount">{selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}</span>
+              <span className="credit">
+                {selectedMachineBalance ? formatBalanceWithoutDecimals(selectedMachineBalance.balance) : '000'}
+              </span>
+              <span className="amount">
+                {selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}
+              </span>
             </div>
           </div>
         </>
