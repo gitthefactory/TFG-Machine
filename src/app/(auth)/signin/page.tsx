@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import Swal from "sweetalert2";
-
+import { signIn } from "next-auth/react"; 
+import { useEffect } from "react";
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
     email: "",
@@ -19,8 +18,7 @@ const SignIn: React.FC = () => {
   function handleInput(e: any) {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
-
-  useEffect(() => {
+useEffect(() => {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       if (url.searchParams.has('callbackUrl')) {
@@ -29,9 +27,8 @@ const SignIn: React.FC = () => {
       }
     }
   }, []);
-
   async function handleSubmit(e: any) {
-    e.preventDefault();
+    e.preventDefault();  
     if (!info.email || !info.password) {
       setError("Todos los campos son obligatorios");
       return;
@@ -40,43 +37,27 @@ const SignIn: React.FC = () => {
     try {
       setPending(true);
       const res = await signIn("credentials", {
+        
         email: info.email,
         password: info.password,
-        redirect: false,
+        redirect: false,  
+        
       });
-
+  
       if (res?.error) {
         setError("Correo o contraseña incorrectos");
       } else {
-        // Mostrar SweetAlert en caso de éxito
-        const result = await Swal.fire({
-          title: "CONFIRMACIÓN DE DATOS",
-          html: `
-            <p><span class="bold-text" style="color: black;">Correo:</span> ${info.email}</p>
-          `,
-          icon: "success",
-          showCancelButton: true,
-          confirmButtonColor: "rgb(227, 17, 108)",
-          cancelButtonColor: "rgb(102, 102, 102)",
-          confirmButtonText: "SÍ, ESTÁN CORRECTOS",
-          cancelButtonText: "CANCELAR",
-          customClass: {
-            title: "custom-title",
-            htmlContainer: "custom-html",
-          },
-        });
-
-        if (result.isConfirmed) {
-          // Recargar la página si se confirma
-          router.push('/');
-        }
+        router.replace("/");
+        
       }
     } catch (error) {
       setError("Ocurrió un error al iniciar sesión");
     } finally {
+      router.refresh();
       setPending(false);
     }
   }
+  
 
   return (
     <>
@@ -107,8 +88,10 @@ const SignIn: React.FC = () => {
       }    
 
     `}</style>
+      {/* <Breadcrumb pageName="Sign In" /> */}
+
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center">
+        <div className="flex flex-wrap items-center" >
             <div className="px-26 py-17.5 text-center">
               <Link className="inline-block" href="/">
                 <Image
@@ -122,40 +105,40 @@ const SignIn: React.FC = () => {
           <div className="w-full border-stroke dark:border-strokedark">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="mb-2.5 block font-medium">
-                    </label>
-                    <div className="relative">
-                      <input
-                        onChange={(e) => handleInput(e)}
-                        name="email"
-                        type="email"
-                        placeholder="Correo Electrónico"
-                        className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                    </div>
-                  </div>
-                  <div className="mb-6">
-                    <label className="mb-2.5 block font-medium">
-                    </label>
-                    <div className="relative">
-                      <input
-                        onChange={(e) => handleInput(e)}
-                        name="password"
-                        type="password"
-                        placeholder="Contraseña"
-                        className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                    </div>
-                  </div>
-                  {error && <span className="message">{error}</span>}
-                  <div className="mb-5">
+              <div className="mb-4">
+                  <label className="mb-2.5 block font-medium">
+                  </label>
+                  <div className="relative">
                     <input
-                      type="submit"
-                      value="Iniciar Sesión"
-                      className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                    />
+                      onChange={(e) => handleInput(e)}
+                      name="email"
+                      type="email"
+                      placeholder="Correo Electrónico"
+                      className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
                   </div>
+                </div>
+                <div className="mb-6">
+                  <label className="mb-2.5 block font-medium">
+                  </label>
+                  <div className="relative">
+                    <input
+                      onChange={(e) => handleInput(e)}
+                      name="password"
+                      type="password"
+                      placeholder="Contraseña"
+                      className="w-full rounded-lg border border-stroke bg-white py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      />
+                  </div>
+                </div>
+                {error && <span className="message">{error}</span>}
+                <div className="mb-5">
+                  <input
+                    type="submit"
+                    value="Iniciar Sesión"
+                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                  />
+                </div>
               </form>
             </div>
           </div>
