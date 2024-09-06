@@ -56,6 +56,7 @@ useEffect(() => {
       router.refresh();
       setPending(false);
     }
+    router.refresh();
   }
   
 
