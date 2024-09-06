@@ -1,20 +1,23 @@
+/* "use client";
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSocket } from '@/app/api/socket/socketContext';
 
-const Proveedores: React.FC = () => {
+const GameProvider: React.FC = () => {
   const [machineData, setMachineData] = useState<any>(null);
-  const [games, setGames] = useState<Game[]>([]);
-  const { socket } = useSocket();
+  const socket = useSocket();
 
   useEffect(() => {
+    if (!socket) return;
+
     const fetchMachineData = async () => {
       try {
         const pathArray = window.location.pathname.split('/');
         const machineId = pathArray[pathArray.length - 1];
-        const provider = pathArray[pathArray.length - 2]; 
+        const provider = pathArray[pathArray.length - 2];
 
-        const response = await fetch(`/api/juegosApi/${provider}/${machineId}/`); // Ajusta la URL de la solicitud
+        const response = await fetch(`/api/juegosApi/${provider}/${machineId}/`);
         if (!response.ok) {
           throw new Error('Error al obtener los datos de la máquina');
         }
@@ -27,26 +30,33 @@ const Proveedores: React.FC = () => {
     };
 
     fetchMachineData();
-    const handleGameStatusUpdated = (gameStatusChange: Game) => {
-        console.log('Game status changed:', gameStatusChange);
-        setGames(prevGames =>
-          prevGames.map(game =>
-            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
-          )
-        );
-      };
- 
 
-    socket?.on('gameStatusUpdated', handleGameStatusUpdated);
+    socket.on('gameStatusUpdated', (updatedGame) => {
+      setMachineData((prevMachineData) => {
+        if (!prevMachineData) return prevMachineData;
 
-      return () => {
-    
-      socket?.off('gameStatusUpdated', handleGameStatusUpdated); 
-      };
-    
+        return {
+          ...prevMachineData,
+          games: prevMachineData.games.map((group: any) => ({
+            ...group,
+            games: group.games.map((game: any) =>
+              game._id === updatedGame.id
+                ? { ...game, status: updatedGame.status }
+                : game
+            )
+          }))
+        };
+      });
+    });
 
-   
+    return () => {
+      socket.off('gameStatusUpdated');
+    };
   }, [socket]);
+
+  const filteredGames = machineData?.games.flatMap((group: any) =>
+    group.games.filter((game: any) => game.status === 1) // Filtra los juegos disponibles
+  ) || [];
 
   return (
     <>
@@ -55,19 +65,12 @@ const Proveedores: React.FC = () => {
           <h2>{machineData.nombre}</h2>
           <p>{machineData.descripcion}</p>
           <ul>
-            {machineData.games.map((group: any) => (
-              <li key={group._id}>
-                <h3>Grupo de Juegos</h3>
-                <ul>
-                  {group.games.map((game: any) => (
-                    <li key={game._id}>
-                      <h4>{game.name}</h4>
-                      <p>Creador: {game.maker}</p>
-                      <p>Categoría: {game.category}</p>
-                      <Image src={game.image} alt={game.name} width={500} height={500}/>
-                    </li>
-                  ))}
-                </ul>
+            {filteredGames.map((game: any) => (
+              <li key={game._id}>
+                <h4>{game.name}</h4>
+                <p>Creador: {game.maker}</p>
+                <p>Categoría: {game.category}</p>
+                <Image src={game.image} alt={game.name} width={500} height={500} />
               </li>
             ))}
           </ul>
@@ -77,4 +80,5 @@ const Proveedores: React.FC = () => {
   );
 };
 
-export default Proveedores;
+export default GameProvider;
+ */

@@ -11,8 +11,10 @@ interface SocketContextInterface {
 
 const SocketContext = createContext<SocketContextInterface | null>(null);
 
+
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
+  
 
   useEffect(() => {
     const socketInstance = io("http://localhost:3001", {

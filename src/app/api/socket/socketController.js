@@ -26,15 +26,9 @@ const handleSocketEvents = (socket, io) => {
     }
   });
   
-  socket.on('gameStatusChange', (data) => {
-    try {
-      io.emit("gameStatusUpdated", { 
-        gameId: data.id,
-        status: data.status,
-      });
-    } catch (error) {
-      console.error('Error en gameStatusChange:', error);
-    }
+  socket.on('gameStatusUpdated', (gameStatus) => {
+    console.log('Game status updated:', gameStatus);
+    socket.broadcast.emit('gameStatusUpdated', gameStatus); // Emitir el evento a otros clientes
   });
 
   socket.on('disconnect', () => {

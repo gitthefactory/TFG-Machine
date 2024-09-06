@@ -21,39 +21,13 @@ interface MachineBalance {
   currency?: string; 
 }
 
-/* interface Game {
-  id: number;
-  name: string;
-  category: string;
-  provider_name: string;
-  image: string;
-  status: number;
-} */
 
 const GameComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [visibleSection, setVisibleSection] = useState('providers');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMachineBalance, setSelectedMachineBalance] = useState<MachineBalance | null>(null);
-  const [games, setGames] = useState<Game[]>([]);
   const { socket } = useSocket();
-
-/*   useEffect(() => {
-    const fetchSetGames = async () => {
-      try {
-        const response = await axios.get('/api/v1/games');
-        
-        if (response.data.code === 200) {
-          const gamesData = response.data.data.filter((game: Game) => game.status === 1);
-          setGames(gamesData);
-        }
-      } catch (error) {
-        console.error('Error fetching games:', error);
-      }
-    };
-
-    fetchSetGames();
-  }, [socket]);  */
 
   
 

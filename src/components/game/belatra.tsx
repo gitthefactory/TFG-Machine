@@ -15,10 +15,9 @@ interface Game {
   status: number;
 }
 
-
 const Belatra: React.FC = () => {
-  const [games, setGames] = useState<any[]>([]);
-  const [selectedGame, setSelectedGame] = useState<any>(null);
+  const [games, setGames] = useState<Game[]>([]);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const swiperRef = useRef<any>(null);
@@ -29,24 +28,20 @@ const Belatra: React.FC = () => {
       try {
         const sessionData = await getSessionData();
         
-        // Validar datos de sesión
         if (!sessionData || sessionData.status !== 200) {
           console.error("Datos de sesión inválidos:", sessionData);
           return;
         }
 
-        // Obtener idMachine de la URL
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine');
         setIdMachine(idMachineFromURL);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
 
-        // Llamar a la API con el idMachine
         const provider = 29;
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
 
-        // Obtener token
         if (data.data?.token) {
           setToken(data.data.token);
         } else {
@@ -54,11 +49,9 @@ const Belatra: React.FC = () => {
           return;
         }
 
-        // Obtener juegos globales
         const globalGamesResponse = await fetch('/api/juegosApi');
         const globalGamesData = await globalGamesResponse.json();
 
-        // Filtrar juegos activos
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
           const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
@@ -67,22 +60,8 @@ const Belatra: React.FC = () => {
             activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
           );
 
+          console.log('Juegos activos de Belatra:', finalBelatraGames);
           setGames(finalBelatraGames);
-          if (socket) {
-            const handleGameStatusUpdated = (gameStatusChange: Game) => {
-               console.log('Game status changed:', gameStatusChange);
-               setGames(prevGames =>
-                 prevGames.map(game =>
-                   game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
-                 )
-               );
-             };
-             socket.on('gameStatusUpdated', handleGameStatusUpdated);
-             return () => {
-               socket.off('gameStatusUpdated', handleGameStatusUpdated);
-             };
-           }
-          
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
         }
@@ -92,32 +71,53 @@ const Belatra: React.FC = () => {
     };
 
     fetchData();
-
+    
+    if (socket) {
+      const handleGameStatusUpdated = (gameStatusChange: Game) => {
+        console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
+        setGames(prevGames => {
+          const updatedGames = prevGames.map(game =>
+            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+          );
+          console.log('Juegos después de la actualización:', updatedGames);
+          return updatedGames;
+        });
+      };
+    
+      socket.on('gameStatusUpdated', handleGameStatusUpdated);
+    
+      return () => {
+        socket.off('gameStatusUpdated', handleGameStatusUpdated);
+      };
+    }
   }, [socket]);
 
-  const handleGameClick = (game: any) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
-
+  
   const closeGameUrl = () => {
     setSelectedGame(null);
   };
 
+  // Filtrar juegos que están activos
+  const filteredGames = games.filter(game => game.status === 1);
+
   return (
     <div className="belatra-container">
       <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
-      {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
+        {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
           <SwiperSlide key={pageIndex}>
             <div className="swiper-slide-content">
-              {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
+              {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
                 <div key={index} className="col-3 col-md-3">
                   <div className="btn-game" onClick={() => handleGameClick(game)}>
                     <Image
                       src={game.image}
                       alt={game.name}
-                      style={{width:'100%'}}
+                      style={{ width: '100%' }}
                       width={500}
-                       height={500}
+                      height={500}
                     />
                     <div className="subtitle">
                       {game.name}
