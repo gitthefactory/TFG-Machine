@@ -32,7 +32,7 @@ function CrearUsuarios() {
 
     const newUsuarios = {
       nombreCompleto: capitalizeFirstLetter(nombreCompleto),
-      email,
+      email : email.toLowerCase(),
       password: hashedPassword,
       status, // Agregado status al objeto nuevo usuario
       typeProfile,
