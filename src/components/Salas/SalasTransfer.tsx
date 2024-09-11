@@ -1,43 +1,72 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
-interface EditarSalaProps {
-  sala: any;
-}
-
-const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
-  const [newNombre, setNewNombre] = useState<string>(sala.nombre || '');
-  const [newCurrency, setNewCurrency] = useState<string>(sala.currency || '');
-  const [selectedMachines, setSelectedMachines] = useState<string | undefined>(undefined);
-  const [balance, setBalance] = useState<number>(0);
+const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
+  const [newNombre, setNewNombre] = useState<string>(transaction?.user || '');
+  const [newCurrency, setNewCurrency] = useState<string>("CLP");
   const [newMessage, setNewMessage] = useState<string>('');
-  const [action, setAction] = useState<number>('CREDIT');
-  const [amount, setAmount] = useState<number>();
+  const [action] = useState<string>('CREDIT');
+  const [balance, setNewBalance] = useState<number>(transaction?.balance || 0);
+  const [amount, setAmount] = useState<number>(0);
+  const [idMachine, setIdMachine] = useState<string>("");
 
+  useEffect(() => {
+    // Extract id_machine from the pathname
+    const pathname = window.location.pathname;
+    const urlParts = pathname.split("/");
+    const id = urlParts[urlParts.length - 1];
+    setIdMachine(id);
 
+    if (!id) {
+      console.error('No ID found in pathname.');
+      return;
+    }
 
+    // Fetch the balance and currency from the API
+    fetch(`/api/v1`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('API Response:', data); // Add this line to debug the response
+        if (data.status === 'OK') {
+          // Assuming data.data is an array of machine data
+          const machineData = data.data.find((item: any) => item.user === id);
+          if (machineData) {
+            setNewBalance(machineData.balance);
+            setNewCurrency(machineData.currency || 'Unknown');
+            setNewNombre(machineData.user); // Update the name based on API data
+          } else {
+            console.error('Machine data not found for ID:', id);
+          }
+        } else {
+          throw new Error('Error fetching transaction details.');
+        }
+      })
+      .catch(error => console.error('Error fetching API:', error));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log("Valor de newCurrency:", newCurrency); // Verifica el valor de newCurrency
+    if (!idMachine) {
+      console.error('ID Machine is missing.');
+      return;
+    }
 
     const transferData = {
       currency: newCurrency,
-      user: selectedMachines,
+      id_machine: idMachine,
       balance,
       message: newMessage,
       action,
-      amount : amount,
+      amount,
     };
 
-
     try {
-      const response = await fetch(`/api/credit/${selectedMachines}`, {
+      const response = await fetch(`/api/credit/${idMachine}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +75,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
       });
 
       if (response.ok) {
-        window.location.href = "/dashboard/salas";
+        window.location.href = "/dashboard/maquinas";
       } else {
         const errorData = await response.json();
         console.error("Error al hacer la solicitud:", errorData.message);
@@ -56,40 +85,34 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
     }
   };
 
-  const handleMachineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = e.target.value;
-    setSelectedMachines(selectedOption === "" ? undefined : selectedOption);
-  };
-
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
         <Breadcrumb pageName="Transacción manual de crédito" />
-        <AtrasButton href="/dashboard/salas" />
+        <AtrasButton href="/dashboard/maquinas" />
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <form onSubmit={handleSubmit} className="p-6.5">
-            <h1 className="mb-6">DATOS DE LA SALA</h1>
+            <h1 className="mb-6">DATOS DE LA MAQUINA</h1>
             <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-              <div className="w-full xl:w-1/2">
+              <div className="w-full xl:w-1/3">
                 <label
                   htmlFor="newNombre"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                 >
-                  Nombre Sala
+                  ID Maquina
                 </label>
                 <input
-                  onChange={(e) => setNewNombre(e.target.value)}
                   value={newNombre}
                   id="newNombre"
                   name="newNombre"
                   type="text"
-                  placeholder="Ingresa el nombre.."
+                  placeholder="id machine"
                   className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
                   readOnly
                   disabled
                 />
               </div>
-              <div className="w-full xl:w-1/2">
+              <div className="w-full xl:w-1/3">
                 <label
                   htmlFor="currency"
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -97,7 +120,6 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
                   Moneda
                 </label>
                 <input
-                  onChange={(e) => setNewCurrency(e.target.value)}
                   value={newCurrency}
                   id="currency"
                   name="currency"
@@ -108,37 +130,27 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
                   disabled
                 />
               </div>
+              <div className="w-full xl:w-1/3">
+                <label
+                  htmlFor="balance"
+                  className="mb-3 block text-sm font-medium text-black dark:text-white"
+                >
+                  Balance actual
+                </label>
+                <input
+                  onChange={(e) => setNewBalance(Number(e.target.value))}
+                  value={balance}
+                  id="balance"
+                  name="balance"
+                  type="text"
+                  placeholder="Balance actual"
+                  className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
+                  readOnly
+                  disabled
+                />
+              </div>
             </div>
-
-            <h1 className="mb-6">SELECCIONAR MÁQUINA</h1>
-
-            <div className="mb-4">
-              <label
-                htmlFor="id_machine"
-                className="mb-3 block text-sm font-medium text-black dark:text-white"
-              >
-                Seleccionar Máquina <span className="text-red">*</span>
-              </label>
-              <select
-                onChange={handleMachineChange}
-                value={selectedMachines || ""}
-                id="id_machine"
-                name="id_machine"
-                className="w-full rounded mt-2 border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
-                required
-              >
-                <option value="">Seleccionar</option>
-                {sala.id_machine &&
-                  sala.id_machine.map((id: string, index: number) => (
-                    <option key={index} value={id}>
-                      {id}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <h1 className="mb-6">TRANSACCION</h1>
-
+            <h1 className="mb-6">TRANSACCIÓN CREDITO</h1>
             <div className="mb-4">
               <label
                 htmlFor="amount"
@@ -160,17 +172,17 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
             <div className="mb-4">
               <label
-                htmlFor="amount"
+                htmlFor="message"
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
               >
-             Mensaje
+                Mensaje
               </label>
               <input
                 onChange={(e) => setNewMessage(e.target.value)}
                 value={newMessage}
                 id="message"
                 name="message"
-                type="string"
+                type="text"
                 placeholder="Escribe un mensaje"
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
               />
@@ -178,7 +190,7 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
 
             <div className="mt-6 flex justify-end gap-4">
               <Link
-                href="/dashboard/salas"
+                href="/dashboard/maquinas"
                 className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
               >
                 Cancelar
@@ -197,4 +209,4 @@ const EditarSala: React.FC<EditarSalaProps> = ({ sala }) => {
   );
 };
 
-export default EditarSala;
+export default EditTransaction;
