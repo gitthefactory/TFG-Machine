@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
 import DeleteButtonSalas from '@/components/Salas/DeleteButtonSalas';
-import { FaMoneyBillTransfer } from "react-icons/fa6";
+
 import { getSession } from "next-auth/react";
 import getRooms from '@/controllers/getRooms'; // Asegúrate de que esta función esté bien importada
 import { useSocket } from "@/app/api/socket/socketContext";
@@ -190,14 +190,7 @@ const SalasTable: React.FC = () => {
           >
             <FaPen />
           </Link>
-          <Link
-            href={`/dashboard/salas/transferir/${row._id}`}
-            className="transfer"
-            title="Transferir"
-            style={{ fontSize: '20px' }}
-          >
-            <FaMoneyBillTransfer />
-          </Link>
+       
         </div>
       ),
       sortable: true,

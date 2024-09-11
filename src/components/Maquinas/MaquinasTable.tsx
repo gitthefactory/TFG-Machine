@@ -4,7 +4,7 @@ import DataTable from 'react-data-table-component';
 import { FaPen } from "react-icons/fa";
 import Link from "next/link";
 import { FaMoneyBill } from "react-icons/fa6";
-
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 interface MaquinaData {
   _id: string;
   id_machine: string;
@@ -124,15 +124,23 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
       name: 'Acciones',
       cell: (row: MaquinaData) => (
         <div className="flex items-center space-x-3.5">
-          <DeleteButtonMachine id={row._id} />
+          <Link
+            href={`/dashboard/salas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
+            className="transfer"
+            title="TransferirCREDIT"
+            style={{ fontSize: '20px', color: 'green'}}
+          >
+            <FaMoneyBillTransfer />
+          </Link>
           <Link
             href={`/dashboard/maquinas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
             title="Transferir"
-            style={{ fontSize: '20px' }}
+            style={{ fontSize: '20px',color: 'red' }}
           >
             <FaMoneyBill />
           </Link>
+         
           <Link
             href={`/dashboard/maquinas/editar/${row._id}`}
             className="edit"
@@ -141,6 +149,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
           >
             <FaPen />
           </Link>
+          <DeleteButtonMachine id={row._id} />
         </div>
       ),
       sortable: false,
