@@ -20,7 +20,7 @@ app.prepare().then(() => {
   // Inicializar Socket.IO
   const io = socketIo(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: ["http://localhost:3000", "https://casinoenruta.com", "https://panel.casinoenruta.com/"],
       methods: ["GET", "POST"],
     },
   });
