@@ -167,9 +167,9 @@ const GameComponent: React.FC = () => {
           {visibleSection === 'live' && <Live />}
           {visibleSection === 'crash' && <CrashSection />}
 
-          <div className="dc" id="dreamcatcher" onClick={toggleModal}>
+          {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
-          </div>
+          </div> */}
 
           {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
