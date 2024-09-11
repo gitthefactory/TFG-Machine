@@ -20,6 +20,7 @@ const SignIn: React.FC = () => {
  
 
   function handleInput(e: any) {
+    const value = e.target.name === "email" ? e.target.value.toLowerCase() : e.target.value
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
@@ -43,7 +44,7 @@ const SignIn: React.FC = () => {
     try {
       setPending(true);
       const res = await signIn("credentials", {
-        email: info.email,
+        email: info.email.toLowerCase(),
         password: info.password,
         redirect: false,  
       });

@@ -4,7 +4,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-import {withAuth} from "next-auth/middleware";
+
 
 // Definir el proveedor de credenciales para el inicio de sesión con correo electrónico y contraseña
 const emailProvider = CredentialsProvider({
