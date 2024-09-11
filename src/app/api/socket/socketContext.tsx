@@ -11,13 +11,20 @@ interface SocketContextInterface {
 
 const SocketContext = createContext<SocketContextInterface | null>(null);
 
+const getSocketUrl = () => {
+  // Verifica el entorno y retorna la URL adecuada
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000'; // URL del servidor en desarrollo
+  } else {
+    return ['https://panel.casinoenruta.com/','https://casinoenruta.com/']; // URL del servidor en producción
+  }
+};
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:3000", {
+    const socketInstance = io(getSocketUrl(), {
       reconnectionAttempts: 5, // Número de intentos de reconexión
       timeout: 10000, // Tiempo máximo para establecer la conexión
     });
