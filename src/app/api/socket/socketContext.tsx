@@ -16,7 +16,7 @@ const getSocketUrl = () => {
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:3000'; // URL del servidor en desarrollo
   } else {
-    return ['https://panel.casinoenruta.com/','https://casinoenruta.com/']; // URL del servidor en producción
+    return ['https://panel.casinoenruta.com/','https://casinoenruta.com/','http://localhost:3000']; // URL del servidor en producción
   }
 };
 
