@@ -17,7 +17,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:3001", {
+    const socketInstance = io("http://localhost:3000", {
       reconnectionAttempts: 5, // Número de intentos de reconexión
       timeout: 10000, // Tiempo máximo para establecer la conexión
     });
