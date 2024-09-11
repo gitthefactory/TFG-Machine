@@ -4,44 +4,52 @@ import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
+import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from 'sweetalert2';
-import { signOut } from 'next-auth/react'; // Importa signOut
+import { signOut } from 'next-auth/react';
 
-const Bgaming: React.FC = () => {
-  const [games, setGames] = useState<any[]>([]);
-  const [selectedGame, setSelectedGame] = useState<any>(null);
+interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+}
+
+const Belatra: React.FC = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const swiperRef = useRef<any>(null);
+  const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessionData = await getSessionData();
-        
         if (!sessionData || sessionData.status !== 200) {
           console.error("Datos de sesión inválidos:", sessionData);
           setLoading(false);
           return;
         }
 
-        // Obtener idMachine de la URL
         const params = new URLSearchParams(window.location.search);
-        const idMachineFromURL = params.get('idMachine');
-        setIdMachine(idMachineFromURL);
-        console.log("ID de máquina desde la URL:", idMachineFromURL);
+        const idMachine = params.get('idMachine');
+        setIdMachineFromURL(idMachine);
 
-        if (idMachineFromURL) {
+        if (idMachine) {
           const machineResponse = await fetch(`/api/maquinas`);
           const machineData = await machineResponse.json();
-          const machine = machineData.data.find((m: any) => m.id_machine === idMachineFromURL);
+          const machine = machineData.data.find((m: any) => m.id_machine === idMachine);
 
           if (machine) {
             setMachineStatus(machine.status);
 
-            // Mostrar alerta y cerrar sesión si la máquina está deshabilitada
             if (machine.status === 0) {
               setTimeout(async () => {
                 const result = await Swal.fire({
@@ -58,22 +66,20 @@ const Bgaming: React.FC = () => {
                 });
 
                 if (result.isConfirmed) {
-                  // Cierra la sesión del usuario cuando la máquina está deshabilitada
                   await signOut({ callbackUrl: '/' });
                 }
                 setLoading(false);
               }, 1000);
 
-              return; // Detener el flujo si la máquina está deshabilitada
+              return;
             }
           } else {
             console.warn("No se encontró la máquina con el ID proporcionado.");
           }
         }
 
-        // Llamar a la API con el idMachine
         const provider = 68;
-        const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
+        const response = await fetch(`/api/juegosApi/${idMachine}/${provider}`);
         const data = await response.json();
 
         if (data.data?.token) {
@@ -84,16 +90,14 @@ const Bgaming: React.FC = () => {
           return;
         }
 
-        // Obtener juegos globales
         const globalGamesResponse = await fetch('/api/juegosApi');
         const globalGamesData = await globalGamesResponse.json();
 
-        // Filtrar juegos activos
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
           const activeBgamingGames = data.data.games.filter((game: any) => game.maker === 'bgaming' && game.status === 1);
 
-          const finalBgamingGames = activeBgamingGames.filter(bgamingGame => 
+          const finalBgamingGames = activeBgamingGames.filter(bgamingGame =>
             activeGlobalGames.some(globalGame => globalGame.id === bgamingGame.id)
           );
 
@@ -103,7 +107,6 @@ const Bgaming: React.FC = () => {
         }
 
         setLoading(false);
-
       } catch (error) {
         console.error("Error al obtener los datos de sesión:", error);
         setLoading(false);
@@ -111,7 +114,25 @@ const Bgaming: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+
+    if (socket) {
+      const handleGameStatusUpdated = (gameStatusChange: Game) => {
+        console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
+        setGames(prevGames => {
+          const updatedGames = prevGames.map(game =>
+            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+          );
+          return updatedGames;
+        });
+      };
+
+      socket.on('gameStatusUpdated', handleGameStatusUpdated);
+
+      return () => {
+        socket.off('gameStatusUpdated', handleGameStatusUpdated);
+      };
+    }
+  }, [socket]);
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -125,7 +146,7 @@ const Bgaming: React.FC = () => {
     }
   };
 
-  const handleGameClick = (game: any) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
 
@@ -133,10 +154,12 @@ const Bgaming: React.FC = () => {
     setSelectedGame(null);
   };
 
+  const filteredGames = games.filter(game => game.status === 1);
+
   return (
     <div className="belatra-container">
       {loading ? (
-        <p>Loading...</p> 
+        <p>Loading...</p>
       ) : (
         <>
           <div className="navigation-buttons">
@@ -144,10 +167,10 @@ const Bgaming: React.FC = () => {
             <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
           </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
-            {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
+            {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
                 <div className="swiper-slide-content">
-                  {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
+                  {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
                     <div key={index} className="col-3 col-md-3">
                       <div className="btn-game" onClick={() => handleGameClick(game)}>
                         <Image
@@ -168,12 +191,12 @@ const Bgaming: React.FC = () => {
             ))}
           </Swiper>
           {selectedGame && token && (
-            <GameUrl game={selectedGame} token={token} onClose={closeGameUrl} />
+            <GameUrl game={selectedGame} token={token} idMachine={idMachineFromURL} onClose={closeGameUrl} />
           )}
         </>
       )}
     </div>
   );
-}
+};
 
-export default Bgaming;
+export default Belatra;

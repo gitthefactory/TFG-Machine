@@ -3,7 +3,6 @@
 import { NextResponse } from "next/server";
 import {connectDB} from "@/libs/mongodb";
 import User from "@/models/user";
-
 import ProfileType from "@/models/profileType";
 
 
@@ -26,7 +25,6 @@ export async function GET() {
       };
     }));
 
-    // Devolver la respuesta con los datos de los usuarios poblados
     return NextResponse.json({
       message: "Ok",
       data: populatedUsuarios,
@@ -34,7 +32,8 @@ export async function GET() {
       status: 200
     });
   } catch (error) {
-    // Manejar cualquier error que pueda ocurrir durante el proceso
+
+  
     return NextResponse.json({
       message: "Failed to get users",
       error,

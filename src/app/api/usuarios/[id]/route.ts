@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/user";
-
 //GET A ONE USER
 export async function GET(request: any, { params: { id } }: any) {
   try {
@@ -9,6 +8,7 @@ export async function GET(request: any, { params: { id } }: any) {
     await connectDB();
     //get data using model
     const usuario = await User.findOne({ _id: id });
+
     return NextResponse.json(
       {
         message: "Ok",
@@ -16,7 +16,8 @@ export async function GET(request: any, { params: { id } }: any) {
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error) 
+  {
     return NextResponse.json(
       {
         message: "Failed to fecth a User",
@@ -65,6 +66,7 @@ export async function PUT(request: any, { params: { id } }: any) {
 
     // Actualizar usuario y devolver el documento actualizado
     const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
 
     return NextResponse.json(
       {

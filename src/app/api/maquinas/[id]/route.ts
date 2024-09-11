@@ -81,6 +81,8 @@ export async function GET(request: any, { params: { id } }: any) {
   
       // Guardar los cambios en la base de datos
       const updatedMachine = await machine.save();
+ // Emitir evento de actualización de la máquina al cliente
+
   
       return NextResponse.json(
         {

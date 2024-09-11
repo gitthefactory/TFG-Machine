@@ -6,6 +6,8 @@ import DeleteButtonSalas from '@/components/Salas/DeleteButtonSalas';
 
 import { getSession } from "next-auth/react";
 import getRooms from '@/controllers/getRooms'; // Asegúrate de que esta función esté bien importada
+import { useSocket } from "@/app/api/socket/socketContext";
+import Loader from "../common/Loader";
 
 interface SalaData {
   _id: string;
@@ -27,9 +29,12 @@ const SalasTable: React.FC = () => {
   const [userRole, setUserRole] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredSalas, setFilteredSalas] = useState<SalaData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Inicia el indicador de carga
       try {
         const session = await getSession();
         if (session) {
@@ -42,16 +47,34 @@ const SalasTable: React.FC = () => {
         }
       } catch (error) {
         console.error("Error al obtener datos de salas:", error);
+      } finally {
+        setLoading(false); // Detiene el indicador de carga
       }
     };
 
     fetchData();
-  }, []);
+
+    if (socket) {
+      const handleUpdateSala = async (updatedSala: SalaData) => {
+        console.log('Sala actualizada recibida:', updatedSala);
+        await fetchData(); // Actualiza la lista de salas
+      }
+      console.log("Socket conectado:", socket);
+  
+      // Escucha el evento de actualización de salas
+      socket.on('MachineUpdated', handleUpdateSala);
+  
+      return () => {
+        socket.off('MachineUpdated', handleUpdateSala);
+      }
+      
+    }
+  }, [socket]);
 
   useEffect(() => {
     // Filtrar salas basado en el término de búsqueda
     const filteredData = salas.filter((sala) =>
-      sala.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      sala.nombre && sala.nombre.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredSalas(filteredData);
   }, [searchTerm, salas]);
@@ -68,17 +91,14 @@ const SalasTable: React.FC = () => {
     }
 
     try {
+      setLoading(true); // Inicia el indicador de carga
       console.log(`Actualizando sala con ID ${id} a nuevo estado ${newStatus}`);
       const response = await fetch(`/api/salas/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-        
-          newStatus: newStatus,
-         
-        }),
+        body: JSON.stringify({ newStatus: newStatus }),
       });
 
       const result = await response.json();
@@ -92,16 +112,28 @@ const SalasTable: React.FC = () => {
             sala._id === id ? { ...sala, status: newStatus } : sala
           )
         );
+        
+        if (socket) {
+          socket.emit('updateMachine', {
+            _id: salaToUpdate._id,
+            status: newStatus,
+          });
+        }
+
         setFilteredSalas(prevFilteredSalas =>
           prevFilteredSalas.map(sala =>
             sala._id === id ? { ...sala, status: newStatus } : sala
           )
         );
+
+       
       } else {
         console.error('Error al actualizar estado', result);
       }
     } catch (error) {
       console.error('Error al enviar solicitud de actualización', error);
+    } finally {
+      setLoading(false); // Detiene el indicador de carga
     }
   };
 
@@ -127,7 +159,7 @@ const SalasTable: React.FC = () => {
     },
     {
       name: 'Pais',
-      selector: (row: SalaData) => row.pais.join(', '), // Une los elementos del array si es necesario
+      selector: (row: SalaData) => (row.pais || []).join(', '), // Une los elementos del array si es necesario
       sortable: true,
     },
     {
@@ -193,13 +225,17 @@ const SalasTable: React.FC = () => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <DataTable
-            columns={columns}
-            data={filteredSalas}
-            pagination
-            highlightOnHover
-            responsive
-          />
+          {loading ? (
+            <Loader />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={filteredSalas}
+              pagination
+              highlightOnHover
+              responsive
+            />
+          )}
         </div>
       </div>
     </div>

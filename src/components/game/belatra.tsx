@@ -5,16 +5,27 @@ import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
-import { signOut } from 'next-auth/react'; // Importa signOut
+import { signOut } from 'next-auth/react';
+import { useSocket } from "@/app/api/socket/socketContext"; // Importa signOut
+
+interface Game {
+  id: number;
+  name: string;
+  category: string;
+  provider_name: string;
+  image: string;
+  status: number;
+}
 
 const Belatra: React.FC = () => {
-  const [games, setGames] = useState<any[]>([]);
-  const [selectedGame, setSelectedGame] = useState<any>(null);
+  const [games, setGames] = useState<Game[]>([]);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const swiperRef = useRef<any>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +38,6 @@ const Belatra: React.FC = () => {
           return;
         }
 
-        // Obtener idMachine de la URL
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine');
         setIdMachine(idMachineFromURL);
@@ -84,11 +94,9 @@ const Belatra: React.FC = () => {
           return;
         }
 
-        // Obtener juegos globales
         const globalGamesResponse = await fetch('/api/juegosApi');
         const globalGamesData = await globalGamesResponse.json();
 
-        // Filtrar juegos activos
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
           const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
@@ -97,6 +105,7 @@ const Belatra: React.FC = () => {
             activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
           );
 
+          console.log('Juegos activos de Belatra:', finalBelatraGames);
           setGames(finalBelatraGames);
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
@@ -111,7 +120,26 @@ const Belatra: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+    
+    if (socket) {
+      const handleGameStatusUpdated = (gameStatusChange: Game) => {
+        console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
+        setGames(prevGames => {
+          const updatedGames = prevGames.map(game =>
+            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+          );
+          console.log('Juegos después de la actualización:', updatedGames);
+          return updatedGames;
+        });
+      };
+    
+      socket.on('gameStatusUpdated', handleGameStatusUpdated);
+    
+      return () => {
+        socket.off('gameStatusUpdated', handleGameStatusUpdated);
+      };
+    }
+  }, [socket]);
 
   const handlePrevButtonClick = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -128,10 +156,13 @@ const Belatra: React.FC = () => {
   const handleGameClick = (game: any) => {
     setSelectedGame(game);
   };
-
+  
   const closeGameUrl = () => {
     setSelectedGame(null);
   };
+
+  // Filtrar juegos que están activos
+  const filteredGames = games.filter(game => game.status === 1);
 
   return (
     <div className="belatra-container">
@@ -146,24 +177,24 @@ const Belatra: React.FC = () => {
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
-                <div className="swiper-slide-content">
-                  {(games.slice(pageIndex * 8, (pageIndex + 1) * 8)).map((game, index) => (
-                    <div key={index} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
-                        <Image
-                          src={game.image}
-                          alt={game.name}
-                          style={{width:'100%'}}
-                          width={500}
-                          height={500}
-                        />
-                        <div className="subtitle">
-                          {game.name}
-                        </div>
-                      </div>
+               <div className="swiper-slide-content">
+              {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
+                <div key={index} className="col-3 col-md-3">
+                  <div className="btn-game" onClick={() => handleGameClick(game)}>
+                    <Image
+                      src={game.image}
+                      alt={game.name}
+                      style={{ width: '100%' }}
+                      width={500}
+                      height={500}
+                    />
+                    <div className="subtitle">
+                      {game.name}
                     </div>
-                  ))}
+                  </div>
                 </div>
+              ))}
+            </div>
               </SwiperSlide>
             ))}
           </Swiper>

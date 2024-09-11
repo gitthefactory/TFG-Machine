@@ -6,7 +6,6 @@ import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import bcrypt from "bcryptjs";
-import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 function capitalizeFirstLetter(string) {

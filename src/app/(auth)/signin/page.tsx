@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import { useEffect } from "react";
 export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 
+
 const SignIn: React.FC = () => {
   const [info, setInfo] = useState({
     email: "",
@@ -16,6 +17,7 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
+ 
 
   function handleInput(e: any) {
     const value = e.target.name === "email" ? e.target.value.toLowerCase() : e.target.value

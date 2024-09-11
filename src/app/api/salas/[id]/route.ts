@@ -69,6 +69,7 @@ export async function GET(request: any, { params: { id } }: any) {
   
       // Asegúrate de que id_machine esté incluido en la respuesta
       updatedMachine.id_machine = id_machine;
+
   
       return NextResponse.json(
         {

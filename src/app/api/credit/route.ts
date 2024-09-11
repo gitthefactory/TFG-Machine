@@ -7,7 +7,7 @@ export async function POST(request) {
     const data = await request.json();
     console.log("Datos recibidos:", data);
 
-    await connectDB();
+    await connectDB(); 
 
     if (data.action !== 'CREDIT') {
       throw new Error('Acción no permitida. Solo se permite CREDIT en este endpoint.');
@@ -15,7 +15,6 @@ export async function POST(request) {
 
     const creditAmount = Number(data.credit) || 0;  // Asegúrate de que sea un número
 
-    // Verifica si el valor de crédito es 0
     if (creditAmount <= 0) {
       throw new Error('El monto de crédito debe ser mayor que 0.');
     }
