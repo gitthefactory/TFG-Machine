@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Operator from "@/models/operator";
-import { getIO } from "@/app/api/socket/socket";
 
 // GET A ONE OPERATOR
 export async function GET(request: any, { params: { id } }: any) {
@@ -72,12 +71,6 @@ export async function PUT(request: any, { params: { id } }: any) {
         { status: 404 }
       );
     }
-
-    const io = getIO();
-
-    // Emite el evento de actualización
-    io.emit('operatorUpdated', updatedOperator);
-
     return NextResponse.json(
       {
         message: "Operador Actualizado con Éxito",

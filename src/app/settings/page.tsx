@@ -2,9 +2,9 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getServerSession } from "next-auth/next";
+import  Handler  from "@/app/api/auth/[...nextauth]/route";
 // import Image from "next/image";
 import { FaUser, FaMessage } from "react-icons/fa6";
-
 export const metadata: Metadata = {
   title: "TFG | Ajustes",
   description:

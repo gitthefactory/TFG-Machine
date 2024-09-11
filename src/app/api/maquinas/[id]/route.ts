@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import Machine from "@/models/machine";
 import Room from "@/models/room";
-import { getIO } from "@/app/api/socket/socket";
 
 
 //GET A ONE MACHINE
@@ -82,10 +81,7 @@ export async function GET(request: any, { params: { id } }: any) {
   
       // Guardar los cambios en la base de datos
       const updatedMachine = await machine.save();
-
-      const io = getIO();
-
-      io.emit("update_machine", updatedMachine); // Emitir evento de actualización de la máquina al cliente
+ // Emitir evento de actualización de la máquina al cliente
 
   
       return NextResponse.json(

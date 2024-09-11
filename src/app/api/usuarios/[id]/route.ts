@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/user";
-import { getIO } from "@/app/api/socket/socket";
 //GET A ONE USER
 export async function GET(request: any, { params: { id } }: any) {
   try {
@@ -9,11 +8,6 @@ export async function GET(request: any, { params: { id } }: any) {
     await connectDB();
     //get data using model
     const usuario = await User.findOne({ _id: id });
-    
- /*    const io = getIO();
-
-    // Emite el evento de actualización
-    io.emit('UpdateSala', {id, usuario}); */
 
     return NextResponse.json(
       {
@@ -73,10 +67,6 @@ export async function PUT(request: any, { params: { id } }: any) {
     // Actualizar usuario y devolver el documento actualizado
     const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
 
-    const io = getIO();
-
-    // Emite el evento de actualización
-    io.emit('UpdateSala', {id, updateData });
 
     return NextResponse.json(
       {

@@ -25,12 +25,6 @@ export async function GET() {
       };
     }));
 
-    // Devolver la respuesta con los datos de los usuarios poblados
- /*    const io = getIO();
-
-    // Emite el evento de actualización
-    io.emit('operatorUpdated', updatedOperator); */
-
     return NextResponse.json({
       message: "Ok",
       data: populatedUsuarios,
