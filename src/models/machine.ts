@@ -12,6 +12,7 @@ interface Machine extends Document {
   providers: any[];
   token: string;
   balance?: number; 
+  signIn: number;
 }
 
 // Definición del esquema de la máquina
@@ -25,6 +26,7 @@ const MachineSchema = new Schema<Machine>({
   providers: { type: [{ type: Schema.Types.Mixed }], default: [] }, // Array de tipo any[] similar a games
   token: { type: String, default: generateUUID }, // Añade un token único para cada documento
   balance: { type: Number, default: 0 }, 
+  signIn: { type: Number, default:0}
 }, {
   timestamps: true,
 });
