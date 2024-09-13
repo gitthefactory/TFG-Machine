@@ -26,7 +26,16 @@ body, html {
 }
 
 
-
+.botonPagar{
+  text-align: center;
+  color: white;
+  background-color: rgb(153, 45, 45);
+  max-height: 70%;
+  min-width: 20%;
+  margin-top: 10px;
+  margin-left : 20px;
+  border-radius: 80%;
+}
 /* .video-container-test{
   /* position: fixed; */
   /* top: 0;

@@ -117,7 +117,7 @@ export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: s
 export async function PUT(request: Request) {
   try {
     const { id } = request.nextUrl.searchParams;
-    const { nombre, descripcion, status, games, operator, client, room, pais, direccion, ciudad, balance } = await request.json();
+    const { nombre, descripcion, status, games, operator, client, room, pais, direccion, ciudad, balance,signIn } = await request.json();
     await connectDB();
     
     const machine = await Machine.findById(id);
@@ -137,6 +137,7 @@ export async function PUT(request: Request) {
     if (direccion) machine.direccion = direccion;
     if (ciudad) machine.ciudad = ciudad;
     if (balance) machine.balance = balance;
+    if (signIn) machine.signIn = signIn;
     machine.updatedAt = new Date();
     const updatedMachine = await machine.save();
 

@@ -135,7 +135,36 @@ const GameComponent: React.FC = () => {
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
+  const handlePay = async () => {
+    if (!selectedMachineBalance) return;
 
+    try {
+      const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'DEBIT',
+          amount: selectedMachineBalance.balance,
+          currency: selectedMachineBalance.currency,
+          message: 'Cliente retiró dinero',
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Payment successful!');
+        // Handle success (e.g., update UI, redirect, etc.)
+      } else {
+        alert(`Payment failed: ${data.data.message}`);
+        // Handle error (e.g., show error message)
+      }
+    } catch (error) {
+      console.error('Error making payment:', error);
+      alert('Payment failed due to an error.');
+    }
+  };
   return (
     <div>
       {isLoading && <Loader />}
@@ -184,12 +213,21 @@ const GameComponent: React.FC = () => {
               <span className="credit">
                 {selectedMachineBalance ? formatBalanceWithoutDecimals(selectedMachineBalance.balance) : '000'}
               </span>
+              
               <span className="amount">
                 {selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}
+                
               </span>
+              
             </div>
+            <button className="btn botonPagar" onClick={handlePay}>PAGAR</button>
           </div>
+          
+           <div>
+          
+           </div>
         </>
+       
       )}
     </div>
   );
