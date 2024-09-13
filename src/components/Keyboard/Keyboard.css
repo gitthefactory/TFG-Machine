@@ -1,0 +1,143 @@
+.keyboard {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr); /* 5 filas para incluir una fila adicional para el espacio */
+    grid-template-columns: repeat(13, 3fr); /* 16 columnas para las teclas */
+    gap: 5px; /* Espacio entre las teclas */
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #222;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .keyboard-container.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .keyboard-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+  }
+  
+  .keyboard:before {
+    position: absolute;
+    top: calc(100% + 1.2vmin);
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #3a3a3a;
+    font-size: 1.5vmin;
+  }
+  
+  .keyboard li {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #333;
+    text-align: center;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .keyboard li:hover {
+    background-color: #444;
+  }
+  .delete {
+    grid-column: span 2;
+
+  }
+  .return {
+    grid-column: span 2;
+  }
+
+  
+  .symbol, .letter, .capslock, .return, .shift, .space, .delete {
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .shift, .capslock, .return, .delete {
+    background-color: #555;
+  }
+  
+  .symbol {
+    background-color: #666;
+  }
+  
+  .delete, .capslock, .shift, .return {
+    background-color: #666;
+  }
+  
+  .key-cotnent {
+    width: 100%;
+    height: 100%;
+    background-color: #444;
+    position: relative;
+    border-radius: 4px;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 0.6vmin rgba(0, 0, 0, 0.6);
+    transition: top 0.1s ease-in-out, box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+  }
+  
+  .key-cotnent:active {
+    background-color: rgba(68, 68, 68, 0.9);
+  }
+  
+  @keyframes shadow {
+    0% { box-shadow: 0 0 5vmin -2vmin var(--red); }
+    33% { box-shadow: 0 0 5vmin -2vmin var(--blue); }
+    66% { box-shadow: 0 0 5vmin -2vmin var(--green); }
+    100% { box-shadow: 0 0 5vmin -2vmin var(--red); }
+  }
+  
+  @keyframes color {
+    0% { color: var(--red); }
+    33% { color: var(--blue); }
+    66% { color: var(--green); }
+    100% { color: var(--red); }
+  }
+  
+  @media (max-width: 600px) {
+    .keyboard {
+      padding: 5px;
+      grid-template-rows: repeat(5, 1fr); /* Ajusta el número de filas */
+      grid-template-columns: repeat(16, 1fr); /* Ajusta el número de columnas */
+    }
+    
+    .keyboard li {
+      font-size: 12px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .keyboard {
+      padding: 20px;
+    }
+    
+    .keyboard li {
+      font-size: 16px;
+    }
+  }

@@ -2,28 +2,59 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
 import { FaCircleCheck } from "react-icons/fa6";
 import axios from "axios";
 import "../../../css/globals.css";
+import Keyboard from '@/components/Keyboard/Keyboard'; // Importa tu componente de teclado
+
 
 const Maquinas: React.FC = () => {
     const [info, setInfo] = useState({
         id_machine: "",
         password: "",
     });
-
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showKeyboard, setShowKeyboard] = useState(false); // Estado para mostrar/ocultar el teclado
+    const [activeInput, setActiveInput] = useState<string | null>(null); // Input activo
+    const keyboardRef = useRef<HTMLDivElement>(null); // Referencia para el contenedor del teclado
+
     const router = useRouter();
 
-    function handleInput(e: any) {
+    
+    function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
         setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
 
+    function handleInputFocus(inputName: string) {
+        setActiveInput(inputName);
+        setShowKeyboard(true); // Muestra el teclado cuando un input es enfocado
+    }
+
+    function handleKeyPress(character: string) {
+        if (activeInput) {
+            setInfo((prev) => {
+                if (character === 'delete') {
+                    return {
+                        ...prev,
+                        [activeInput]: prev[activeInput].slice(0, -1),
+                    };
+                } else {
+                    return {
+                        ...prev,
+                        [activeInput]: prev[activeInput] + character,
+                    };
+                }
+            });
+        }
+    }
+    
+
+ 
     async function verificarEstadoMaquina(idMachine: string) {
         try {
             const res = await axios.get(`/api/maquinas`);
@@ -149,7 +180,7 @@ const Maquinas: React.FC = () => {
                 <a>
                     <Image className="dark:hidden p-3" src={"/images/logo/logo-white.png"} alt="Logo" width={350} height={32} />
                 </a>
-                <p id="testdecolor" className="2xl:px-20 text-center">
+                <p className="2xl:px-20 text-center">
                     Scanea el QRCode o ingresa los datos correspondientes a la máquina:
                 </p>
                 <form onSubmit={handleSubmit}>
@@ -159,15 +190,21 @@ const Maquinas: React.FC = () => {
                                 {error}
                             </span>
                         )}
-                        <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
                         <div className="relative">
-                            <input onChange={(e) => handleInput(e)} name="id_machine" type="id_machine" placeholder="Id Máquina" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                        <input 
+  onFocus={() => handleInputFocus("id_machine")} 
+  onChange={(e) => handleInput(e)} 
+  name="id_machine" 
+  value={info.id_machine} 
+  type="text" 
+  placeholder="ID Máquina" 
+  className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black uppercase" 
+/>
                         </div>
                     </div>
                     <div className="mb-6">
-                        <label className="mb-2.5 block font-medium text-black dark:text-white"></label>
                         <div className="relative">
-                            <input onChange={(e) => handleInput(e)} name="password" type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                            <input onFocus={() => handleInputFocus("password")} onChange={(e) => handleInput(e)} name="password" value={info.password} type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
                         </div>
                     </div>
                     <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -177,9 +214,12 @@ const Maquinas: React.FC = () => {
                         </button>
                     </div>
                 </form>
+
+                {showKeyboard && <Keyboard ref={keyboardRef} onKeyPress={handleKeyPress} />}
             </div>
         </>
     );
 };
 
 export default Maquinas;
+
