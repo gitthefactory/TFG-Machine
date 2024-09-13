@@ -157,7 +157,7 @@ const GameComponent: React.FC = () => {
         alert('Payment successful!');
         // Handle success (e.g., update UI, redirect, etc.)
       } else {
-        alert(`Payment failed: ${data.data.message}`);
+        alert(`Payment fallido consultar con admin: ${data.data.message}`);
         // Handle error (e.g., show error message)
       }
     } catch (error) {

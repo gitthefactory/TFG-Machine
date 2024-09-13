@@ -77,9 +77,19 @@ export default function CrearProveedores() {
         setImg("/images/img/buttons/belatra1.png");
         setProvider_name("Belatra");
         break;
-      case 999: // Aquí puedes agregar más casos según necesites
+      case 12: // Aquí puedes agregar más casos según necesites
+              setImg("/images/img/buttons/bgaming1.png");
+              setProvider_name("booming-games");
+        break;
+        case 87: // Aquí puedes agregar más casos según necesites
+              setImg("/images/img/buttons/bgaming1.png");
+              setProvider_name("aspect-gaming");
+        break;
+        case 999: // Aquí puedes agregar más casos según necesites
         // ...
         break;
+       
+
       default:
         setImg("");
         setProvider_name("");
@@ -114,6 +124,8 @@ export default function CrearProveedores() {
                     <option value="Seleccionar" disabled>Seleccionar</option>
                     <option value={68}>68</option> {/* Cambiar el value a número */}
                     <option value={29}>29</option>
+                    <option value={12}>12</option>
+                    <option value={87}>87</option>
                   </select>
                 </div>
                 <div className="mb-4">

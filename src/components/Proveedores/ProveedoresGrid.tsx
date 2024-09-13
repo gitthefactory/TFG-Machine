@@ -22,6 +22,8 @@ enum LoadingState {
 const providers = {
   29: "Belatra Gaming",
   68: "Bgaming",
+  12: "Booming Games",
+  87: "Aspect Gaming",
   // Añade más proveedores según sea necesario
 };
 
