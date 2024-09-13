@@ -35,9 +35,9 @@ export async function GET(request: any, { params: { id } }: any) {
   
   export async function PUT(request: any, { params: { id } }: any) {
     try {
-      const { games: newGame, status, providers } = await request.json();
+      const { games: newGame, status, providers,signIn } = await request.json();
   
-      console.log("Datos recibidos:", { newGame, status, providers });
+      console.log("Datos recibidos:", { newGame, status, providers ,signIn});
   
       // Conectar a la base de datos
       await connectDB();
@@ -66,7 +66,13 @@ export async function GET(request: any, { params: { id } }: any) {
           machine.games.push(newGame);
         }
       }
-  
+    // Actualizar el campo signIn de la máquina
+    if (signIn !== undefined) {
+      machine.signIn = signIn;
+  }
+
+  machine.updatedAt = new Date();
+
       // Actualizar el status de la máquina
       if (status !== undefined) {
         machine.status = status;
