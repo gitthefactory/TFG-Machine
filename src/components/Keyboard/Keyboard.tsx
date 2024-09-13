@@ -9,11 +9,12 @@ interface KeyboardProps {
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
   const [shift, setShift] = useState(false);
   const keyboardRef = useRef<HTMLUListElement>(null);
+  const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (keyboardRef.current && !keyboardRef.current.contains(event.target as Node)) {
-        onClose(); // Ocultar teclado si se hace clic fuera de él
+       
       }
     }
 
@@ -34,6 +35,13 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
           return;
       }
     }
+
+    const handleKeyClick = (key: string) => {
+      if (key === 'Close') {
+          setShowKeyboard(false); // Oculta el teclado cuando se presiona "Close"
+      }
+      // Puedes agregar más lógica aquí si necesitas manejar otras teclas
+  };
     
 
 
@@ -46,7 +54,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
   return (
     <div className="">
       <ul className="keyboard" ref={keyboardRef}>
-        <li className='Close' onClick={()=> handleKeyClick('Close')}>Close</li>
+       <li className='Close' onClick={() => handleKeyClick('Close')}>Close</li>
         {/* Primera fila */}
         <li className="symbol" onClick={() => handleKeyClick('1')}>1</li>
         <li className="symbol" onClick={() => handleKeyClick('2')}>2</li>

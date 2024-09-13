@@ -30,10 +30,14 @@ const Maquinas: React.FC = () => {
         setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
 
-    function handleInputFocus(inputName: string) {
+    const handleInputFocus = (inputName: string) => {
         setActiveInput(inputName);
         setShowKeyboard(true); // Muestra el teclado cuando un input es enfocado
-    }
+    };
+
+    const handleInputBlur = () => {
+        setShowKeyboard(false); // Oculta el teclado cuando el input pierde el foco
+    };
 
     function handleKeyPress(character: string) {
         if (activeInput) {
@@ -269,7 +273,7 @@ const Maquinas: React.FC = () => {
                             </span>
                         )}
                         <div className="relative">
-                        <input 
+                        <input onBlur={handleInputBlur}
   onFocus={() => handleInputFocus("id_machine")} 
   onChange={(e) => handleInput(e)} 
   name="id_machine" 
@@ -282,7 +286,7 @@ const Maquinas: React.FC = () => {
                     </div>
                     <div className="mb-6">
                         <div className="relative">
-                            <input onFocus={() => handleInputFocus("password")} onChange={(e) => handleInput(e)} name="password" value={info.password} type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                            <input onFocus={() => handleInputFocus("password")} onBlur={handleInputBlur} onChange={(e) => handleInput(e)} name="password" value={info.password} type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
                         </div>
                     </div>
                     <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
