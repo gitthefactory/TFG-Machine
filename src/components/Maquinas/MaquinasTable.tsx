@@ -34,9 +34,10 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
         // console.log('todos los balances:', data);
   
         let transferDataArray = [];
-  
+        console.log('Data:',data)
         if (Array.isArray(data)) {
           transferDataArray = data;
+        
         } else if (data && Array.isArray(data.data)) {
           transferDataArray = data.data;
         } else {
@@ -125,7 +126,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
       cell: (row: MaquinaData) => (
         <div className="flex items-center space-x-3.5">
           <Link
-            href={`/dashboard/salas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
+            href={`/dashboard/maquinas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
             title="TransferirCREDIT"
             style={{ fontSize: '20px', color: 'green'}}

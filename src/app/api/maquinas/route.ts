@@ -58,7 +58,7 @@ export async function POST(request: { json: () => PromiseLike<{ nombre: string; 
       direccion,
       ciudad,
       token,
-      balance
+      balance : 0 ,
     });
 
     // Devolver una respuesta con la máquina recién creada
