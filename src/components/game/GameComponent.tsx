@@ -133,7 +133,7 @@ const GameComponent: React.FC = () => {
   };
 
   const formatBalanceWithoutDecimals = (balance: number) => {
-    return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "");
   };
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
