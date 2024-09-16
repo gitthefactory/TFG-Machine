@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import getSessionData from "@/controllers/getSession";
 import { FaLaptop, FaServer, FaUser, FaShop, FaUserGroup, FaHouse, FaUserPlus, FaDice } from "react-icons/fa6";
+import Loader from "../common/Loader";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -16,6 +17,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const sidebar = useRef<any>(null);
 
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
 
   useEffect(() => {
     const userData = async () => {
@@ -43,6 +56,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   }, [sidebarOpen]);
 
   return (
+    <>
+     { loading && <Loader isSidebarOpen={sidebarOpen} />}
     <aside
       ref={sidebar}
       className={`absolute left-0 top-0 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -180,6 +195,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         </nav>
       </div>
     </aside>
+    </>
   );
 };
 

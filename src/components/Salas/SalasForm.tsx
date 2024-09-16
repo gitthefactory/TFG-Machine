@@ -64,8 +64,6 @@ const handleCreateMachine = async () => {
       client: newClient._id,
     };
 
-    console.log("Datos enviados en la solicitud POST:", requestData);
-
     const response = await fetch("/api/maquinas", {
       method: "POST",
       headers: {
@@ -80,8 +78,29 @@ const handleCreateMachine = async () => {
       const responseData = await response.json();
       console.log("Máquina creada con éxito", responseData);
 
+      // Verifica la estructura de responseData
+      console.log("ID de máquina:", responseData.data?.id_machine);
+
+      // Actualizar el estado de las máquinas creadas
       setMaquinasCreadas(prevMaquinas => [...prevMaquinas, responseData]);
       setMachineCreationError(null);
+
+      // Usar el id_machine de la respuesta para crear el crédito
+      const creditResponse = await fetch(`/api/credit/${responseData.data?.id_machine}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: responseData.data.id_machine , balance: 0 ,action :'CREDIT' }),
+      });
+
+      if (creditResponse.ok) {
+        console.log("Crédito inicial asignado con éxito.");
+      } else {
+        const creditResponseData = await creditResponse.json();
+        console.error("Error al asignar crédito inicial:", creditResponseData.error || "Error desconocido");
+      }
+
     } else {
       const responseData = await response.json();
       setMachineCreationError(responseData.error || "Error desconocido al crear la máquina");
@@ -91,6 +110,7 @@ const handleCreateMachine = async () => {
     setMachineCreationError("Error de red al crear la máquina");
   }
 };
+
 
   // Función para manejar la presentación del formulario
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
