@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import './Keyboard.css';
 
@@ -9,12 +11,11 @@ interface KeyboardProps {
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
   const [shift, setShift] = useState(false);
   const keyboardRef = useRef<HTMLUListElement>(null);
-  const [showKeyboard, setShowKeyboard] = useState<boolean>(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (keyboardRef.current && !keyboardRef.current.contains(event.target as Node)) {
-       
+        onClose(); // Cerrar el teclado si se hace clic fuera de él
       }
     }
 
@@ -24,37 +25,29 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
     };
   }, [onClose]);
 
-
-
-
   const handleKeyClick = (character: string, isSpecial?: boolean) => {
     if (isSpecial) {
       switch (character) {
         case 'delete':
           onKeyPress('delete');
           return;
+        case 'Close':
+          onClose(); // Cierra el teclado al hacer clic en "Close"
+          return;
       }
     }
 
-    const handleKeyClick = (key: string) => {
-      if (key === 'Close') {
-          setShowKeyboard(false); // Oculta el teclado cuando se presiona "Close"
-      }
-      // Puedes agregar más lógica aquí si necesitas manejar otras teclas
-  };
-    
-
-
-    // Ajusta el carácter dependiendo del estado de shift o capslock
+    // Ajusta el carácter dependiendo del estado de shift
     const finalCharacter = shift ? character.toUpperCase() : character.toLowerCase();
     onKeyPress(finalCharacter);
     if (shift) setShift(false); // Desactiva shift después de usarlo
   };
 
+
   return (
     <div className="">
       <ul className="keyboard" ref={keyboardRef}>
-       <li className='Close' onClick={() => handleKeyClick('Close')}>Close</li>
+       <li className='Close' onClick={() => handleKeyClick('Close', true)}>Close</li>
         {/* Primera fila */}
         <li className="symbol" onClick={() => handleKeyClick('1')}>1</li>
         <li className="symbol" onClick={() => handleKeyClick('2')}>2</li>

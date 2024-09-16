@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { FaCircleCheck } from "react-icons/fa6";
 import axios from "axios";
 import "../../../css/globals.css";
-import Keyboard from '@/components/Keyboard/Keyboard'; // Importa tu componente de teclado
+import Keyboard from '@/components/Keyboard/Keyboard'; 
 
 
 const Maquinas: React.FC = () => {
@@ -27,10 +27,13 @@ const Maquinas: React.FC = () => {
 
     
     function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-        setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setInfo((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.name === "id_machine" ? e.target.value.toUpperCase() : e.target.value,
+        }));
     }
 
-    const handleInputFocus = (inputName: string) => {
+    function handleInputFocus(inputName: string) {
         setActiveInput(inputName);
         setShowKeyboard(true); // Muestra el teclado cuando un input es enfocado
     };
@@ -39,23 +42,27 @@ const Maquinas: React.FC = () => {
         setShowKeyboard(false); // Oculta el teclado cuando el input pierde el foco
     };
 
+    const handleCloseKeyboard = () => {
+        setShowKeyboard(false);
+    };
+
     function handleKeyPress(character: string) {
         if (activeInput) {
             setInfo((prev) => {
+                let newValue = prev[activeInput];
                 if (character === 'delete') {
-                    return {
-                        ...prev,
-                        [activeInput]: prev[activeInput].slice(0, -1),
-                    };
+                    newValue = newValue.slice(0, -1);
                 } else {
-                    return {
-                        ...prev,
-                        [activeInput]: prev[activeInput] + character,
-                    };
+                    newValue += activeInput === 'id_machine' ? character.toUpperCase() : character;
                 }
+                return {
+                    ...prev,
+                    [activeInput]: newValue,
+                };
             });
         }
     }
+
     
 
  
@@ -273,20 +280,22 @@ const Maquinas: React.FC = () => {
                             </span>
                         )}
                         <div className="relative">
-                        <input onBlur={handleInputBlur}
+                        <input 
   onFocus={() => handleInputFocus("id_machine")} 
-  onChange={(e) => handleInput(e)} 
+  /* onChange={(e) => handleInput(e)}  */
+  onChange={handleInput}
   name="id_machine" 
   value={info.id_machine} 
   type="text" 
   placeholder="ID Máquina" 
-  className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black uppercase" 
+  className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black " 
+  
 />
                         </div>
                     </div>
                     <div className="mb-6">
                         <div className="relative">
-                            <input onFocus={() => handleInputFocus("password")} onBlur={handleInputBlur} onChange={(e) => handleInput(e)} name="password" value={info.password} type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
+                            <input onFocus={() => handleInputFocus("password")} onChange={handleInput} name="password" value={info.password} type="password" placeholder="Contraseña" className="w-full rounded-lg py-4 pl-6 pr-10 border-solid border-2 border-black" />
                         </div>
                     </div>
                     <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -297,11 +306,12 @@ const Maquinas: React.FC = () => {
                     </div>
                 </form>
 
-                {showKeyboard && <Keyboard ref={keyboardRef} onKeyPress={handleKeyPress} />}
+                {showKeyboard && (
+  <Keyboard onKeyPress={handleKeyPress} onClose={handleCloseKeyboard} />
+)}
             </div>
         </>
     );
 };
 
 export default Maquinas;
-
