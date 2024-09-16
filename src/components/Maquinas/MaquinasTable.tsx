@@ -125,8 +125,8 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
       name: 'Acciones',
       cell: (row: MaquinaData) => (
         <div className="flex items-center space-x-3.5">
-          <Link
-            href={`/dashboard/maquinas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
+            <Link
+            href={`/dashboard/salas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
             title="TransferirCREDIT"
             style={{ fontSize: '20px', color: 'green'}}
@@ -136,7 +136,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
           <Link
             href={`/dashboard/maquinas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
-            title="Transferir"
+            title="TransferirDEBIT"
             style={{ fontSize: '20px',color: 'red' }}
           >
             <FaMoneyBill />
@@ -187,3 +187,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
 };
 
 export default MaquinasTable;
+
+
+
+// ahora credit funciona 
