@@ -86,37 +86,37 @@ const Maquinas: React.FC = () => {
         }
     }
     
-    async function verificarEstadoSignIn(idMachine: string) {
-        try {
-            // Realiza una solicitud GET para obtener todas las máquinas
-            const res = await axios.get(`/api/maquinas`);
+    // async function verificarEstadoSignIn(idMachine: string) {
+    //     try {
+    //         // Realiza una solicitud GET para obtener todas las máquinas
+    //         const res = await axios.get(`/api/maquinas`);
             
-            if (res.status === 200) {
-                // Extrae los datos de la respuesta
-                const machines = res.data.data;
+    //         if (res.status === 200) {
+    //             // Extrae los datos de la respuesta
+    //             const machines = res.data.data;
                 
-                // Busca la máquina con el id_machine especificado
-                const machine = machines.find((m: any) => m.id_machine === idMachine);
+    //             // Busca la máquina con el id_machine especificado
+    //             const machine = machines.find((m: any) => m.id_machine === idMachine);
                 
-                // Imprime la máquina encontrada para depuración
-                console.log('LA MAQUINA ES:', machine);
+    //             // Imprime la máquina encontrada para depuración
+    //             console.log('LA MAQUINA ES:', machine);
                 
-                if (machine && machine.signIn === 1) {
-                    // Si la máquina tiene status 1, no se debe permitir el login
-                    return false;
-                }
-                // Si la máquina tiene status distinto de 1, se puede proceder
-                return true;
-            } else {
-                // Lanza un error si la respuesta no es 200 OK
-                throw new Error("Error al verificar el estado de la máquina");
-            }
-        } catch (error) {
-            // Imprime el error y lo lanza nuevamente
-            console.error("Error al verificar el estado de la máquina:", error);
-            throw error;
-        }
-    }
+    //             if (machine && machine.signIn === 1) {
+    //                 // Si la máquina tiene status 1, no se debe permitir el login
+    //                 return false;
+    //             }
+    //             // Si la máquina tiene status distinto de 1, se puede proceder
+    //             return true;
+    //         } else {
+    //             // Lanza un error si la respuesta no es 200 OK
+    //             throw new Error("Error al verificar el estado de la máquina");
+    //         }
+    //     } catch (error) {
+    //         // Imprime el error y lo lanza nuevamente
+    //         console.error("Error al verificar el estado de la máquina:", error);
+    //         throw error;
+    //     }
+    // }
     
 
 
@@ -182,13 +182,13 @@ const Maquinas: React.FC = () => {
         setLoading(true);
         try {
             // Verificar estado de la máquina antes de iniciar sesión
-            const estadoSignin = await verificarEstadoSignIn(info.id_machine)
+            // const estadoSignin = await verificarEstadoSignIn(info.id_machine)
             const estadoMaquina = await verificarEstadoMaquina(info.id_machine);
-            if (!estadoSignin) {
-                setError("El usuario está activo en otra ubicación.");
-                setLoading(false);
-                return;
-            }
+            // if (!estadoSignin) {
+            //     setError("El usuario está activo en otra ubicación.");
+            //     setLoading(false);
+            //     return;
+            // }
             if (!estadoMaquina) {
                 setError("La máquina está inactiva. Por favor, contacte al administrador.");
                 setLoading(false);
