@@ -32,18 +32,14 @@ const Maquinas: React.FC = () => {
             [e.target.name]: e.target.name === "id_machine" ? e.target.value.toUpperCase() : e.target.value,
         }));
     }
-
-    function handleInputFocus(inputName: string) {
-        setActiveInput(inputName);
-        setShowKeyboard(true); // Muestra el teclado cuando un input es enfocado
-    };
-
-    const handleInputBlur = () => {
-        setShowKeyboard(false); // Oculta el teclado cuando el input pierde el foco
-    };
-
+    function handleInputFocus(e: React.FocusEvent<HTMLInputElement>) {
+        setActiveInput(null); // Cambia el id del input activo
+        setShowKeyboard(true); // Muestra el teclado cuando haces foco en un input
+    }
+  
     const handleCloseKeyboard = () => {
         setShowKeyboard(false);
+        setActiveInput(null);
     };
 
     function handleKeyPress(character: string) {
@@ -63,7 +59,6 @@ const Maquinas: React.FC = () => {
         }
     }
 
-    
 
  
     async function verificarEstadoMaquina(idMachine: string) {
@@ -121,7 +116,23 @@ const Maquinas: React.FC = () => {
 
 
 
-
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                keyboardRef.current &&
+                !keyboardRef.current.contains(event.target as Node) &&
+                !((event.target as HTMLElement).closest('input') && activeInput) // Si el click no es en un input activo
+            ) {
+                setShowKeyboard(false); // Oculta el teclado
+                setActiveInput(null);   // Limpia el input activo
+            }
+        }
+    
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [activeInput, keyboardRef]);
 
 
     async function obtenerInformacionMaquina(idMachine: string) {
