@@ -62,7 +62,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
         <li className="delete" onClick={() => handleKeyClick('delete', true)}>delete</li>
 
         {/* Segunda fila */}
-        <li className="letter" onClick={() => handleKeyClick('q')}>q</li>
+        <li className="letter-1" onClick={() => handleKeyClick('q')}>q</li>
         <li className="letter" onClick={() => handleKeyClick('w')}>w</li>
         <li className="letter" onClick={() => handleKeyClick('e')}>e</li>
         <li className="letter" onClick={() => handleKeyClick('r')}>r</li>
@@ -74,7 +74,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
         <li className="letter" onClick={() => handleKeyClick('p')}>p</li>
 
         {/* Tercera fila */}
-        <li className="letter" onClick={() => handleKeyClick('a')}>a</li>
+        <li className="letter-1" onClick={() => handleKeyClick('a')}>a</li>
         <li className="letter" onClick={() => handleKeyClick('s')}>s</li>
         <li className="letter" onClick={() => handleKeyClick('d')}>d</li>
         <li className="letter" onClick={() => handleKeyClick('f')}>f</li>
@@ -86,7 +86,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onClose }) => {
 
         {/* Cuarta fila */}
         <li className="letter" onClick={() => handleKeyClick('z')}>z</li>
-        <li className="letter" onClick={() => handleKeyClick('x')}>x</li>
+        <li className="letter-3" onClick={() => handleKeyClick('x')}>x</li>
         <li className="letter" onClick={() => handleKeyClick('c')}>c</li>
         <li className="letter" onClick={() => handleKeyClick('v')}>v</li>
         <li className="letter" onClick={() => handleKeyClick('b')}>b</li>
