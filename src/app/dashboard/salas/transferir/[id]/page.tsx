@@ -1,6 +1,8 @@
 
+// AQUI ESTÁ CREDIT MACHINE
 
-import SalasTransfer from "@/components/Salas/SalasTransfer";
+
+import SalasTransfer from "@/components/Maquinas/creditMachine";
 import getSingleRoom from "@/controllers/getSingleRoom";
 import React from "react";
 import { SocketProvider } from "@/app/api/socket/socketContext";

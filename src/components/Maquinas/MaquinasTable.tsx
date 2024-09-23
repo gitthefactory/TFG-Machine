@@ -34,9 +34,10 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
         // console.log('todos los balances:', data);
   
         let transferDataArray = [];
-  
+        console.log('Data:',data)
         if (Array.isArray(data)) {
           transferDataArray = data;
+        
         } else if (data && Array.isArray(data.data)) {
           transferDataArray = data.data;
         } else {
@@ -124,7 +125,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
       name: 'Acciones',
       cell: (row: MaquinaData) => (
         <div className="flex items-center space-x-3.5">
-          <Link
+            <Link
             href={`/dashboard/salas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
             title="TransferirCREDIT"
@@ -135,7 +136,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
           <Link
             href={`/dashboard/maquinas/transferir/${getTransferIdByMachineId(row.id_machine)}`}
             className="transfer"
-            title="Transferir"
+            title="TransferirDEBIT"
             style={{ fontSize: '20px',color: 'red' }}
           >
             <FaMoneyBill />
@@ -186,3 +187,7 @@ const MaquinasTable: React.FC<MaquinasTableProps> = ({ maquinas }) => {
 };
 
 export default MaquinasTable;
+
+
+
+// ahora credit funciona 
