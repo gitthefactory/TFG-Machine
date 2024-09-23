@@ -69,7 +69,9 @@ const handleCreateMachine = async () => {
       headers: {
         "Content-Type": "application/json",
       },
+      
       body: JSON.stringify(requestData),
+      
     });
 
     if (response.status === 201) {

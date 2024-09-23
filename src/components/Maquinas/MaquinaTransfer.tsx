@@ -26,6 +26,9 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
       return;
     }
 
+
+
+    
     // Fetch the balance and currency from the API
     fetch(`/api/v1`)
       .then(response => response.json())
@@ -35,7 +38,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
           // Assuming data.data is an array of machine data
           const machineData = data.data.find((item: any) => item.user === id);
           if (machineData) {
-            setNewBalance(machineData.balance);
+            setNewBalance(machineData.balance || 0);
             setNewCurrency(machineData.currency || 'Unknown');
             setNewNombre(machineData.user); // Update the name based on API data
           } else {
