@@ -14,7 +14,7 @@ import Slots from '@/components/game/slots';
 import Loader from "@/components/common/Loader";
 import Image from 'next/image';
 import { useSocket } from '@/app/api/socket/socketContext';
-import { Br, Cut, Line, Printer, Row, Text, render } from 'react-thermal-printer';
+
 interface MachineBalance {
   user: string;
   balance: number;
@@ -135,8 +135,6 @@ const GameComponent: React.FC = () => {
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "");
   };
-
-
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
 
@@ -156,40 +154,15 @@ const GameComponent: React.FC = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert('Pago Realizado con exito!');
-           // Aquí vamos a generar el recibo y enviarlo a la impresora térmica.
-      const receipt = (
-        <Printer type="epson" width={42}>
-          <Text bold={true}>Recibo de Pago</Text>
-          <Br />
-          <Line />
-          <Row left="Cliente" right={selectedMachineBalance?.user || 'N/A'} />
-          <Row left="Monto Retirado" right={`${selectedMachineBalance?.currency || 'USD'} ${selectedMachineBalance?.balance}`} />
-          <Line />
-          <Text align="center">Gracias por su compra</Text>
-          <Br />
-          <Cut />
-        </Printer>
-      );
-
-      // Generar el Uint8Array para la impresora térmica
-      const dataToPrint: Uint8Array = await render(receipt);
-
-      // Enviar los datos a la impresora térmica vía serial port
-      const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 9600 });
-      const writer = port.writable?.getWriter();
-      if (writer) {
-        await writer.write(dataToPrint);
-        writer.releaseLock();
-      }
+        alert('Payment successful!');
+        // Handle success (e.g., update UI, redirect, etc.)
       } else {
-        alert(`Pago fallido consultar con admin: ${data.data.message}`);
+        alert(`Payment fallido consultar con admin: ${data.data.message}`);
         // Handle error (e.g., show error message)
       }
     } catch (error) {
       console.error('Error making payment:', error);
-      alert('El pago falló debido a un error.');
+      alert('Payment failed due to an error.');
     }
   };
   return (
