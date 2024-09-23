@@ -14,7 +14,7 @@ import Slots from '@/components/game/slots';
 import Loader from "@/components/common/Loader";
 import Image from 'next/image';
 import { useSocket } from '@/app/api/socket/socketContext';
-
+import Printer from "esc-pos-printer";
 interface MachineBalance {
   user: string;
   balance: number;
@@ -135,9 +135,37 @@ const GameComponent: React.FC = () => {
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "");
   };
+
+  const handlePrint = async () => {
+    try {
+      const printer = new Printer();
+      const printerList = await printer.getPrinters();
+  
+      if (printerList.length === 0) {
+        alert("No se encontraron impresoras.");
+        return;
+      }
+  
+      printer.setPrinterName(printerList[0]);
+      printer.text("Prueba de impresión.\n");
+      printer.feed(2);
+      printer.cut();
+  
+      await printer.print();
+    } catch (error) {
+      console.error('Error durante la impresión:', error);
+      alert(`Error durante la impresión: ${error.message}`);
+    }
+  };
+  
+  
+  
+
+
+
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-
+  
     try {
       const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
         method: 'POST',
@@ -151,20 +179,21 @@ const GameComponent: React.FC = () => {
           message: 'Cliente retiró dinero',
         }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         alert('Payment successful!');
-        // Handle success (e.g., update UI, redirect, etc.)
+        await handlePrint(); // Llama a la función de impresión
       } else {
         alert(`Payment fallido consultar con admin: ${data.data.message}`);
-        // Handle error (e.g., show error message)
       }
     } catch (error) {
       console.error('Error making payment:', error);
       alert('Payment failed due to an error.');
     }
   };
+
+
   return (
     <div>
       {isLoading && <Loader />}
