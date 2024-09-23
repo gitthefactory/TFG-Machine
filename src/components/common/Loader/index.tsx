@@ -11,14 +11,12 @@ const Loader = ({ sidebarWidth = 250, isSidebarOpen }: LoaderProps) => {
         zIndex: 99,
         position: "fixed",
         top: 0,
-        left: isSidebarOpen ? `${sidebarWidth}px` : "0px", // Si el sidebar está abierto, deja el espacio
-        width: isSidebarOpen
-          ? `calc(100% - ${sidebarWidth}px)` // Ajusta el ancho si el sidebar está abierto
-          : "100%", // Ocupa toda la pantalla si el sidebar está cerrado
+        left: isSidebarOpen ? `${sidebarWidth}px` : "0px",
+        width: isSidebarOpen ? `calc(100% - ${sidebarWidth}px)` : "100%",
         height: "100%",
-        background: "rgba(0, 0, 0, 0.95)", // Color de fondo negro muy oscuro
-        backdropFilter: "blur(6px)", // Efecto de difuminado
-        WebkitBackdropFilter: "blur(6px)", // Para navegadores basados en WebKit como Safari
+        background: "rgba(0, 0, 0, 0.95)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -28,5 +26,6 @@ const Loader = ({ sidebarWidth = 250, isSidebarOpen }: LoaderProps) => {
     </div>
   );
 };
+
 
 export default Loader;

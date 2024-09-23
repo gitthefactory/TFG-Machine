@@ -17,7 +17,7 @@ interface Sala {
 // Componente para el contenido de Salas
 const SalasContent: React.FC = () => {
   const [salas, setSalas] = useState<Sala[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -28,7 +28,6 @@ const SalasContent: React.FC = () => {
           id: index.toString(),
         }));
         setSalas(salasConIds);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

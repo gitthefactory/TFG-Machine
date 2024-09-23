@@ -3,6 +3,7 @@ import Bgaming from './bgaming';
 import Belatra from './belatra';
 import getSessionData from "@/controllers/getSession";
 import Loader from "@/components/common/Loader";
+import Aspect from "./aspect";
 
 interface ProviderData {
   provider_name: string;
@@ -16,6 +17,7 @@ const Providers: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showBelatraButton, setShowBelatraButton] = useState(false);
   const [showBgamingButton, setShowBgamingButton] = useState(false);
+  const [showAspectButton, setShowAspectButton] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +41,7 @@ const Providers: React.FC = () => {
               if (data.data && Array.isArray(data.data.providers)) {
                 const belatraProvider = data.data.providers.find((p: any) => p.provider === 29);
                 const bgamingProvider = data.data.providers.find((p: any) => p.provider === 68);
+                const aspectProvider = data.data.providers.find((p: any)=> p.provider === 87);
 
                 if (belatraProvider) {
                   setBelatraStatus(belatraProvider.status);
@@ -48,6 +51,10 @@ const Providers: React.FC = () => {
                 if (bgamingProvider) {
                   setBgamingStatus(bgamingProvider.status);
                   setShowBgamingButton(bgamingProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'bgaming' && p.status === 1));
+                }
+                if (aspectProvider) {
+                  setShowAspectButton(aspectProvider.status);
+                  setShowAspectButton(aspectProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'aspect' && p.status === 1));
                 }
               } else {
                 console.error("La API /api/juegosApi no devolvió un estado válido.");
@@ -97,13 +104,25 @@ const Providers: React.FC = () => {
             
           </button>
         )}
+       {showAspectButton && (
+  <button
+    className="btn-provider aspect"
+    onClick={() => handleProvider('aspect')}
+    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+  >
+    {/* Texto o contenido del botón aquí */}
+  </button>
+)}
       </div>
       {visibleSection && (
         <div style={{ marginTop: '20px' }}>
-          {visibleSection === 'belatra' ? <Belatra /> : <Bgaming />}
+         {visibleSection === 'belatra' && <Belatra />}
+         {visibleSection === 'bgaming' && <Bgaming />}
+         {visibleSection === 'aspect' && <Aspect/>}
         </div>
       )}
     </div>
+    
   );
 };
 
