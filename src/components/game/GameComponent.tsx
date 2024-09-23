@@ -135,29 +135,8 @@ const GameComponent: React.FC = () => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "");
   };
 
-  const handlePrint = async () => {
-    try {
-      const printer = new Printer();
-      const printerList = await printer.getPrinters();
   
-      if (printerList.length === 0) {
-        alert("No se encontraron impresoras.");
-        return;
-      }
-  
-      printer.setPrinterName(printerList[0]);
-      printer.text("Prueba de impresión.\n");
-      printer.feed(2);
-      printer.cut();
-  
-      await printer.print();
-    } catch (error) {
-      console.error('Error durante la impresión:', error);
-      alert(`Error durante la impresión: ${error.message}`);
-    }
-  };
-  
-  
+
   
 
 
