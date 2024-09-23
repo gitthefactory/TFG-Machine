@@ -14,7 +14,6 @@ import Slots from '@/components/game/slots';
 import Loader from "@/components/common/Loader";
 import Image from 'next/image';
 import { useSocket } from '@/app/api/socket/socketContext';
-import Printer from "esc-pos-printer";
 interface MachineBalance {
   user: string;
   balance: number;
