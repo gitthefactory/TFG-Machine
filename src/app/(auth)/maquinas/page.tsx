@@ -32,8 +32,8 @@ const Maquinas: React.FC = () => {
             [e.target.name]: e.target.name === "id_machine" ? e.target.value.toUpperCase() : e.target.value,
         }));
     }
-    function handleInputFocus(e: React.FocusEvent<HTMLInputElement>) {
-        setActiveInput(null); // Cambia el id del input activo
+    function handleInputFocus(inputName: string) {
+        setActiveInput(inputName); // Cambia el input activo con el nombre pasado como argumento
         setShowKeyboard(true); // Muestra el teclado cuando haces foco en un input
     }
   
