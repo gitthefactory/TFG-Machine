@@ -391,6 +391,16 @@ body {
   background-image: url('/images/img/buttons/bgaming2.png');
 }
 
+.aspect {
+  background-image: url('/images/img/buttons/aspect1.png');
+  background-position: center center;
+  background-size: 341px 200px;
+}
+
+.aspect:hover{
+  background-image: url('/images/img/buttons/aspect2.png');
+}
+
 .tatan {
   background-image: url('/images/img/buttons/tatan1.png');
   background-position: center center;
