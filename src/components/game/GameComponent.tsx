@@ -143,29 +143,29 @@ const GameComponent: React.FC = () => {
     const receiptContent = `
       <div style="font-size: 12px; font-family: 'Times New Roman'; width: 155px;">
         <img src="/images/img/logo.png" alt="Logo" style="max-width: 100%;"/>
-        <p style="text-align: center;">RECIBO<br>Address line 1<br>Address line 2</p>
+        <p style="text-align: center;">RECIBO<br>
         <table style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr>
-              <th style="border-top: 1px solid black;">Q.</th>
-              <th style="border-top: 1px solid black;">Description</th>
+              <th style="border-top: 1px solid black;">Moneda</th>
+              <th style="border-top: 1px solid black;">Id Máquina</th>
               <th style="border-top: 1px solid black;">$$</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="border-top: 1px solid black;">1.00</td>
-              <td style="border-top: 1px solid black;">Monto retirado : </td>
+              <td style="border-top: 1px solid black;">${selectedMachineBalance?.currency}</td>
+              <td style="border-top: 1px solid black;">${selectedMachineBalance?.user}</td>
               <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
             </tr>
             <tr>
               <td></td>
-              <td style="border-top: 1px solid black;">TOTAL</td>
-              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.user}</td>
+              <td style="border-top: 1px solid black;">TOTAL A RETIRAR </td>
+              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
             </tr>
           </tbody>
         </table>
-        <p style="text-align: center;">Thanks for your purchase!</p>
+        <p style="text-align: center;"></p>
       </div>
     `;
     
