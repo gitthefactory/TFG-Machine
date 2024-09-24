@@ -226,7 +226,7 @@ const GameComponent: React.FC = () => {
         if (response.ok) {
           await Swal.fire("Retiro exitoso", "El retiro se ha procesado correctamente.", "success");
           await handlePrint(); // Llamar a la función de impresión si el pago es exitoso
-          await 
+          
         } else {
           await Swal.fire("Error", `Error al procesar el retiro: ${data.data.message}`, "error");
         }
