@@ -137,13 +137,60 @@ const GameComponent: React.FC = () => {
 
   
 
-  
 
 
+  const handlePrint = () => {
+    const receiptContent = `
+      <div style="font-size: 12px; font-family: 'Times New Roman'; width: 155px;">
+        <img src="/images/img/logo.png" alt="Logo" style="max-width: 100%;"/>
+        <p style="text-align: center;">RECIBO<br>Address line 1<br>Address line 2</p>
+        <table style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr>
+              <th style="border-top: 1px solid black;">Q.</th>
+              <th style="border-top: 1px solid black;">Description</th>
+              <th style="border-top: 1px solid black;">$$</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border-top: 1px solid black;">1.00</td>
+              <td style="border-top: 1px solid black;">Monto retirado : </td>
+              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td style="border-top: 1px solid black;">TOTAL</td>
+              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.user}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="text-align: center;">Thanks for your purchase!</p>
+      </div>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Receipt</title>
+          <style>
+            @media print {
+              body { -webkit-print-color-adjust: exact; }
+            }
+          </style>
+        </head>
+        <body onload="window.print(); window.close();">
+          ${receiptContent}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-  
+
     try {
       const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
         method: 'POST',
@@ -157,19 +204,20 @@ const GameComponent: React.FC = () => {
           message: 'Cliente retiró dinero',
         }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert('Payment successful!');
-        await handlePrint(); // Llama a la función de impresión
+        await handlePrint(); // Call the print function here
       } else {
-        alert(`Payment fallido consultar con admin: ${data.data.message}`);
+        alert(`Payment failed: ${data.data.message}`);
       }
     } catch (error) {
       console.error('Error making payment:', error);
       alert('Payment failed due to an error.');
     }
   };
+
 
 
   return (
