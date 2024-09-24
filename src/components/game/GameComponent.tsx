@@ -14,6 +14,8 @@ import Slots from '@/components/game/slots';
 import Loader from "@/components/common/Loader";
 import Image from 'next/image';
 import { useSocket } from '@/app/api/socket/socketContext';
+import Swal from "sweetalert2"
+
 interface MachineBalance {
   user: string;
   balance: number;
@@ -190,34 +192,50 @@ const GameComponent: React.FC = () => {
 
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-
+  
     try {
-      const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'DEBIT',
-          amount: selectedMachineBalance.balance,
-          currency: selectedMachineBalance.currency,
-          message: 'Cliente retiró dinero',
-        }),
+      const result = await Swal.fire({
+        title: "Confirmar retiro",
+        text: "¿Estás seguro de que deseas realizar el retiro?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#16CB37",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, proceder",
+        cancelButtonText: "Cancelar",
+        background: "#DDCDEE",
+        iconColor: "black"
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert('Payment successful!');
-        await handlePrint(); // Call the print function here
-      } else {
-        alert(`Payment failed: ${data.data.message}`);
+  
+      if (result.isConfirmed) {
+        // Solo procede si el usuario confirma el pago
+        const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "DEBIT",
+            amount: selectedMachineBalance.balance,
+            currency: selectedMachineBalance.currency,
+            message: "Cliente retiró dinero",
+          }),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          await Swal.fire("Retiro exitoso", "El retiro se ha procesado correctamente.", "success");
+          await handlePrint(); // Llamar a la función de impresión si el pago es exitoso
+          await 
+        } else {
+          await Swal.fire("Error", `Error al procesar el retiro: ${data.data.message}`, "error");
+        }
       }
     } catch (error) {
-      console.error('Error making payment:', error);
-      alert('Payment failed due to an error.');
+      console.error("Error making payment:", error);
+      await Swal.fire("Error", "Ocurrió un error durante el retiro.", "error");
     }
   };
-
 
 
   return (
