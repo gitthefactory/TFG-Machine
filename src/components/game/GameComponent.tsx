@@ -156,7 +156,7 @@ const GameComponent: React.FC = () => {
           </thead>
           <tbody>
             <tr>
-              <td style="border-top: 1px solid black;">Id Máquina</td>
+              <td style="border-top: 1px solid black;">Máquina</td>
               <td style="border-top: 1px solid black;">${selectedMachineBalance?.user}</td>
               
             </tr>
