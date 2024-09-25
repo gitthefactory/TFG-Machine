@@ -162,7 +162,7 @@ const GameComponent: React.FC = () => {
             </tr>
             <tr>
               <td style=" padding: 5px; text-align: left; padding-left: 0;"<strong>Monto a retirar: </strong></td>
-              <td style=" padding: 5px;">$${selectedMachineBalance?.balance}</td>
+              <td style=" padding: 5px;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
             </tr>
 
            

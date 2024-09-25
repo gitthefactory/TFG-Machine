@@ -119,6 +119,27 @@ export async function getProviders() {
     });
   }
 }
+export async function actualizarJuegos() {
+  try {
+    const response = await fetch('/api/juegosApi');
+    if (!response.ok) {
+      throw new Error('Error al obtener los juegos de la API');
+    }
+
+    const { data: { games } } = await response.json();
+    
+    await paraProvider(games);
+    await ParaGames(games);
+  } catch (error) {
+    console.error('Error al actualizar los juegos:', error);
+  }
+}
+
+export async function POST() {
+  await actualizarJuegos();
+  return new Response('Juegos actualizados con éxito', { status: 200 });
+}
+
 
 
 getProviders();

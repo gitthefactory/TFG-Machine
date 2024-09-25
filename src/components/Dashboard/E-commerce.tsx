@@ -22,7 +22,8 @@ const provider = {
   29: "Belatra Gaming",
   68: "Bgaming",
   12 : "Booming Games",
-  87 : "Aspect Gaming"
+  87 : "Aspect Gaming",
+  88 : "popOk"
   // Añade más proveedores según sea necesario
 };
 
