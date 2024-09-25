@@ -149,31 +149,25 @@ const GameComponent: React.FC = () => {
         <table style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr>
-              <th style="border-top: 1px solid black;">Información del recibo</th>
-       
-              
+              <th style="border-top: 1px solid black; padding: 5px;">Información del recibo</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="border-top: 1px solid black;">Máquina</td>
-              <td style="border-top: 1px solid black;">${selectedMachineBalance?.user}</td>
-              
+              <td style="border-top: 1px solid black; padding: 5px;">Máquina</td>
+              <td style="border-top: 1px solid black; padding: 20px;">${selectedMachineBalance?.user}</td>
             </tr>
-             <tr>
-              <td style="border-top: 1px solid black;">Moneda</td>
-              <td style="border-top: 1px solid black;">${selectedMachineBalance?.currency}</td>
-              
+            <tr>
+              <td style="border-top: 1px solid black; padding: 5px;">Moneda</td>
+              <td style="border-top: 1px solid black; padding: 5px;">${selectedMachineBalance?.currency}</td>
             </tr>
-             <tr>
-              <td style="border-top: 1px solid black;">Monto a retirar : </td>
-        
-              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance}</td>
+            <tr>
+              <td style="border-top: 1px solid black; padding: 5px; text-align: left; padding-left: 0;">Monto a retirar:</td>
+              <td style="border-top: 1px solid black; padding: 5px;">$${selectedMachineBalance?.balance}</td>
             </tr>
-           
           </tbody>
         </table>
-        <p style="text-align: center;"></p>
+        <p style="text-align: left;"></p>
       </div>
     `;
     
@@ -194,7 +188,8 @@ const GameComponent: React.FC = () => {
       </html>
     `);
     printWindow.document.close();
-  };
+};
+
 
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
