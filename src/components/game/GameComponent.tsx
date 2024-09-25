@@ -143,28 +143,29 @@ const GameComponent: React.FC = () => {
 
   const handlePrint = () => {
     const receiptContent = `
-      <div style="font-size: 12px; font-family: 'Times New Roman'; width: 155px;">
+      <div style="font-size: 40px; font-family: 'Times New Roman'; width: 153px;">
         <img src="/images/img/logo.png" alt="Logo" style="max-width: 100%;"/>
         <p style="text-align: center;">RECIBO<br>
         <table style="border-collapse: collapse; width: 100%;">
-          <thead>
-            <tr>
-              <th style="border-top: 1px solid black; padding: 5px;">Información del recibo</th>
-            </tr>
-          </thead>
+          
+           
+          
           <tbody>
             <tr>
-              <td style="border-top: 1px solid black; padding: 5px;">Máquina</td>
-              <td style="border-top: 1px solid black; padding: 20px;">${selectedMachineBalance?.user}</td>
+            <br>
+              <td style="border-top: 1px solid black;padding-top: 10px; ">Máquina: </td>
+              <td style="border-top: 1px solid black; padding-right: 5px; padding-top: 10px;">${selectedMachineBalance?.user}</td>
             </tr>
             <tr>
-              <td style="border-top: 1px solid black; padding: 5px;">Moneda</td>
-              <td style="border-top: 1px solid black; padding: 5px;">${selectedMachineBalance?.currency}</td>
+              <td style=" padding: 1px; padding-top: 10px">Moneda: </td>
+              <td style=" padding: 1px;padding-top: 10px">${selectedMachineBalance?.currency}</td> 
             </tr>
             <tr>
-              <td style="border-top: 1px solid black; padding: 5px; text-align: left; padding-left: 0;">Monto a retirar:</td>
-              <td style="border-top: 1px solid black; padding: 5px;">$${selectedMachineBalance?.balance}</td>
+              <td style=" padding: 5px; text-align: left; padding-left: 0;"<strong>Monto a retirar: </strong></td>
+              <td style=" padding: 5px;">$${selectedMachineBalance?.balance}</td>
             </tr>
+
+           
           </tbody>
         </table>
         <p style="text-align: left;"></p>
