@@ -149,22 +149,28 @@ const GameComponent: React.FC = () => {
         <table style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr>
-              <th style="border-top: 1px solid black;">Moneda</th>
-              <th style="border-top: 1px solid black;">Id Máquina</th>
-              <th style="border-top: 1px solid black;">$$</th>
+              <th style="border-top: 1px solid black;">Información del recibo</th>
+       
+              
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="border-top: 1px solid black;">${selectedMachineBalance?.currency}</td>
+              <td style="border-top: 1px solid black;">Id Máquina</td>
               <td style="border-top: 1px solid black;">${selectedMachineBalance?.user}</td>
-              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
+              
             </tr>
-            <tr>
-              <td></td>
-              <td style="border-top: 1px solid black;">TOTAL A RETIRAR </td>
-              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
+             <tr>
+              <td style="border-top: 1px solid black;">Moneda</td>
+              <td style="border-top: 1px solid black;">${selectedMachineBalance?.currency}</td>
+              
             </tr>
+             <tr>
+              <td style="border-top: 1px solid black;">Monto a retirar : </td>
+        
+              <td style="border-top: 1px solid black;">$${selectedMachineBalance?.balance}</td>
+            </tr>
+           
           </tbody>
         </table>
         <p style="text-align: center;"></p>
@@ -272,7 +278,7 @@ const GameComponent: React.FC = () => {
           {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
           </div> */}
-
+              
           {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
@@ -282,7 +288,9 @@ const GameComponent: React.FC = () => {
           )}
 
           <div className="footer d-flex justify-content-center">
+          <span className='IdMaquina'>MAQUINA : {selectedMachineBalance.user}</span> 
             <div className="bgcreditos">
+              
               <span className="credit">
                 {selectedMachineBalance ? formatBalanceWithoutDecimals(selectedMachineBalance.balance) : '000'}
               </span>

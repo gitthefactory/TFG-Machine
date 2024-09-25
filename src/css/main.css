@@ -98,7 +98,14 @@ body {
 .h-100 {
   height: 100% !important;
 }
-
+.IdMaquina {
+  position: absolute; /* O relative, dependiendo del contexto */
+    bottom: 0;         /* Alinear al fondo */
+    left: 0;           /* Alinear a la izquierda */
+    transform: translate(100%, -60px); /* Asegura que esté en la esquina */
+  margin-right: 10%;
+  padding-right: ;
+}
 .topbar {
   top: 0;
   position: fixed;
@@ -315,6 +322,8 @@ body {
   background-size: 528px 100px;
   background-repeat: no-repeat;
   align-self: center;
+  margin-right: 10%;
+  margin-left: 24%;
 }
 .credit {
   margin-top: 22px;
