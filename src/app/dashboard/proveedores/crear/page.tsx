@@ -83,7 +83,7 @@ export default function CrearProveedores() {
         break;
         case 87: // Aquí puedes agregar más casos según necesites
               setImg("/images/img/buttons/bgaming1.png");
-              setProvider_name("aspect-gaming");
+              setProvider_name("Aspect");
         break;
         case 999: // Aquí puedes agregar más casos según necesites
         // ...
