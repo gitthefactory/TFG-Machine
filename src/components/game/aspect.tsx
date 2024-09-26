@@ -17,7 +17,7 @@ interface Game {
   status: number;
 }
 
-const Aspect: React.FC = () => {
+const Belatra: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -99,13 +99,13 @@ const Aspect: React.FC = () => {
 
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          const activeAspectGames = data.data.games.filter((game: any) => game.maker === 'Aspect' && game.status === 1);
+          const activeAspectGames = data.data.games.filter((game: any) => game.maker === 'aspect-gaming' && game.status === 1);
 
           const finalAspectGames = activeAspectGames.filter(aspectGame => 
-            activeGlobalGames.some(globalGame => globalGame.id === aspectGame.id)
+            activeGlobalGames.some(globalGame => globalGame.id ===aspectGame.id)
           );
 
-          console.log('Juegos activos de Aspect:', finalAspectGames);
+          console.log('Juegos activos de aspect:', finalAspectGames);
           setGames(finalAspectGames);
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
@@ -165,7 +165,7 @@ const Aspect: React.FC = () => {
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
-    <div className="Aspect-container">
+    <div className="belatra-container">
       {loading ? (
         <p>Loading...</p> 
       ) : (
@@ -207,4 +207,4 @@ const Aspect: React.FC = () => {
   );
 }
 
-export default Aspect;
+export default Belatra;

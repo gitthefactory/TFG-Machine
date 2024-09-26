@@ -54,10 +54,8 @@ const Providers: React.FC = () => {
                   setShowBgamingButton(bgamingProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'bgaming' && p.status === 1));
                 }
                 if (aspectProvider) {
-                  setAspectStatus(aspectProvider.status);
+                  setShowAspectButton(aspectProvider.status);
                   setShowAspectButton(aspectProvider.status === 1 && providersData.data.some((p: any) => p.provider_name.toLowerCase() === 'aspect' && p.status === 1));
-                  console.log("Aspect Provider:", aspectProvider);
-                  console.log("Aspect Status:", aspectProvider.status);
                 }
               } else {
                 console.error("La API /api/juegosApi no devolvió un estado válido.");
@@ -108,11 +106,11 @@ const Providers: React.FC = () => {
           </button>
         )}
        {showAspectButton && (
- <button
- className="btn-provider aspect"
- onClick={() => handleProvider('aspect')}
- style={{ margin: '0 5px' }}  // Eliminar el condicional de display
->
+  <button
+    className="btn-provider aspect"
+    onClick={() => handleProvider('aspect')}
+    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+  >
     {/* Texto o contenido del botón aquí */}
   </button>
 )}

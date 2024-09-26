@@ -2,7 +2,7 @@ import { connectDB } from '@/libs/mongodb';
 import ProviderModel from '@/models/providers'; // Ajusta la ruta según tu estructura de archivos
 import GamesModel from '@/models/games';
 import { NextResponse } from 'next/server';
-
+export const dynamic = 'force-dynamic'; // Asegura que la página o API sea dinámica
 
 export async function GET() {
     // Realizar el fetch a la nueva URL
