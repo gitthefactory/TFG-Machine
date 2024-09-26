@@ -365,6 +365,24 @@ body {
   background-image: url('/images/img/belatra/belatra.png');
 }
 
+.booming {
+  background-image: url('/images/img/booming/booming1.png');
+  background-position: center center;
+  background-size: 341px 200px;
+}
+
+.booming:hover {
+  background-image: url('/images/img/booming/booming2.png');
+}
+.popok {
+  background-image: url('/images/img/popok/popok1.png');
+  background-position: center center;
+  background-size: 341px 200px;
+}
+.popok:hover {
+  background-image: url('/images/img/popok/popok2.png');
+}
+
 .agt {
   background-image: url('/images/img/buttons/agt1.png');
   background-position: center center;
