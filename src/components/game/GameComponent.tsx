@@ -1,81 +1,86 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import '/src/css/swiper.css';
-import '/src/css/main.css';
-import '/src/css/bootstrap.min.css';
-import '/src/css/satoshi.css';
-import CrashSection from '@/components/game/crash';
-import Live from '@/components/game/live';
-import Providers from '@/components/game/providers';
-import DreamcatcherCashier from '@/components/game/DreamcatcherCashier';
-import Slots from '@/components/game/slots';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "/src/css/swiper.css";
+import "/src/css/main.css";
+import "/src/css/bootstrap.min.css";
+import "/src/css/satoshi.css";
+import CrashSection from "@/components/game/crash";
+import Live from "@/components/game/live";
+import Providers from "@/components/game/providers";
+import DreamcatcherCashier from "@/components/game/DreamcatcherCashier";
+import Slots from "@/components/game/slots";
 import Loader from "@/components/common/Loader";
-import Image from 'next/image';
-import { useSocket } from '@/app/api/socket/socketContext';
-import Swal from "sweetalert2"
+import Image from "next/image";
+import { useSocket } from "@/app/api/socket/socketContext";
+import Swal from "sweetalert2";
 
 interface MachineBalance {
   user: string;
   balance: number;
-  currency?: string; 
+  currency?: string;
 }
 
 const GameComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleSection, setVisibleSection] = useState('providers');
+  const [visibleSection, setVisibleSection] = useState("providers");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMachineBalance, setSelectedMachineBalance] = useState<MachineBalance | null>(null);
+  const [selectedMachineBalance, setSelectedMachineBalance] =
+    useState<MachineBalance | null>(null);
   const { socket } = useSocket();
 
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
       const query = new URLSearchParams(window.location.search);
-      const idMachine = query.get('idMachine');
-      
+      const idMachine = query.get("idMachine");
+
       if (idMachine) {
         try {
           const [balanceResponse, machineResponse] = await Promise.all([
             axios.get(`/api/v1`),
-            axios.get(`/api/maquinas`)
+            axios.get(`/api/maquinas`),
           ]);
 
-          const machine = machineResponse.data.data.find((m: any) => m.id_machine === idMachine);
-          
+          const machine = machineResponse.data.data.find(
+            (m: any) => m.id_machine === idMachine,
+          );
+
           if (machine && machine.status === 0) {
-            clearCookiesAndRedirect('/maquinas');
+            clearCookiesAndRedirect("/maquinas");
             return; // Termina la función si redirige
           }
 
           if (balanceResponse.data.code === 200) {
-            const machineData = balanceResponse.data.data.find((machine: any) => machine.user === idMachine);
+            const machineData = balanceResponse.data.data.find(
+              (machine: any) => machine.user === idMachine,
+            );
             setSelectedMachineBalance({
               user: machineData ? machineData.user : idMachine,
               balance: machineData ? machineData.balance : 0,
-              currency: machineData ? machineData.currency : 'USD'
+              currency: machineData ? machineData.currency : "USD",
             });
           } else {
             setSelectedMachineBalance({
               user: idMachine,
               balance: 0,
-              currency: 'USD'
+              currency: "USD",
             });
           }
         } catch (error) {
-          console.error('Error fetching selected machine balance:', error);
+          console.error("Error fetching selected machine balance:", error);
           setSelectedMachineBalance({
-            user: idMachine || '',
+            user: idMachine || "",
             balance: 0,
-            currency: 'USD'
+            currency: "USD",
           });
         }
       } else {
-        console.error('No idMachine found in URL');
+        console.error("No idMachine found in URL");
         setSelectedMachineBalance({
-          user: '',
+          user: "",
           balance: 0,
-          currency: 'USD'
+          currency: "USD",
         });
       }
       setIsLoading(false);
@@ -85,50 +90,52 @@ const GameComponent: React.FC = () => {
 
     if (socket) {
       const handleBalanceUpdate = (updatedBalance: MachineBalance) => {
-        console.log('Balance actualizado recibido:', updatedBalance);
+        console.log("Balance actualizado recibido:", updatedBalance);
         if (selectedMachineBalance?.user === updatedBalance.user) {
-          setSelectedMachineBalance(prev => ({
+          setSelectedMachineBalance((prev) => ({
             ...prev,
             balance: updatedBalance.balance,
           }));
         }
       };
 
-      socket.on('balanceUpdated', handleBalanceUpdate);
+      socket.on("balanceUpdated", handleBalanceUpdate);
 
       return () => {
-        socket.off('balanceUpdated', handleBalanceUpdate);
+        socket.off("balanceUpdated", handleBalanceUpdate);
       };
     }
   }, [socket, selectedMachineBalance]);
 
   const clearCookiesAndRedirect = (url: string) => {
-    document.cookie.split(';').forEach(cookie => {
-      document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    document.cookie.split(";").forEach((cookie) => {
+      document.cookie = cookie
+        .replace(/^ +/, "")
+        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
     });
     window.location.href = url;
   };
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
-    setVisibleSection('');
+    setVisibleSection("");
     setTimeout(() => {
       setVisibleSection(section);
       setIsLoading(false);
     }, 5000);
   };
 
-  const handleCrash = () => handleSectionChange('crash');
-  const handleAll = () => handleSectionChange('providers');
-  const handleSlots = () => handleSectionChange('slots');
-  const handleLive = () => handleSectionChange('live');
+  const handleCrash = () => handleSectionChange("crash");
+  const handleAll = () => handleSectionChange("providers");
+  const handleSlots = () => handleSectionChange("slots");
+  const handleLive = () => handleSectionChange("live");
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
   const formatBalance = (balance: number, currency: string | undefined) => {
-    return currency === 'CLP' 
+    return currency === "CLP"
       ? balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
       : balance.toFixed(2);
   };
@@ -136,10 +143,6 @@ const GameComponent: React.FC = () => {
   const formatBalanceWithoutDecimals = (balance: number) => {
     return balance.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, "");
   };
-
-  
-
-
 
   const handlePrint = () => {
     const receiptContent = `
@@ -171,8 +174,8 @@ const GameComponent: React.FC = () => {
         <p style="text-align: left;"></p>
       </div>
     `;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>
         <head>
@@ -189,12 +192,11 @@ const GameComponent: React.FC = () => {
       </html>
     `);
     printWindow.document.close();
-};
-
+  };
 
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-  
+
     try {
       const result = await Swal.fire({
         title: "Confirmar retiro",
@@ -206,31 +208,41 @@ const GameComponent: React.FC = () => {
         confirmButtonText: "Sí, proceder",
         cancelButtonText: "Cancelar",
         background: "#DDCDEE",
-        iconColor: "black"
+        iconColor: "black",
       });
-  
+
       if (result.isConfirmed) {
         // Solo procede si el usuario confirma el pago
-        const response = await fetch(`/api/debit/${selectedMachineBalance.user}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `/api/debit/${selectedMachineBalance.user}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              action: "DEBIT",
+              amount: selectedMachineBalance.balance,
+              currency: selectedMachineBalance.currency,
+              message: "Cliente retiró dinero",
+            }),
           },
-          body: JSON.stringify({
-            action: "DEBIT",
-            amount: selectedMachineBalance.balance,
-            currency: selectedMachineBalance.currency,
-            message: "Cliente retiró dinero",
-          }),
-        });
-  
+        );
+
         const data = await response.json();
         if (response.ok) {
-          await Swal.fire("Retiro exitoso", "El retiro se ha procesado correctamente.", "success");
+          await Swal.fire(
+            "Retiro exitoso",
+            "El retiro se ha procesado correctamente.",
+            "success",
+          );
           await handlePrint(); // Llamar a la función de impresión si el pago es exitoso
-          
         } else {
-          await Swal.fire("Error", `Error al procesar el retiro: ${data.data.message}`, "error");
+          await Swal.fire(
+            "Error",
+            `Error al procesar el retiro: ${data.data.message}`,
+            "error",
+          );
         }
       }
     } catch (error) {
@@ -239,7 +251,6 @@ const GameComponent: React.FC = () => {
     }
   };
 
-
   return (
     <div>
       {isLoading && <Loader />}
@@ -247,15 +258,30 @@ const GameComponent: React.FC = () => {
         <>
           <div className="topbar">
             <div className="logo">
-              <Image src="/images/img/logo.png" alt="Logo" width={500} height={500} />
+              <Image
+                src="/images/img/logo.png"
+                alt="Logo"
+                width={500}
+                height={500}
+              />
             </div>
             <div className="nav">
               <div className="navbar">
-                <div className="jackpot"><span>78.000.000</span></div>
-                <div className="acumulado"><span>000.556.970</span></div>
-                <div className="gran"><span>010.000.000</span></div>
-                <div className="menor"><span>000.250.000</span></div>
-                <div className="express"><span>000.080.000</span></div>
+                <div className="jackpot">
+                  <span>78.000.000</span>
+                </div>
+                <div className="acumulado">
+                  <span>000.556.970</span>
+                </div>
+                <div className="gran">
+                  <span>010.000.000</span>
+                </div>
+                <div className="menor">
+                  <span>000.250.000</span>
+                </div>
+                <div className="express">
+                  <span>000.080.000</span>
+                </div>
               </div>
               <div className="menu">
                 <button className="all" onClick={handleAll}></button>
@@ -266,15 +292,15 @@ const GameComponent: React.FC = () => {
             </div>
           </div>
 
-          {visibleSection === 'providers' && <Providers />}
-          {visibleSection === 'slots' && <Slots />}
-          {visibleSection === 'live' && <Live />}
-          {visibleSection === 'crash' && <CrashSection />}
+          {visibleSection === "providers" && <Providers />}
+          {visibleSection === "slots" && <Slots />}
+          {visibleSection === "live" && <Live />}
+          {visibleSection === "crash" && <CrashSection />}
 
           {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
           </div> */}
-              
+
           {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
@@ -284,27 +310,29 @@ const GameComponent: React.FC = () => {
           )}
 
           <div className="footer d-flex justify-content-center">
-          <span className='IdMaquina'>MAQUINA : {selectedMachineBalance.user}</span> 
+            <span className="IdMaquina">
+              MAQUINA : {selectedMachineBalance.user}
+            </span>
             <div className="bgcreditos">
-              
               <span className="credit">
-                {selectedMachineBalance ? formatBalanceWithoutDecimals(selectedMachineBalance.balance) : '000'}
+                {selectedMachineBalance
+                  ? formatBalanceWithoutDecimals(selectedMachineBalance.balance)
+                  : "000"}
               </span>
-              
+
               <span className="amount">
-                {selectedMachineBalance ? `${selectedMachineBalance.currency || 'USD'} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}` : 'USD $0.00'}
-                
+                {selectedMachineBalance
+                  ? `${selectedMachineBalance.currency || "USD"} $${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}`
+                  : "USD $0.00"}
               </span>
-              
             </div>
-            <button className="btn botonPagar" onClick={handlePay}>PAGAR</button>
+            <button className="btn botonPagar" onClick={handlePay}>
+              PAGAR
+            </button>
           </div>
-          
-           <div>
-          
-           </div>
+
+          <div></div>
         </>
-       
       )}
     </div>
   );
