@@ -187,6 +187,25 @@ const Providers: React.FC = () => {
 
   </button>
 )}
+   {showAspectButton && (
+  <button
+    className="btn-provider booming"
+    onClick={() => handleProvider('booming')}
+    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+  >
+
+  </button>
+)}
+{showAspectButton && (
+  <button
+    className="btn-provider popok"
+    onClick={() => handleProvider('popok')}
+    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
+  >
+
+  </button>
+)}
+   
       </div>
       {visibleSection && (
         <div style={{ marginTop: "20px" }}>
