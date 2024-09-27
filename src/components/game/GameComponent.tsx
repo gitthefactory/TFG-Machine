@@ -170,12 +170,12 @@ const GameComponent: React.FC = () => {
             <td style="padding: 5px;">$<strong>${selectedMachineBalance?.balance.toFixed(2)}</strong></td>
           </tr>
           <tr>
-            <td colspan="2" style="text-align: center;  ">
-             <div style="display: flex; justify-content: center; margin-top: 20px">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=100x100" alt="QR Code" />
-            </div>
-            </td>
-          </tr>
+  <td colspan="2" style="text-align: center;">
+    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 80px;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=100x100">
+    </div>
+  </td>
+</tr>
         </tbody>
       </table>
       <p style="text-align: left;"></p>
@@ -213,6 +213,7 @@ const GameComponent: React.FC = () => {
                 <style>
                   @media print {
                     body { -webkit-print-color-adjust: exact; }
+                  
                   }
                 </style>
               </head>
