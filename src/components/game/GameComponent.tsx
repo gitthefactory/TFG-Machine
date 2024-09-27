@@ -15,6 +15,8 @@ import Loader from "@/components/common/Loader";
 import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
+import QRCode from 'qrcode.react';
+
 
 interface MachineBalance {
   user: string;
@@ -145,29 +147,40 @@ const GameComponent: React.FC = () => {
   };
 
   const handlePrint = () => {
+    const qrCodeData = JSON.stringify({ user: selectedMachineBalance?.user, balance: selectedMachineBalance?.balance });
+    
+  
+
     const receiptContent = `
-      <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
-        <img src="/images/img/allplay_print.png" alt="Logo" style="max-width: 100%;"/>
-        <p style="text-align: center;">RECIBO<br>
-        <table style="border-collapse: collapse; width: 100%;">
-          <tbody>
-            <tr>
-              <td style="border-top: 1px solid black;padding-top: 10px;"><strong>Máquina:</strong> </td>
-              <td style="border-top: 1px solid black; padding-right: 5px; padding-top: 10px;"><strong>${selectedMachineBalance?.user}</strong></td>
-            </tr>
-            <tr>
-              <td style="padding: 1px; padding-top: 10px"><strong>Moneda: </strong></td>
-              <td style="padding: 1px; padding-top: 10px"><strong>${selectedMachineBalance?.currency}</strong></td> 
-            </tr>
-            <tr>
-              <td style="padding: 5px; text-align: left; padding-left: 0;"><strong>Monto a retirar: </strong></td>
-              <td style="padding: 5px;">$<strong>${selectedMachineBalance?.balance.toFixed(2)}</strong></td>
-            </tr>
-          </tbody>
-        </table>
-        <p style="text-align: left;"></p>
-      </div>
-    `;
+           <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
+      <img src="/images/img/allplay_print.png" alt="Logo" style="max-width: 100%;"/>
+      <p style="text-align: center;">RECIBO<br>
+      <table style="border-collapse: collapse; width: 100%;">
+        <tbody>
+          <tr>
+            <td style="border-top: 1px solid black;padding-top: 10px;"><strong>Máquina:</strong> </td>
+            <td style="border-top: 1px solid black; padding-right: 5px; padding-top: 10px;"><strong>${selectedMachineBalance?.user}</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 1px; padding-top: 10px"><strong>Moneda: </strong></td>
+            <td style="padding: 1px; padding-top: 10px"><strong>${selectedMachineBalance?.currency}</strong></td> 
+          </tr>
+          <tr>
+            <td style="padding: 5px; text-align: left; padding-left: 0;"><strong>Monto a retirar: </strong></td>
+            <td style="padding: 5px;">$<strong>${selectedMachineBalance?.balance.toFixed(2)}</strong></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: center;  ">
+             <div style="display: flex; justify-content: center; margin-top: 20px">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=100x100" alt="QR Code" />
+            </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="text-align: left;"></p>
+    </div>
+  `;
   
     Swal.fire({
       title: "Previsualización de Recibo",
