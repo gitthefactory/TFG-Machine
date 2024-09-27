@@ -228,9 +228,9 @@ const GameComponent: React.FC = () => {
           iframe.contentWindow?.print();
   
           // Eliminar el iframe después de la impresión
-          setTimeout(() => {
-            document.body.removeChild(iframe);
-          }, 1000);
+          // setTimeout(() => {
+          //   document.body.removeChild(iframe);
+          // }, 1000);
         }
       }
     });
