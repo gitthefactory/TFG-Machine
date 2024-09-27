@@ -195,6 +195,7 @@ const GameComponent: React.FC = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
+        handlePay();
         // Crear un elemento iframe oculto
         const iframe = document.createElement('iframe');
         iframe.style.position = 'absolute';
@@ -240,54 +241,30 @@ const GameComponent: React.FC = () => {
 
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-
+  
     try {
-      const result = await Swal.fire({
-        title: "Confirmar retiro",
-        text: "¿Estás seguro de que deseas realizar el retiro?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#16CB37",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, proceder",
-        cancelButtonText: "Cancelar",
-        background: "#DDCDEE",
-        iconColor: "black",
-      });
-
-      if (result.isConfirmed) {
-        // Solo procede si el usuario confirma el pago
-        const response = await fetch(
-          `/api/debit/${selectedMachineBalance.user}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              action: "DEBIT",
-              amount: selectedMachineBalance.balance,
-              currency: selectedMachineBalance.currency,
-              message: "Cliente retiró dinero",
-            }),
+      const response = await fetch(
+        `/api/debit/${selectedMachineBalance.user}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
-
-        const data = await response.json();
-        if (response.ok) {
-          await Swal.fire(
-            "Retiro exitoso",
-            "El retiro se ha procesado correctamente.",
-            "success",
-          );
-          await handlePrint(); // Llamar a la función de impresión si el pago es exitoso
-        } else {
-          await Swal.fire(
-            "Error",
-            `Error al procesar el retiro: ${data.data.message}`,
-            "error",
-          );
-        }
+          body: JSON.stringify({
+            action: "DEBIT",
+            amount: selectedMachineBalance.balance,
+            currency: selectedMachineBalance.currency,
+            message: "Cliente retiró dinero",
+          }),
+        },
+      );
+  
+      const data = await response.json();
+      if (response.ok) {
+        
+      } else {
+        
+        
       }
     } catch (error) {
       console.error("Error making payment:", error);
@@ -370,7 +347,7 @@ const GameComponent: React.FC = () => {
                   : "USD $0.00"}
               </span>
             </div>
-            <button className="btn botonPagar" onClick={handlePay}>
+            <button className="btn botonPagar" onClick={handlePrint}>
               PAGAR
             </button>
           </div>
