@@ -143,53 +143,82 @@ const GameComponent: React.FC = () => {
 
   const handlePrint = () => {
     const receiptContent = `
-      <div style="font-size: 40px; font-family: 'Times New Roman'; width: 153px;">
-        <img src="/images/img/logo.png" alt="Logo" style="max-width: 100%;"/>
+      <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
+        <img src="/images/img/allplay_print.png" alt="Logo" style="max-width: 100%;"/>
         <p style="text-align: center;">RECIBO<br>
         <table style="border-collapse: collapse; width: 100%;">
-          
-           
-          
           <tbody>
             <tr>
-            <br>
-              <td style="border-top: 1px solid black;padding-top: 10px; ">Máquina: </td>
-              <td style="border-top: 1px solid black; padding-right: 5px; padding-top: 10px;">${selectedMachineBalance?.user}</td>
+              <td style="border-top: 1px solid black;padding-top: 10px;"><strong>Máquina:</strong> </td>
+              <td style="border-top: 1px solid black; padding-right: 5px; padding-top: 10px;"><strong>${selectedMachineBalance?.user}</strong></td>
             </tr>
             <tr>
-              <td style=" padding: 1px; padding-top: 10px">Moneda: </td>
-              <td style=" padding: 1px;padding-top: 10px">${selectedMachineBalance?.currency}</td> 
+              <td style="padding: 1px; padding-top: 10px"><strong>Moneda: </strong></td>
+              <td style="padding: 1px; padding-top: 10px"><strong>${selectedMachineBalance?.currency}</strong></td> 
             </tr>
             <tr>
-              <td style=" padding: 5px; text-align: left; padding-left: 0;"<strong>Monto a retirar: </strong></td>
-              <td style=" padding: 5px;">$${selectedMachineBalance?.balance.toFixed(2)}</td>
+              <td style="padding: 5px; text-align: left; padding-left: 0;"><strong>Monto a retirar: </strong></td>
+              <td style="padding: 5px;">$<strong>${selectedMachineBalance?.balance.toFixed(2)}</strong></td>
             </tr>
-
-           
           </tbody>
         </table>
         <p style="text-align: left;"></p>
       </div>
     `;
-    
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Receipt</title>
-          <style>
-            @media print {
-              body { -webkit-print-color-adjust: exact; }
-            }
-          </style>
-        </head>
-        <body onload="window.print(); window.close();">
-          ${receiptContent}
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-};
+  
+    Swal.fire({
+      title: "Previsualización de Recibo",
+      html: receiptContent,
+      showCancelButton: true,
+      confirmButtonText: "Imprimir",
+      cancelButtonText: "Cancelar",
+      background: "#DDCDEE",
+      iconColor: "black",
+      customClass: {
+        popup: 'swal-wide'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Crear un elemento iframe oculto
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0px';
+        iframe.style.height = '0px';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+  
+        const doc = iframe.contentWindow?.document;
+        if (doc) {
+          doc.open();
+          doc.write(`
+            <html>
+              <head>
+                <title>Imprimir Recibo</title>
+                <style>
+                  @media print {
+                    body { -webkit-print-color-adjust: exact; }
+                  }
+                </style>
+              </head>
+              <body>
+                ${receiptContent}
+              </body>
+            </html>
+          `);
+          doc.close();
+  
+          // Esperar un momento para cargar el contenido y luego imprimir
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+  
+          // Eliminar el iframe después de la impresión
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+        }
+      }
+    });
+  };
 
 
   const handlePay = async () => {
