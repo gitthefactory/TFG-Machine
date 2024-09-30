@@ -188,7 +188,7 @@ const GameComponent: React.FC = () => {
       showCancelButton: true,
       confirmButtonText: "Imprimir",
       cancelButtonText: "Cancelar",
-      background: "#DDCDEE",
+      background: "#ffffff",
       iconColor: "black",
       customClass: {
         popup: 'swal-wide'
