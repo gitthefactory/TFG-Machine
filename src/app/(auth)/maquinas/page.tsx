@@ -323,9 +323,7 @@ const Maquinas: React.FC = () => {
             height={32}
           />
         </a>
-        <p className="text-center 2xl:px-20">
-          Scanea el QRCode o ingresa los datos correspondientes a la máquina:
-        </p>
+       
         {error && (
           <span
             className="message "
