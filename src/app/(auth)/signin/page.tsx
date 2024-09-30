@@ -70,7 +70,7 @@ const SignIn: React.FC = () => {
     <style jsx>{`
       /* Estilos CSS */ 
       .rounded-sm {
-        background-image: url("/images/logo/fondo.png");
+        background-color: #000;
         color: white;
         min-height: 100vh;
         display: flex;
@@ -89,7 +89,7 @@ const SignIn: React.FC = () => {
       input[type='submit'] {
         width: 90%;
         border: none;
-        background-color: rgb(227, 17, 108);
+        background-color: rgba(254, 203, 0, 1);
         max-width: 250px;
       }    
 
@@ -102,7 +102,7 @@ const SignIn: React.FC = () => {
               <Link className="inline-block" href="/">
                 <Image
                   className="dark:hidden"
-                  src={"/images/logo/logo-white.png"}
+                  src={"/images/img/Logo-Factory/Logo-factory.png"}
                   alt="Logo"
                   width={350}
                   height={350}
@@ -111,6 +111,7 @@ const SignIn: React.FC = () => {
           <div className="w-full border-stroke dark:border-strokedark">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <form onSubmit={handleSubmit}>
+              {error && <span className="message" style={{ color: "rgba(254, 203, 0, 1)" }}>{error}</span>}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium">
                   </label>
@@ -137,12 +138,12 @@ const SignIn: React.FC = () => {
                     />
                   </div>
                 </div>
-                {error && <span className="message">{error}</span>}
+                
                 <div className="mb-5">
                   <input
                     type="submit"
                     value="Iniciar Sesión"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-black transition hover:bg-opacity-90"
                   />
                 </div>
               </form>

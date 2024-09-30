@@ -278,18 +278,20 @@ const Maquinas: React.FC = () => {
             )}
             <div className="rounded-sm shadow-default dark:border-strokedark dark:bg-boxdark" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", flexDirection: "column" }}>
                 <a>
-                    <Image className="dark:hidden p-3" src={"/images/logo/logo-white.png"} alt="Logo" width={350} height={32} />
+                    <Image className="dark:hidden p-3" src={"/images/img/Logo-Factory/Logo-factory.png"} alt="Logo" width={350} height={32} />
                 </a>
                 <p className="2xl:px-20 text-center">
                     Scanea el QRCode o ingresa los datos correspondientes a la máquina:
                 </p>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        {error && (
-                            <span className="message" style={{ marginBottom: 10 }}>
+                {error && (
+                            <span className="message " style={{ color: "gray", margin: "0px, 0px, 30px" }} >
                                 {error}
                             </span>
                         )}
+                <form onSubmit={handleSubmit}>
+                
+                    <div className="mb-4">
+                       
                         <div className="relative">
                         <input 
   onFocus={() => handleInputFocus("id_machine")} 
@@ -310,9 +312,9 @@ const Maquinas: React.FC = () => {
                         </div>
                     </div>
                     <div className="mb-5" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <button type="submit" className="cursor-pointer rounded-lg bg-primary p-3 text-white transition hover:bg-opacity-90" style={{ display: "flex", alignItems: "center", fontSize: "16px", backgroundColor: "#a11069" }}>
+                        <button type="submit" className="cursor-pointer rounded-lg bg-primary p-3 text-white transition hover:bg-opacity-90" style={{ display: "flex", alignItems: "center", fontSize: "16px", backgroundColor: "#FECB00" }}>
                             <span style={{ marginRight: "8px" }}>VALIDAR DATOS</span>
-                            <FaCircleCheck style={{ color: "#4CAF50", fontSize: "17px", width: "50px" }} />
+                            <FaCircleCheck style={{ color: "#000", fontSize: "17px", width: "50px" }} />
                         </button>
                     </div>
                 </form>
