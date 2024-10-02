@@ -15,8 +15,7 @@ import Loader from "@/components/common/Loader";
 import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
-import QRCode from 'qrcode.react';
-
+import QRCode from "qrcode.react";
 
 interface MachineBalance {
   user: string;
@@ -147,9 +146,10 @@ const GameComponent: React.FC = () => {
   };
 
   const handlePrint = () => {
-    const qrCodeData = JSON.stringify({ user: selectedMachineBalance?.user, balance: selectedMachineBalance?.balance });
-    
-  
+    const qrCodeData = JSON.stringify({
+      user: selectedMachineBalance?.user,
+      balance: selectedMachineBalance?.balance,
+    });
 
     const receiptContent = `
            <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
@@ -181,7 +181,7 @@ const GameComponent: React.FC = () => {
       <p style="text-align: left;"></p>
     </div>
   `;
-  
+
     Swal.fire({
       title: "Previsualización de Recibo",
       html: receiptContent,
@@ -191,19 +191,19 @@ const GameComponent: React.FC = () => {
       background: "#DDCDEE",
       iconColor: "black",
       customClass: {
-        popup: 'swal-wide'
-      }
+        popup: "swal-wide",
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         handlePay();
         // Crear un elemento iframe oculto
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'absolute';
-        iframe.style.width = '0px';
-        iframe.style.height = '0px';
-        iframe.style.border = 'none';
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "absolute";
+        iframe.style.width = "0px";
+        iframe.style.height = "0px";
+        iframe.style.border = "none";
         document.body.appendChild(iframe);
-  
+
         const doc = iframe.contentWindow?.document;
         if (doc) {
           doc.open();
@@ -224,11 +224,11 @@ const GameComponent: React.FC = () => {
             </html>
           `);
           doc.close();
-  
+
           // Esperar un momento para cargar el contenido y luego imprimir
           iframe.contentWindow?.focus();
           iframe.contentWindow?.print();
-  
+
           // Eliminar el iframe después de la impresión
           // setTimeout(() => {
           //   document.body.removeChild(iframe);
@@ -238,10 +238,9 @@ const GameComponent: React.FC = () => {
     });
   };
 
-
   const handlePay = async () => {
     if (!selectedMachineBalance) return;
-  
+
     try {
       const response = await fetch(
         `/api/debit/${selectedMachineBalance.user}`,
@@ -258,13 +257,10 @@ const GameComponent: React.FC = () => {
           }),
         },
       );
-  
+
       const data = await response.json();
       if (response.ok) {
-        
       } else {
-        
-        
       }
     } catch (error) {
       console.error("Error making payment:", error);
@@ -277,39 +273,46 @@ const GameComponent: React.FC = () => {
       {isLoading && <Loader />}
       {!isLoading && (
         <>
-          <div className="topbar">
-            <div className="logo">
-              <Image
-                src="/images/img/logo.png"
-                alt="Logo"
-                width={500}
-                height={500}
-              />
+          <div className="d-flex justify-content-between align-items-center p-3">
+            <div className="topbar">
+              <div className="topbox acu d-flex justify-content-between align-items-center">
+                <div className="text-light text-top mt-4 w-100 text-center">
+                  <span className="fs-6">$</span>12.345.678,90
+                </div>
+              </div>
+              <div className="logo">
+                <Image
+                  src="/images/img/New-clients/tatan_gaming.png"
+                  alt="Logo"
+                  width={500}
+                  height={500}
+                />
+              </div>
             </div>
-            <div className="nav">
-              <div className="navbar">
-                <div className="jackpot">
-                  <span>78.000.000</span>
-                </div>
-                <div className="acumulado">
-                  <span>000.556.970</span>
-                </div>
-                <div className="gran">
-                  <span>010.000.000</span>
-                </div>
-                <div className="menor">
-                  <span>000.250.000</span>
-                </div>
-                <div className="express">
-                  <span>000.080.000</span>
-                </div>
+          </div>
+          <div className="nav">
+            <div className="navbar">
+              <div className="jackpot">
+                <span>78.000.000</span>
               </div>
-              <div className="menu">
-                <button className="all" onClick={handleAll}></button>
-                <button className="slots" onClick={handleSlots}></button>
-                <button className="live" onClick={handleLive}></button>
-                <button className="crash" onClick={handleCrash}></button>
+              <div className="acumulado">
+                <span>000.556.970</span>
               </div>
+              <div className="gran">
+                <span>010.000.000</span>
+              </div>
+              <div className="menor">
+                <span>000.250.000</span>
+              </div>
+              <div className="express">
+                <span>000.080.000</span>
+              </div>
+            </div>
+            <div className="menu">
+              <button className="all" onClick={handleAll}></button>
+              <button className="slots" onClick={handleSlots}></button>
+              <button className="live" onClick={handleLive}></button>
+              <button className="crash" onClick={handleCrash}></button>
             </div>
           </div>
 
@@ -351,8 +354,6 @@ const GameComponent: React.FC = () => {
               PAGAR
             </button>
           </div>
-
-          <div></div>
         </>
       )}
     </div>
