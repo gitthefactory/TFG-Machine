@@ -6,6 +6,7 @@ import Loader from "@/components/common/Loader";
 import Aspect from "./aspect";
 import Booming from "./Booming";
 import PopOK from "./PopOk";
+import "/src/css/splide.min.css"
 
 interface ProviderData {
   provider_name: string;
@@ -60,7 +61,7 @@ const Providers: React.FC = () => {
                 const boomingProvider = data.data.providers.find(
                   (p: any) => p.provider === 12,
                 );
-                
+
                 const popokProvider = data.data.providers.find(
                   (p: any) => p.provider === 88,
                 );
@@ -110,7 +111,6 @@ const Providers: React.FC = () => {
                           p.status === 1,
                       ),
                   );
-                 
                 }
                 if (popokProvider) {
                   setPopokGameStatus(popokProvider.status);
@@ -147,6 +147,8 @@ const Providers: React.FC = () => {
 
     fetchData();
   }, []);
+  
+ 
 
   const handleProvider = useCallback((provider: string) => {
     setLoading(true);
@@ -155,65 +157,75 @@ const Providers: React.FC = () => {
   }, []);
 
   return (
-    <div className="container" style={{ textAlign: "center" }}>
-      {loading && <Loader />}
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {showBelatraButton && (
-          <button
-            className="btn-provider belatra"
-            onClick={() => handleProvider("belatra")}
-            style={{
-              display: visibleSection ? "none" : "inline-block",
-              margin: "0 5px",
-            }}
-          ></button>
-        )}
-        {showBgamingButton && (
-          <button
-            className="btn-provider bgaming"
-            onClick={() => handleProvider("bgaming")}
-            style={{
-              display: visibleSection ? "none" : "inline-block",
-              margin: "0 5px",
-            }}
-          ></button>
-        )}
-       {showAspectButton && (
+    <div id="splide" className="splide" style={{ textAlign: "center" }}>
+      <div
+        className="splide__track"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <ul className="splide__list">
+          {showBelatraButton && (
+            <li
+              className="splide__slide"
+              onClick={() => handleProvider("belatra")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            >
+              <img src="/images/img/New-Providers/belatra.png" />
+            </li>
+          )}
+          {showBgamingButton && (
+            <button
+              className="splide__slide"
+              onClick={() => handleProvider("bgaming")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            >
+            </button>
+          )}
+          {showAspectButton && (
+            <button
+              className="splide__slide"
+              onClick={() => handleProvider("aspect")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            >
+              <img src="/images/img/New-Providers/aspect.png" />
+            </button>
+          )}
+          {showAspectButton && (
+            <button
+              className="splide__slide"
+              onClick={() => handleProvider("booming")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            >
+              <img src="/images/img/New-Providers/booming.png" />
+            </button>
+          )}
+          {/* {showAspectButton && (
   <button
-    className="btn-provider aspect"
-    onClick={() => handleProvider('aspect')}
-    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-   {showAspectButton && (
-  <button
-    className="btn-provider booming"
-    onClick={() => handleProvider('booming')}
-    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-{showAspectButton && (
-  <button
-    className="btn-provider popok"
+    className="splide__slide"
     onClick={() => handleProvider('popok')}
     style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-   
+  ><img src="public/images/img/New-Providers/igrosoft.png"/></button>
+)} */}
+        </ul>
       </div>
       {visibleSection && (
-        <div style={{ marginTop: "20px" }}>
+        <div className="splide">
           {visibleSection === "belatra" && <Belatra />}
           {visibleSection === "bgaming" && <Bgaming />}
           {visibleSection === "aspect" && <Aspect />}
           {visibleSection === "booming" && <Booming />}
-          {visibleSection === "popok" && <PopOK/>}
+          {visibleSection === "popok" && <PopOK />}
         </div>
       )}
     </div>
