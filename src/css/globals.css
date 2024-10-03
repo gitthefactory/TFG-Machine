@@ -1,119 +1,129 @@
-/* Estilos CSS */ 
+/* Estilos CSS */
 .rounded-sm {
-    background-color: black;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-  }
-  /* Estilos personalizados para SweetAlert */
+  background-color: black;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* Estilos personalizados para SweetAlert */
 .custom-swal-popup {
-  max-width: 600px; /* Aumenta el ancho del popup */
-  padding: 2rem;    /* Aumenta el relleno del popup */
-  font-size: 1.2rem; /* Aumenta el tamaño de la fuente */
+  max-width: 600px;
+  /* Aumenta el ancho del popup */
+  padding: 2rem;
+  /* Aumenta el relleno del popup */
+  font-size: 1.2rem;
+  /* Aumenta el tamaño de la fuente */
 }
 
 .custom-swal-confirm-button {
-  font-size: 1.1rem; /* Aumenta el tamaño de la fuente del botón de confirmar */
-  padding: 0.75rem 1.5rem; /* Aumenta el relleno del botón */
+  font-size: 1.1rem;
+  /* Aumenta el tamaño de la fuente del botón de confirmar */
+  padding: 0.75rem 1.5rem;
+  /* Aumenta el relleno del botón */
 }
 
 .custom-swal-cancel-button {
-  font-size: 1.1rem; /* Aumenta el tamaño de la fuente del botón de cancelar */
-  padding: 0.75rem 1.5rem; /* Aumenta el relleno del botón */
+  font-size: 1.1rem;
+  /* Aumenta el tamaño de la fuente del botón de cancelar */
+  padding: 0.75rem 1.5rem;
+  /* Aumenta el relleno del botón */
 }
 
-  .text-center {
-    margin-bottom: 2rem;
+.text-center {
+  margin-bottom: 2rem;
+}
+
+.relative {
+  width: 100%;
+  max-width: 300px;
+  background: white;
+  border-radius: 100px;
+  border: none;
+}
+
+input {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.message {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+input[type='submit'] {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(151, 15, 74);
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-width: 250px;
+  font-weight: bold;
+}
+
+/* Estilo adicional para cuando el botón está en estado de hover */
+input[type='submit']:hover {
+  background-color: #5a67d8;
+  font-weight: bold;
+}
+
+.footer-content p {
+  text-align: center;
+}
+
+input[type='id_machine']::placeholder {
+  text-align: center;
+  font-weight: bold;
+}
+
+input[type='password']::placeholder {
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Información del pie de página */
+.footer-content {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #883d64;
+}
+
+.custom-title {
+  color: rgba(211, 20, 20, 0.884);
+  /* Cambia el color del título */
+}
+
+.custom-html {
+  color: blue;
+  /* Cambia el color del texto */
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+/* Loading */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .relative {
-    width: 100%;
-    max-width: 300px;
-    background: white;
-    border-radius: 100px;
-    border: none;
+
+  100% {
+    transform: rotate(360deg);
   }
-  
-  input {
-    width: 100%;
-    padding: 1rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
-  
-  .message {
-    color: red;
-    margin-bottom: 1rem;
-  }
-  
-  input[type='submit'] {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 5px;
-    background-color: rgb(151, 15, 74);
-    border-radius: 10px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    max-width: 250px;
-    font-weight: bold;
-  }
-  
-  /* Estilo adicional para cuando el botón está en estado de hover */
-  input[type='submit']:hover {
-    background-color: #5a67d8;
-    font-weight: bold;
-  }
-  
-  .footer-content p {
-    text-align: center;
-  }
-  
-  input[type='id_machine']::placeholder {
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  input[type='password']::placeholder {
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  /* Información del pie de página */
-  .footer-content {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    color: #883d64;
-  }
-  
-  .custom-title {
-    color: rgba(211, 20, 20, 0.884); /* Cambia el color del título */
-  }
-  
-  .custom-html {
-    color: blue; /* Cambia el color del texto */
-  }
-  
-  .bold-text {
-    font-weight: bold;
-  }
-  
-  /* Loading */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
+}
