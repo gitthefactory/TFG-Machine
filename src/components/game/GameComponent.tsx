@@ -320,7 +320,7 @@ const GameComponent: React.FC = () => {
         <div className="bar" style={{flexGrow:'1'}}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}} >
             <div style={{width:'25%', textAlign:'center'}} className="machine_id">{selectedMachineBalance?.user}</div>
-            <div style={{width:'100%', textAlign:'center', marginTop:'1rem', marginLeft:'10rem'}} className="text-light mt-2 text-bottom">
+            <div style={{width:'100%', textAlign:'center', marginTop:'1rem', marginLeft:'9rem'}} className="text-light mt-2 text-bottom">
              {selectedMachineBalance
                   ? formatBalanceWithoutDecimals(selectedMachineBalance.balance)
                   : "000"}
