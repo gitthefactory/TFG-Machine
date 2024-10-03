@@ -308,8 +308,8 @@ const GameComponent: React.FC = () => {
 <div style={{ width:'100%'}}>
         <ul className="menubar">
         <li><a href="#" onClick={handleAll}>TODOS</a></li>
-          <li><a href="#">SLOTS</a></li>
-          <li><a href="#">CASINO EN VIVO</a></li>
+          <li><a href="#" onClick={handleSlots}>SLOTS</a></li>
+          <li><a href="#"onClick={handleLive}>CASINO EN VIVO</a></li>
           <li><a href="#">BINGO</a></li>
           <li><a href="#">VIRTUALES</a></li>
           <li><a href="#">SCRATCH</a></li>
