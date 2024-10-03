@@ -280,7 +280,7 @@ const GameComponent: React.FC = () => {
               </div>
             </div>
             <div className="logo">
-              <img src="/images/img/New-clients/tatan_gaming.png"/>
+              <img src="/images/img/New-clients/tatan_gaming.png" />
             </div>
             <div className="topbox jac d-flex justify-content-between align-items-center">
               <div className="text-light text-top mt-4 w-100 text-center">
@@ -289,7 +289,7 @@ const GameComponent: React.FC = () => {
             </div>
           </div>
           {/* end topbar */}
-         
+
 
           {visibleSection === "providers" && <Providers />}
           {/* {visibleSection === "slots" && <Slots />}
@@ -298,17 +298,9 @@ const GameComponent: React.FC = () => {
  */}
           {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
-          </div> */} 
-
-          {isModalOpen && (
-            <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
-              <div className="dreamcatcher-cashier-container">
-                <DreamcatcherCashier />
-              </div>
-            </div>
-          )}
-          <div className="bottom_bar">
-
+          </div> */}
+{/* bottom_bar */}
+<div className="bottom_bar">
       <div className="w-100">
         <ul className="menubar">
           <li><a href="#">TODOS</a></li>
@@ -321,25 +313,45 @@ const GameComponent: React.FC = () => {
       </div>
       <div className="d-flex justify-content-between align-items-center p-3">
         <div className="pay">
-          <a href="#" onclick="alert('clicked!')">
-            <img src="assets/img/pay.png" alt="pay" />
+          <a href="#" onClick={() => alert('clicked!')}>
+            <img src="/images/img/New_bottomBar/pay.png" alt="pay" />
           </a>
         </div>
-        <div className="bar flex-grow-1">
+        <div className="bar flex-grow-1 ">
           <div className="d-flex justify-content-between align-items-center">
             <div className="w-25 text-center machine_id">XA5A01ABC</div>
             <div className="w-50 text-center text-light mt-2 text-bottom">
-              1234567890<span className="credits">CRÉDITOS</span>
+              1234567890
+              <span className="credits">CRÉDITOS</span>
             </div>
             <div className="w-25 text-center amount">
               <span className="fs-6">$</span>12.345.678,90
             </div>
           </div>
         </div>
-        <div style={{width: "172px"}}></div>
+        <div style={{ width: "172px" }}></div>
       </div>
     </div>
+          {/*END  bottom_bar */}
 
+          <div className="space">
+    <div className="particle"></div>
+    <div className="particle"></div>
+    <div className="particle"></div>
+    <div className="particle"></div>
+  </div>
+          
+          {isModalOpen && (
+            <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
+              <div className="dreamcatcher-cashier-container">
+                <DreamcatcherCashier />
+              </div>
+            </div>
+          )}
+
+
+
+           
 
 
           {/* <div className="footer d-flex justify-content-center">
@@ -364,11 +376,12 @@ const GameComponent: React.FC = () => {
             </button>
           </div>
  */}
-         
+
         </>
-      )} 
-     
+      )}
+
     </div>
+    
   );
 };
 
