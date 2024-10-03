@@ -1101,7 +1101,7 @@ box-shadow: rgba(255,205,0, 1) 1.5em 0 0 0, rgba(255,205,0, 1) 1.1em 1.1em 0 0, 
 }
 .space {
   position: relative;
-  width: 100vw;
+  width: 1vw;
   height: 23vh;
   z-index: -1;
 }
