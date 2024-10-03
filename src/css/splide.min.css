@@ -51,7 +51,7 @@
   
   .splide {
     position: relative;
-    visibility: hidden
+    
   }
   
   .splide.is-initialized,
@@ -60,7 +60,7 @@
   }
   
   .splide__slide {
-    backface-visibility: hidden;
+    /* backface-visibility: hidden; */
     box-sizing: border-box;
     -ms-flex-negative: 0;
     flex-shrink: 0;
