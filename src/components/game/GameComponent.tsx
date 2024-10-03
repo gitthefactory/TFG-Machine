@@ -313,25 +313,34 @@ const GameComponent: React.FC = () => {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' , padding:'1rem'}}>
         <div className="pay">
-          <a href="#" onClick={() => alert('clicked!')}>
+          <a href="#" onClick={() => handlePrint()}>
             <img src="/images/img/New_bottomBar/pay.png" alt="pay" />
           </a>
         </div>
         <div className="bar" style={{flexGrow:'1'}}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}} >
-            <div style={{width:'25%', textAlign:'center'}} className="machine_id">XA5A01ABC</div>
-            <div style={{width:'100%', textAlign:'center', marginTop:'1rem' }} className="text-light mt-2 text-bottom">
+            <div style={{width:'25%', textAlign:'center'}} className="machine_id">{selectedMachineBalance?.user}</div>
+            <div style={{width:'100%', textAlign:'center', marginTop:'1rem', marginLeft:'10rem'}} className="text-light mt-2 text-bottom">
              {selectedMachineBalance
                   ? formatBalanceWithoutDecimals(selectedMachineBalance.balance)
                   : "000"}
               <span className="credits">CRÉDITOS</span>
             </div>
             <div style={{width:'25%', textAlign:'center'}} className="amount">
-              <span className="fs-6">
-                {selectedMachineBalance
-                  ? formatBalance(selectedMachineBalance.balance)
-                  : "000"}
-              </span>
+            <span className="fs-6" style={{ fontSize: '40px', display: 'flex', alignItems: 'center' }}>
+  {selectedMachineBalance ? (
+    <>
+      <span style={{ fontSize: '20px', marginRight: '20px', }}>
+        {selectedMachineBalance.currency || 'USD'}
+      </span>
+      <span style={{marginLeft:'0px', fontSize:'20px'}}>
+      ${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}
+      </span>
+    </>
+  ) : (
+    'USD $0.00'
+  )}
+</span>
             </div>
           </div>
         </div>
