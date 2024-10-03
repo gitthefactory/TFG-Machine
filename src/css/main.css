@@ -1013,7 +1013,7 @@ box-shadow: rgba(255,205,0, 1) 1.5em 0 0 0, rgba(255,205,0, 1) 1.1em 1.1em 0 0, 
   width: 100%;
   max-width: 1024px;
   height: 102px;
-  background-image: url("/public/images/img/New_bottomBar/bottom_bar.png");
+  background-image: url("/images/img/New_bottomBar/bottom_bar.png");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 100% 100%;

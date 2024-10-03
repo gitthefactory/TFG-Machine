@@ -273,7 +273,7 @@ const GameComponent: React.FC = () => {
       {!isLoading && (
         <>
           {/* Top bar */}
-          <div className="d-flex justify-content-between align-items-center p-3">
+          <div style={{display:'flex', justifyContent: 'center',alignItems:'center'}}>
             <div className="topbox acu d-flex justify-content-between align-items-center">
               <div className="text-light text-top mt-4 w-100 text-center">
                 <span className="fs-6">$</span>12.345.678,90
@@ -301,7 +301,7 @@ const GameComponent: React.FC = () => {
           </div> */}
 {/* bottom_bar */}
 <div className="bottom_bar">
-      <div className="w-100">
+<div style={{ width:'100%'}}>
         <ul className="menubar">
           <li><a href="#">TODOS</a></li>
           <li><a href="#">SLOTS</a></li>
@@ -311,20 +311,20 @@ const GameComponent: React.FC = () => {
           <li><a href="#">SCRATCH</a></li>
         </ul>
       </div>
-      <div className="d-flex justify-content-between align-items-center p-3">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' , padding:'1rem'}}>
         <div className="pay">
           <a href="#" onClick={() => alert('clicked!')}>
             <img src="/images/img/New_bottomBar/pay.png" alt="pay" />
           </a>
         </div>
-        <div className="bar flex-grow-1 ">
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="w-25 text-center machine_id">XA5A01ABC</div>
-            <div className="w-50 text-center text-light mt-2 text-bottom">
+        <div className="bar" style={{flexGrow:'1'}}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}} >
+            <div style={{width:'25%', textAlign:'center'}} className="machine_id">XA5A01ABC</div>
+            <div style={{width:'50%', textAlign:'center' }} className="text-light mt-2 text-bottom">
               1234567890
               <span className="credits">CRÉDITOS</span>
             </div>
-            <div className="w-25 text-center amount">
+            <div style={{width:'25%', textAlign:'center'}} className="amount">
               <span className="fs-6">$</span>12.345.678,90
             </div>
           </div>

@@ -184,6 +184,7 @@ const Providers: React.FC = () => {
                 margin: "0 5px",
               }}
             >
+              <img src="/images/img/New-Providers/bgaming.png" />
             </button>
           )}
           {showAspectButton && (
