@@ -16,6 +16,9 @@ import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 
+
+
+
 interface MachineBalance {
   user: string;
   balance: number;
@@ -31,6 +34,7 @@ const GameComponent: React.FC = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
+    
     const fetchSelectedMachineBalance = async () => {
       const query = new URLSearchParams(window.location.search);
       const idMachine = query.get("idMachine");
@@ -303,7 +307,7 @@ const GameComponent: React.FC = () => {
 <div className="bottom_bar">
 <div style={{ width:'100%'}}>
         <ul className="menubar">
-          <li><a href="#">TODOS</a></li>
+        <li><a href="#" onClick={handleAll}>TODOS</a></li>
           <li><a href="#">SLOTS</a></li>
           <li><a href="#">CASINO EN VIVO</a></li>
           <li><a href="#">BINGO</a></li>
