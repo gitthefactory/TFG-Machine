@@ -320,12 +320,18 @@ const GameComponent: React.FC = () => {
         <div className="bar" style={{flexGrow:'1'}}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}} >
             <div style={{width:'25%', textAlign:'center'}} className="machine_id">XA5A01ABC</div>
-            <div style={{width:'50%', textAlign:'center' }} className="text-light mt-2 text-bottom">
-              1234567890
+            <div style={{width:'100%', textAlign:'center', marginTop:'1rem' }} className="text-light mt-2 text-bottom">
+             {selectedMachineBalance
+                  ? formatBalanceWithoutDecimals(selectedMachineBalance.balance)
+                  : "000"}
               <span className="credits">CRÉDITOS</span>
             </div>
             <div style={{width:'25%', textAlign:'center'}} className="amount">
-              <span className="fs-6">$</span>12.345.678,90
+              <span className="fs-6">
+                {selectedMachineBalance
+                  ? formatBalance(selectedMachineBalance.balance)
+                  : "000"}
+              </span>
             </div>
           </div>
         </div>
