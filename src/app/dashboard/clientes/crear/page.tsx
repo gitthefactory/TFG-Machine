@@ -18,11 +18,12 @@ function CrearUsuarios() {
   const [password, setPassword] = useState("");
   const [typeProfile, setTypeProfile] = useState("660ebaa7b02ce973cad66551");
   const [status, setStatus] = useState(1); // Estado predeterminado agregado
+  const [contactNumber1, setContactNumber1] = useState(""); // Número de contacto obligatorio
+  const [contactNumber2, setContactNumber2] = useState(""); 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (nombreCompleto.trim() === "" || email.trim() === "" || password.trim() === "") {
+    if (nombreCompleto.trim() === "" || email.trim() === "" || password.trim() === "" || contactNumber1.trim() === "") {
       toast.error("Por favor, completa todos los campos requeridos.");
       return;
     }
@@ -35,7 +36,9 @@ function CrearUsuarios() {
       password: hashedPassword,
       status, // Agregado status al objeto nuevo usuario
       typeProfile,
-      id_machine: ""
+      id_machine: "",
+      contactNumber1,
+      contactNumber2,  // Agregado contactNumber2 al objeto nuevo usuario
     };
     
     const response = await fetch("/api/usuarios", {
@@ -114,10 +117,55 @@ function CrearUsuarios() {
                   />
                 </div>
               </div>
+              <label
+                    htmlFor="contactNumber1"
+                    className="mb-3 block text-sm font-medium text-gray dark:text-white"
+                  >
+                    Numeros de contacto (obligatorio)
+                  </label>
+              {/* Campos de contacto */}
+              
+              <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full xl:w-1/2">
+                  <label
+                    htmlFor="contactNumber1"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Número de Contacto (obligatorio)
+                  </label>
+                  <input
+                    onChange={(e) => setContactNumber1(e.target.value)}
+                    value={contactNumber1}
+                    id="contactNumber1"
+                    name="contactNumber1"
+                    type="text"
+                    placeholder="Ingresa el número de contacto principal"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  />
+                </div>
+                <div className="w-full xl:w-1/2">
+                  <label
+                    htmlFor="contactNumber2"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Número de Contacto (opcional)
+                  </label>
+                  <input
+                    onChange={(e) => setContactNumber2(e.target.value)}
+                    value={contactNumber2}
+                    id="contactNumber2"
+                    name="contactNumber2"
+                    type="text"
+                    placeholder="Ingresa el número de contacto secundario (opcional)"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+                  />
+                </div>
+              </div>
+
               <div className="mt-6 flex justify-end gap-4">
                 <Link
                   href="/dashboard/clientes"
-                   className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+                  className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
                 >
                   Cancelar
                 </Link>

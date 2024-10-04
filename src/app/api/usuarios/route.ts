@@ -45,14 +45,27 @@ export async function GET() {
 
 
 
-export async function POST(request: { json: () => Promise<{ nombreCompleto: string; email: string; password: string; status: number; id_machine: string[]; typeProfile: string; games?: any[]; client?: string; }>; }) {
+// POST - CREAR UN USUARIO
+export async function POST(request: { json: () => Promise<{ nombreCompleto: string; email: string; password: string; status: number; id_machine: string[]; typeProfile: string; games?: any[]; client?: string; contactNumber1: string; contactNumber2?: string; }>; }) {
   try {
-    const { nombreCompleto, email, password, status, id_machine, typeProfile, games = [], client } = await request.json();
+    // Extraer los datos del cuerpo de la solicitud
+    const { 
+      nombreCompleto, 
+      email, 
+      password, 
+      status, 
+      id_machine, 
+      typeProfile, 
+      games = [], 
+      client, 
+      contactNumber1,  // Agregamos contactNumber1 (obligatorio)
+      contactNumber2   // Agregamos contactNumber2 (opcional)
+    } = await request.json();
 
-    // Conecta a la base de datos
+    // Conectar a la base de datos
     await connectDB();
 
-    // Crea un nuevo usuario en base a los datos proporcionados
+    // Crear un nuevo usuario en base a los datos proporcionados
     const newUser = await User.create({
       nombreCompleto,
       email,
@@ -61,27 +74,25 @@ export async function POST(request: { json: () => Promise<{ nombreCompleto: stri
       id_machine,
       typeProfile,
       games,
-      client,  // Add client field here
+      client,
+      contactNumber1,   // Guardamos el primer número de contacto (obligatorio)
+      contactNumber2,   // Guardamos el segundo número de contacto (opcional)
     });
 
     return NextResponse.json({
-        message: "Usuario Creado con Éxito",
-        data: newUser
-    }, {status:201});
+      message: "Usuario Creado con Éxito",
+      data: newUser
+    }, { status: 201 });
+
   } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Error al crear el usuario",
-        error,
-      },
-      {
-        status: 500,
-      }
-    );
+    return NextResponse.json({
+      message: "Error al crear el usuario",
+      error,
+    }, {
+      status: 500,
+    });
   }
 }
-
-
 
 //DELETE A USER
 export async function DELETE(request: { nextUrl: { searchParams: { get: (arg0: string) => any; }; }; }){

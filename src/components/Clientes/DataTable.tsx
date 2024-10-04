@@ -101,8 +101,13 @@ const UserDataTable: React.FC = () => {
       button: true,
     },
     {
-      name: 'ID',
-      selector: (row: User) => row._id,
+      name: 'Telefono 1',
+      selector: (row: User) => row.contactNumber1,
+      sortable: true,
+    },
+    {
+      name: 'Telefono 2',
+      selector: (row: User) => row.contactNumber2,
       sortable: true,
     },
     {
@@ -110,11 +115,7 @@ const UserDataTable: React.FC = () => {
       selector: (row: User) => row.nombreCompleto,
       sortable: true,
     },
-    // {
-    //   name: 'Maquina',
-    //   selector: (row: User) => row.games.length > 0 ? "Sí" : "No",
-    //   sortable: true,
-    // },
+ 
     {
       name: 'Correo Electrónico',
       selector: (row: User) => row.email,
