@@ -22,7 +22,7 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
   const [filteredProviders, setFilteredProviders] = useState<ProvidersData[]>([]);
   const { socket } = useSocket()
 
-  console.log(providers);
+ 
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -111,11 +111,11 @@ const ProviderTable: React.FC<ProviderTableProps> = ( {providers}) => {
       selector: (row: ProvidersData) => row.status,
       sortable: true,
     },
-    {
-      name: 'N°',
-      selector: (row: ProvidersData) => row._id,
-      sortable: true,
-    },
+    // {
+    //   name: 'N°',
+    //   selector: (row: ProvidersData) => row._id,
+    //   sortable: true,
+    // },
     {
       name: 'Nombre Proveedor',
       selector: (row: ProvidersData) => row.provider_name,
