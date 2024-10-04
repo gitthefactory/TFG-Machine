@@ -271,6 +271,7 @@ body, html {
   filter: invert(1);
   width: 24px;
   height: 24px;
+  fill: transparent;
 }
 .splide__arrow.splide__arrow--prev {
   left: -100px;

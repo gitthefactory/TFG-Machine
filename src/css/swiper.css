@@ -22,28 +22,22 @@
 }
 
 .swiper-button-prev-img {
-  background-image: url('/images/img/left1.png');
+  background-image: url('/images/img/New-clients/arrow_right.png') !important;
   width: 82px !important;
   height: 100px !important;
   position: absolute;
   left: -150px !important ;
 }
 
-.swiper-button-prev-img:hover {
-  background-image: url('/images/img/left2.png') !important;
-}
 
 .swiper-button-next-img {
-  background-image: url('/images/img/right1.png');
+  background-image: url('/images/img/New-clients/arrow_right.png');
   width: 82px !important;
   height: 100px !important;
   position: absolute;
   right: -150px !important;
 }
 
-.swiper-button-next-img:hover {
-  background-image: url('/images/img/right2.png') !important;
-}
 
 .swiper-slide-content {
   display: flex;

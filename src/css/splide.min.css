@@ -151,6 +151,7 @@
     display: block
   }
   
+
   .splide__arrow {
     -ms-flex-align: center;
     align-items: center;
@@ -169,16 +170,18 @@
     top: 50%;
     transform: translateY(-50%);
     width: 2em;
-    z-index: 1
+    z-index: 1;
+    
   }
   
   .splide__arrow svg {
-    /* fill: #000;
-    height: 1.2em;
-    width: 1.2em */
-    fill: transparent;
+ /*     fill: #000; */
+    /* height: 1.2em;
+    width: 1.2em  */
+  
     height: 0;
     width: 0;
+    fill: transparent !important;
   }
   .splide__arrow {
     /* fill: #ff0000; */
