@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import Splide from '@splidejs/splide'; // Asegúrate de haber instalado Splide
 import Bgaming from "./bgaming";
 import Belatra from "./belatra";
 import getSessionData from "@/controllers/getSession";
@@ -6,11 +7,7 @@ import Loader from "@/components/common/Loader";
 import Aspect from "./aspect";
 import Booming from "./Booming";
 import PopOK from "./PopOk";
-
-interface ProviderData {
-  provider_name: string;
-  status: number;
-}
+import '@splidejs/splide/dist/css/splide.min.css'; // Importa el CSS de Splide
 
 const Providers: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
@@ -43,26 +40,25 @@ const Providers: React.FC = () => {
 
             if (idMachineFromURL) {
               const response = await fetch(
-                `/api/juegosApi/${idMachineFromURL}`,
+                `/api/juegosApi/${idMachineFromURL}`
               );
               const data = await response.json();
 
               if (data.data && Array.isArray(data.data.providers)) {
                 const belatraProvider = data.data.providers.find(
-                  (p: any) => p.provider === 29,
+                  (p: any) => p.provider === 29
                 );
                 const bgamingProvider = data.data.providers.find(
-                  (p: any) => p.provider === 68,
+                  (p: any) => p.provider === 68
                 );
                 const aspectProvider = data.data.providers.find(
-                  (p: any) => p.provider === 87,
+                  (p: any) => p.provider === 87
                 );
                 const boomingProvider = data.data.providers.find(
-                  (p: any) => p.provider === 12,
+                  (p: any) => p.provider === 12
                 );
-                
                 const popokProvider = data.data.providers.find(
-                  (p: any) => p.provider === 88,
+                  (p: any) => p.provider === 88
                 );
 
                 if (belatraProvider) {
@@ -72,8 +68,8 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "belatra gaming" &&
-                          p.status === 1,
-                      ),
+                          p.status === 1
+                      )
                   );
                 }
 
@@ -84,8 +80,8 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "bgaming" &&
-                          p.status === 1,
-                      ),
+                          p.status === 1
+                      )
                   );
                 }
                 if (aspectProvider) {
@@ -95,10 +91,9 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "aspect gaming" &&
-                          p.status === 1,
-                      ),
+                          p.status === 1
+                      )
                   );
-                  console.log("AspectButton", aspectProvider);
                 }
                 if (boomingProvider) {
                   setBoomingStatus(boomingProvider.status);
@@ -107,10 +102,9 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "booming games" &&
-                          p.status === 1,
-                      ),
+                          p.status === 1
+                      )
                   );
-                 
                 }
                 if (popokProvider) {
                   setPopokGameStatus(popokProvider.status);
@@ -119,14 +113,13 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "popok games" &&
-                          p.status === 1,
-                      ),
+                          p.status === 1
+                      )
                   );
-                  console.log("Popok Button", popokProvider);
                 }
               } else {
                 console.error(
-                  "La API /api/juegosApi no devolvió un estado válido.",
+                  "La API /api/juegosApi no devolvió un estado válido."
                 );
               }
             } else {
@@ -134,7 +127,7 @@ const Providers: React.FC = () => {
             }
           } else {
             console.error(
-              "La API /api/providers no devolvió un estado válido.",
+              "La API /api/providers no devolvió un estado válido."
             );
           }
         }
@@ -154,66 +147,66 @@ const Providers: React.FC = () => {
     setTimeout(() => setLoading(false), 900);
   }, []);
 
+  useEffect(() => {
+    const splide = new Splide('#splide', {
+      type: 'loop',
+      perPage: 5,
+      breakpoints: {
+        '1280': {
+          perPage: 2,
+        },
+      },
+      focus: 'center',
+      autoplay: true,
+      interval: 5000,
+      flickMaxPages: 3,
+      updateOnMove: true,
+      pagination: false,
+      padding: '10%',
+      throttle: 300,
+    });
+
+    splide.mount();
+
+    // Cleanup function to destroy the instance when the component unmounts
+    return () => splide.destroy();
+  }, []); // Solo se ejecuta una vez al montar el componente
+
   return (
-    <div className="container" style={{ textAlign: "center" }}>
-      {loading && <Loader />}
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {showBelatraButton && (
-          <button
-            className="btn-provider belatra"
-            onClick={() => handleProvider("belatra")}
-            style={{
-              display: visibleSection ? "none" : "inline-block",
-              margin: "0 5px",
-            }}
-          ></button>
-        )}
-        {showBgamingButton && (
-          <button
-            className="btn-provider bgaming"
-            onClick={() => handleProvider("bgaming")}
-            style={{
-              display: visibleSection ? "none" : "inline-block",
-              margin: "0 5px",
-            }}
-          ></button>
-        )}
-       {showAspectButton && (
-  <button
-    className="btn-provider aspect"
-    onClick={() => handleProvider('aspect')}
-    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-   {showAspectButton && (
-  <button
-    className="btn-provider booming"
-    onClick={() => handleProvider('booming')}
-    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-{showAspectButton && (
-  <button
-    className="btn-provider popok"
-    onClick={() => handleProvider('popok')}
-    style={{ display: visibleSection ? 'none' : 'inline-block', margin: '0 5px' }}
-  >
-
-  </button>
-)}
-   
+    <div id="splide" className="splide" style={{ textAlign: "center" }}>
+      <div className="splide__track" style={{ display: "flex", justifyContent: "center" }}>
+        <ul className="splide__list">
+          <li className="splide__slide" onClick={() => handleProvider("belatra")}>
+            <img src="/images/img/New-Providers/belatra.png" alt="Belatra" />
+          </li>
+          <li className="splide__slide" onClick={() => handleProvider("bgaming")}>
+            <img src="/images/img/New-Providers/bgaming.png" alt="Bgaming" />
+          </li>
+          <li className="splide__slide" onClick={() => handleProvider("aspect")}>
+            <img src="/images/img/New-Providers/aspect.png" alt="Aspect" />
+          </li>
+        {/*   {showAspectButton && (
+            <button
+              className="splide__slide"
+              onClick={() => handleProvider("booming")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            > */}
+          <li className="splide__slide" onClick={() => handleProvider("booming")}>
+            <img src="/images/img/New-Providers/booming.png" alt="Booming" />
+          </li>
+          {/* Agrega más proveedores según sea necesario */}
+        </ul>
       </div>
       {visibleSection && (
-        <div style={{ marginTop: "20px" }}>
+        <div className="section-content">
           {visibleSection === "belatra" && <Belatra />}
           {visibleSection === "bgaming" && <Bgaming />}
           {visibleSection === "aspect" && <Aspect />}
           {visibleSection === "booming" && <Booming />}
-          {visibleSection === "popok" && <PopOK/>}
+          {visibleSection === "popok" && <PopOK />}
         </div>
       )}
     </div>

@@ -15,7 +15,9 @@ import Loader from "@/components/common/Loader";
 import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
-import QRCode from "qrcode.react";
+
+
+
 
 interface MachineBalance {
   user: string;
@@ -32,6 +34,7 @@ const GameComponent: React.FC = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
+    
     const fetchSelectedMachineBalance = async () => {
       const query = new URLSearchParams(window.location.search);
       const idMachine = query.get("idMachine");
@@ -269,62 +272,94 @@ const GameComponent: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="background">
       {isLoading && <Loader />}
       {!isLoading && (
         <>
-          <div className="d-flex justify-content-between align-items-center p-3">
-            <div className="topbar">
-              <div className="topbox acu d-flex justify-content-between align-items-center">
-                <div className="text-light text-top mt-4 w-100 text-center">
-                  <span className="fs-6">$</span>12.345.678,90
-                </div>
+          {/* Top bar */}
+          <div style={{display:'flex', justifyContent: 'center',alignItems:'center'}}>
+            <div className="topbox acu d-flex justify-content-between align-items-center">
+              <div className="text-light text-top mt-4 w-100 text-center">
+                <span className="fs-6">$</span>12.345.678,90
               </div>
-              <div className="logo">
-                <Image
-                  src="/images/img/New-clients/tatan_gaming.png"
-                  alt="Logo"
-                  width={500}
-                  height={500}
-                />
+            </div>
+            <div className="logo">
+              <img src="/images/img/New-clients/tatan_gaming.png" />
+            </div>
+            <div className="topbox jac d-flex justify-content-between align-items-center">
+              <div className="text-light text-top mt-4 w-100 text-center">
+                <span className="fs-6">$</span>12.345.678,90
               </div>
             </div>
           </div>
-          <div className="nav">
-            <div className="navbar">
-              <div className="jackpot">
-                <span>78.000.000</span>
-              </div>
-              <div className="acumulado">
-                <span>000.556.970</span>
-              </div>
-              <div className="gran">
-                <span>010.000.000</span>
-              </div>
-              <div className="menor">
-                <span>000.250.000</span>
-              </div>
-              <div className="express">
-                <span>000.080.000</span>
-              </div>
-            </div>
-            <div className="menu">
-              <button className="all" onClick={handleAll}></button>
-              <button className="slots" onClick={handleSlots}></button>
-              <button className="live" onClick={handleLive}></button>
-              <button className="crash" onClick={handleCrash}></button>
-            </div>
-          </div>
+          {/* end topbar */}
+
 
           {visibleSection === "providers" && <Providers />}
-          {visibleSection === "slots" && <Slots />}
+          {/* {visibleSection === "slots" && <Slots />}
           {visibleSection === "live" && <Live />}
           {visibleSection === "crash" && <CrashSection />}
-
+ */}
           {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
             <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
           </div> */}
+{/* bottom_bar */}
+<div className="bottom_bar">
+<div style={{ width:'100%'}}>
+        <ul className="menubar">
+        <li><a href="#" onClick={handleAll}>TODOS</a></li>
+          <li><a href="#" onClick={handleSlots}>SLOTS</a></li>
+          <li><a href="#"onClick={handleLive}>CASINO EN VIVO</a></li>
+          <li><a href="#">BINGO</a></li>
+          <li><a href="#">VIRTUALES</a></li>
+          <li><a href="#">SCRATCH</a></li>
+        </ul>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' , padding:'1rem'}}>
+        <div className="pay">
+          <a href="#" onClick={() => handlePrint()}>
+            <img src="/images/img/New_bottomBar/pay.png" alt="pay" />
+          </a>
+        </div>
+        <div className="bar" style={{flexGrow:'1'}}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}} >
+            <div style={{width:'25%', textAlign:'center'}} className="machine_id">{selectedMachineBalance?.user}</div>
+            <div style={{width:'100%', textAlign:'center', marginTop:'1rem', marginLeft:'9rem'}} className="text-light mt-2 text-bottom">
+             {selectedMachineBalance
+                  ? formatBalanceWithoutDecimals(selectedMachineBalance.balance)
+                  : "000"}
+              <span className="credits">CRÉDITOS</span>
+            </div>
+            <div style={{width:'25%', textAlign:'center'}} className="amount">
+            <span className="fs-6" style={{ fontSize: '40px', display: 'flex', alignItems: 'center' }}>
+  {selectedMachineBalance ? (
+    <>
+      <span style={{ fontSize: '20px', marginRight: '20px', }}>
+        {selectedMachineBalance.currency || 'USD'}
+      </span>
+      <span style={{marginLeft:'0px', fontSize:'20px'}}>
+      ${formatBalance(selectedMachineBalance.balance, selectedMachineBalance.currency)}
+      </span>
+    </>
+  ) : (
+    'USD $0.00'
+  )}
+</span>
+            </div>
+          </div>
+        </div>
+        <div style={{ width: "172px" }}></div>
+      </div>
+    </div>
+          {/*END  bottom_bar */}
 
+          <div className="space">
+    <div className="particle"></div>
+    <div className="particle"></div>
+    <div className="particle"></div>
+    <div className="particle"></div>
+  </div>
+          
           {isModalOpen && (
             <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
@@ -333,7 +368,12 @@ const GameComponent: React.FC = () => {
             </div>
           )}
 
-          <div className="footer d-flex justify-content-center">
+
+
+           
+
+
+          {/* <div className="footer d-flex justify-content-center">
             <span className="IdMaquina">
               MAQUINA : {selectedMachineBalance.user}
             </span>
@@ -354,9 +394,13 @@ const GameComponent: React.FC = () => {
               PAGAR
             </button>
           </div>
+ */}
+
         </>
       )}
+
     </div>
+    
   );
 };
 
