@@ -176,27 +176,28 @@ const Providers: React.FC = () => {
     <div id="splide" className="splide" style={{ textAlign: "center" }}>
       <div className="splide__track" style={{ display: "flex", justifyContent: "center" }}>
         <ul className="splide__list">
-          {showBelatraButton && (
-            <li className="splide__slide" onClick={() => handleProvider("belatra")}>
-              <img src="/images/img/New-Providers/belatra.png" alt="Belatra" />
-            </li>
-          )}
-          {showBgamingButton && (
-            <li className="splide__slide" onClick={() => handleProvider("bgaming")}>
-              <img src="/images/img/New-Providers/bgaming.png" alt="Bgaming" />
-            </li>
-          )}
-          {showAspectButton && (
-            <li className="splide__slide" onClick={() => handleProvider("aspect")}>
-              <img src="/images/img/New-Providers/aspect.png" alt="Aspect" />
-            </li>
-          )}
-          {showBoomingButton && (
-            <li className="splide__slide" onClick={() => handleProvider("booming")}>
-              <img src="/images/img/New-Providers/booming.png" alt="Booming" />
-            </li>
-          )}
-        
+          <li className="splide__slide" onClick={() => handleProvider("belatra")}>
+            <img src="/images/img/New-Providers/belatra.png" alt="Belatra" />
+          </li>
+          <li className="splide__slide" onClick={() => handleProvider("bgaming")}>
+            <img src="/images/img/New-Providers/bgaming.png" alt="Bgaming" />
+          </li>
+          <li className="splide__slide" onClick={() => handleProvider("aspect")}>
+            <img src="/images/img/New-Providers/aspect.png" alt="Aspect" />
+          </li>
+        {/*   {showAspectButton && (
+            <button
+              className="splide__slide"
+              onClick={() => handleProvider("booming")}
+              style={{
+                display: visibleSection ? "none" : "inline-block",
+                margin: "0 5px",
+              }}
+            > */}
+          <li className="splide__slide" onClick={() => handleProvider("booming")}>
+            <img src="/images/img/New-Providers/booming.png" alt="Booming" />
+          </li>
+          {/* Agrega más proveedores según sea necesario */}
         </ul>
       </div>
       {visibleSection && (
