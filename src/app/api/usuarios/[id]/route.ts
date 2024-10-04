@@ -44,6 +44,8 @@ export async function PUT(request: any, { params: { id } }: any) {
       status,
       id_machine,
       games,
+      contactNumber1,
+      contactNumber2
     } = await request.json();
 
     // Conectar a la base de datos
@@ -58,7 +60,8 @@ export async function PUT(request: any, { params: { id } }: any) {
     if (password !== undefined) updateData.password = password;
     if (status !== undefined) updateData.status = status;
     if (games !== undefined) updateData.games = games;
-
+    if (contactNumber1!== undefined) updateData.contactNumber1 = contactNumber1;
+    if (contactNumber2!== undefined) updateData.contactNumber2 = contactNumber2;
     // Agregar nuevos id_machine si se proporcionan
     if (id_machine !== undefined && Array.isArray(id_machine)) {
       updateData.$addToSet = { id_machine: { $each: id_machine } };
