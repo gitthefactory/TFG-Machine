@@ -106,8 +106,8 @@ const UserDataTable: React.FC = () => {
       sortable: true,
     },
     {
-      name: 'Telefono 2',
-      selector: (row: User) => row.contactNumber2,
+      name: 'Balance',
+      selector: (row: User) => row.balance,
       sortable: true,
     },
     {

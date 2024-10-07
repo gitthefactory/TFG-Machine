@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import User from '@/models/user'; 
+import User from '@/models/user';
 import Transaction from '@/models/transaction';
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params; // Ahora usamos params para obtener el ID
+  const { id } = params;
   try {
     const { amount }: { amount: number } = await req.json();
 
@@ -14,8 +14,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ message: 'Usuario no encontrado' }, { status: 404 });
     }
 
-    // 2. Verificar que el monto no exceda el límite disponible del usuario
-    if (user.balance + amount > user.depositLimit) {
+    // 2. Verificar que el monto no exceda el límite de depósito (independiente del balance actual)
+    if (amount > user.depositLimit) {
       return NextResponse.json({ message: 'Depósito excede el límite permitido' }, { status: 400 });
     }
 
@@ -28,7 +28,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       user: id,
       action: 'BALANCE',
       amount,
-      balance: user.balance + amount,
+      balance: user.balance,
       message: 'Depósito exitoso',
     });
 

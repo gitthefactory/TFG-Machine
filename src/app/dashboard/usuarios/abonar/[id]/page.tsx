@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import AtrasButton from "@/components/AtrasButton";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css'; // Para asegurar que los estilos se carguen
 
 const AbonarBalancePage: React.FC = () => {
   const { id } = useParams();
@@ -35,7 +37,7 @@ const AbonarBalancePage: React.FC = () => {
 
   const handleDeposit = async () => {
     setError(null);
-
+  
     try {
       const res = await fetch(`/api/deposit/${id}`, {
         method: "POST",
@@ -44,19 +46,38 @@ const AbonarBalancePage: React.FC = () => {
         },
         body: JSON.stringify({ amount }),
       });
-
+  
       const data = await res.json();
-
+  
       if (!res.ok) {
-        throw new Error(data.message || "Error al hacer el depósito");
+        // Si el estado no es 200, mostrar alerta con el mensaje de error del backend
+        await Swal.fire({
+          title: 'Error',
+          html: `<p><span class="bold-text" style="color: black;">${data.message || 'Error al hacer el depósito'}</span></p>`,
+          icon: 'error',
+          confirmButtonColor: 'rgb(227, 17, 108)',
+          confirmButtonText: 'ACEPTAR',
+          customClass: {
+            title: 'custom-title',
+            htmlContainer: 'custom-html',
+          },
+        });
+        return;  // No continuar si hay un error
       }
-
+  
+      // Mostrar mensaje de éxito
       toast.success("Depósito realizado con éxito");
+  
+      // Redirigir al usuario después de un tiempo
+      setTimeout(() => {
+        window.location.href = "/dashboard/clientes";
+      }, 2000);
     } catch (error: any) {
       setError(error.message);
       toast.error("Error al realizar el depósito");
     }
   };
+  
 
   if (error) {
     return <p>Error: {error}</p>; // Mostrar mensaje de error
@@ -93,6 +114,25 @@ const remainingLimit = user.depositLimit - user.balance
                   />
                 </div>
               </div>
+
+
+
+
+
+              <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+                <div className="w-full">
+                  <label
+                    htmlFor="amount"
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Este cliente poseé actualmente un limite de : ${user.data.depositLimit}
+                  </label>
+                 
+                </div>
+              </div>
+
+
+
 
               <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                 <div className="w-full">
