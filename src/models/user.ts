@@ -11,6 +11,8 @@ interface User extends Document {
   client?: Types.ObjectId; // Optional field
   contactNumber1: string;  // Campo obligatorio
   contactNumber2?: string; // Campo opcional
+  depositLimit:number;
+  balance: number; 
 }
 
 const UserSchema = new Schema<User>(
@@ -53,6 +55,16 @@ const UserSchema = new Schema<User>(
     contactNumber2: {  // Campo opcional
       type: String,
       required: false,
+    },
+    balance: {
+      type: Number,
+      default: 0,
+      required:[true, "Balance is required"]
+    },
+    depositLimit: {
+      type: Number,
+      default: 0,
+      required: [true, "Deposit limit is required"],
     },
   },
   {

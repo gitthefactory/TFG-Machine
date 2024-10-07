@@ -45,8 +45,20 @@ export async function GET() {
 
 
 
-// POST - CREAR UN USUARIO
-export async function POST(request: { json: () => Promise<{ nombreCompleto: string; email: string; password: string; status: number; id_machine: string[]; typeProfile: string; games?: any[]; client?: string; contactNumber1: string; contactNumber2?: string; }>; }) {
+export async function POST(request: { json: () => Promise<{ 
+  nombreCompleto: string; 
+  email: string; 
+  password: string; 
+  status: number; 
+  id_machine: string[]; 
+  typeProfile: string; 
+  games?: any[]; 
+  client?: string; 
+  contactNumber1: string; 
+  contactNumber2?: string; 
+  balance: number; // Agregar balance
+  depositLimit: number; // Agregar depositLimit
+}>; }) {
   try {
     // Extraer los datos del cuerpo de la solicitud
     const { 
@@ -58,8 +70,10 @@ export async function POST(request: { json: () => Promise<{ nombreCompleto: stri
       typeProfile, 
       games = [], 
       client, 
-      contactNumber1,  // Agregamos contactNumber1 (obligatorio)
-      contactNumber2   // Agregamos contactNumber2 (opcional)
+      contactNumber1, 
+      contactNumber2,
+      balance = 0, // Inicializar balance por defecto
+      depositLimit = 0 // Inicializar depositLimit por defecto
     } = await request.json();
 
     // Conectar a la base de datos
@@ -75,8 +89,10 @@ export async function POST(request: { json: () => Promise<{ nombreCompleto: stri
       typeProfile,
       games,
       client,
-      contactNumber1,   // Guardamos el primer número de contacto (obligatorio)
-      contactNumber2,   // Guardamos el segundo número de contacto (opcional)
+      contactNumber1,
+      contactNumber2,
+      balance, // Guardar balance
+      depositLimit // Guardar depositLimit
     });
 
     return NextResponse.json({

@@ -20,11 +20,13 @@ function CrearUsuarios() {
   const [status, setStatus] = useState(1); // Estado predeterminado agregado
   const [contactNumber1, setContactNumber1] = useState(""); // Número de contacto obligatorio
   const [contactNumber2, setContactNumber2] = useState(""); 
+  const [depositLimit, setDepositLimit] = useState(0);
+  const [balance, setBalance ] = useState (0);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (nombreCompleto.trim() === "" || email.trim() === "" || password.trim() === "" || contactNumber1.trim() === "") {
-      toast.error("Por favor, completa todos los campos requeridos.");
+    if (nombreCompleto.trim() === "" || email.trim() === "" || password.trim() === "" || contactNumber1.trim() === "" || depositLimit<0  ) {
+      toast.error("Por favor, completa todos los campos requeridos.");               
       return;
     }
 
@@ -38,7 +40,9 @@ function CrearUsuarios() {
       typeProfile,
       id_machine: "",
       contactNumber1,
-      contactNumber2,  // Agregado contactNumber2 al objeto nuevo usuario
+      contactNumber2,
+      depositLimit  ,
+      balance   // Agregado contactNumber2 al objeto nuevo usuario
     };
     
     const response = await fetch("/api/usuarios", {
@@ -159,6 +163,38 @@ function CrearUsuarios() {
                     placeholder="Ingresa el número de contacto secundario (opcional)"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
                   />
+                  <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
+  <div className="w-full xl:w-1/2">
+    <label htmlFor="depositLimit" className="mb-3 block text-sm font-medium text-black dark:text-white">
+      Límite de Depósito
+    </label>
+    <input
+      onChange={(e) => setDepositLimit(Number(e.target.value))}
+      value={depositLimit}
+      id="depositLimit"
+      name="depositLimit"
+      type="number"
+      placeholder="Ingresa el límite de depósito"
+      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+    />
+  </div>
+
+  {/* COMENTADO EL CAMPO DE BALANCE INICIAL YA QUE TODOS PARTEN CON BALANCE 0  */}
+  {/* <div className="w-full xl:w-1/2">
+    <label htmlFor="balance" className="mb-3 block text-sm font-medium text-black dark:text-white">
+      Balance Inicial
+    </label>
+    <input
+      onChange={(e) => setBalance(Number(e.target.value))}
+      value={balance}
+      id="balance"
+      name="balance"
+      type="number"
+      placeholder="Ingresa el balance "
+      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary"
+    />
+  </div> */}
+</div>
                 </div>
               </div>
 

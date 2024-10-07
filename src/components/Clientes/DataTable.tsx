@@ -5,7 +5,7 @@ import DeleteButton from '@/components/Clientes/DeleteButton'
 import Link from "next/link";
 import { FaPen } from "react-icons/fa";
 import { useSocket } from "@/app/api/socket/socketContext";
-
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 interface User {
   _id: string;
@@ -133,6 +133,14 @@ const UserDataTable: React.FC = () => {
             style={{ fontSize: '20px' }}
           >
             <FaPen />
+          </Link>
+          <Link
+            href={`/dashboard/usuarios/abonar/${row._id}`}
+            className="balance"
+            title="DepositarBalance"
+            style={{ fontSize: '20px' }}
+          >
+            <FaMoneyBillTransfer />
           </Link>
         </div>
       ),
