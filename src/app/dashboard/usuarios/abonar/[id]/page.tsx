@@ -39,7 +39,7 @@ const AbonarBalancePage: React.FC = () => {
     setError(null);
   
     try {
-      const res = await fetch(`/api/deposit/${id}`, {
+      const res = await fetch(`/api/depositUser/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
