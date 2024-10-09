@@ -120,7 +120,7 @@ const remainingLimit = user.depositLimit - user.balance
 
 
               <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                <div className="w-full">
+                <div className="w-full alert alert-warning alert-sm" >
                   <label
                     htmlFor="amount"
                     className="mb-3 block text-sm font-medium text-black dark:text-white"

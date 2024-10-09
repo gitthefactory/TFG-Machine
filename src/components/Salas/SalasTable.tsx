@@ -180,6 +180,11 @@ const SalasTable: React.FC = () => {
       sortable: true,
     },
     {
+      name: 'Balance',
+      selector: (row: SalaData) => row.balance, // Une los elementos del array si es necesario
+      sortable: true,
+    },
+    {
       name: 'Acciones',
       cell: (row: SalaData) => (
         <div className="flex items-center space-x-3.5">
