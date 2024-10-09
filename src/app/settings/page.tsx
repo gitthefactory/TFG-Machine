@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth/next";
 import  Handler  from "@/app/api/auth/[...nextauth]/route";
 // import Image from "next/image";
 import { FaUser, FaMessage } from "react-icons/fa6";
+
+
 export const metadata: Metadata = {
   title: "TFG | Ajustes",
   description:
@@ -54,20 +56,6 @@ const Settings = async () => {
                     </div>
 
                     <div className="w-full sm:w-1/2">
-                      {/* <label
-                        className="mb-3 block text-sm font-medium text-black dark:text-white"
-                        htmlFor="phoneNumber"
-                      >
-                        Numero de contacto
-                      </label>
-                      <input
-                        className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                        type="text"
-                        name="phoneNumber"
-                        id="phoneNumber"
-                        placeholder="+990 3343 7865"
-                        defaultValue="+990 3343 7865"
-                      /> */}
                     </div>
                   </div>
 

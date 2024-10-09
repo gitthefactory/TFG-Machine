@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import axios from "axios";
 import "/src/css/swiper.css";
 import "/src/css/main.css";
@@ -16,8 +16,9 @@ import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 
-
-
+type GameLayoutProps = {
+    children: React.ReactNode; // Define children como un tipo que puede ser cualquier nodo de React
+};
 
 interface MachineBalance {
   user: string;
@@ -25,9 +26,8 @@ interface MachineBalance {
   currency?: string;
 }
 
-const GameComponent: React.FC = () => {
+const GameLayout: React.FC<GameLayoutProps> = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [visibleSection, setVisibleSection] = useState("providers");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMachineBalance, setSelectedMachineBalance] =
     useState<MachineBalance | null>(null);
@@ -120,11 +120,15 @@ const GameComponent: React.FC = () => {
     window.location.href = url;
   };
 
+
+
+
+
+  
+
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
-    setVisibleSection("");
     setTimeout(() => {
-      setVisibleSection(section);
       setIsLoading(false);
     }, 5000);
   };
@@ -272,10 +276,11 @@ const GameComponent: React.FC = () => {
   };
 
   return (
+    <>
     <div className="background">
       {isLoading && <Loader />}
       {!isLoading && (
-        <>
+          <>
           {/* Top bar */}
           <div style={{display:'flex', justifyContent: 'center',alignItems:'center'}}>
             <div className="topbox acu d-flex justify-content-between align-items-center">
@@ -293,19 +298,12 @@ const GameComponent: React.FC = () => {
             </div>
           </div>
           {/* end topbar */}
-
-
-          {visibleSection === "providers" && <Providers />}
-          {/* {visibleSection === "slots" && <Slots />}
-          {visibleSection === "live" && <Live />}
-          {visibleSection === "crash" && <CrashSection />}
- */}
-          {/* <div className="dc" id="dreamcatcher" onClick={toggleModal}>
-            <Image src="/images/img/dreamcatcher.png" className="constant-tilt-shake" alt="Dreamcatcher" width={500} height={500} />
-          </div> */}
+         <div className="content-1">
+         {children}
+         </div>
 {/* bottom_bar */}
 <div className="bottom_bar">
-<div style={{ width:'100%'}}>
+<div style={{ width:'100%'}}> 
         <ul className="menubar">
         <li><a href="#" onClick={handleAll}>TODOS</a></li>
           <li><a href="#" onClick={handleSlots}>SLOTS</a></li>
@@ -333,7 +331,7 @@ const GameComponent: React.FC = () => {
             <div style={{width:'25%', textAlign:'center'}} className="amount">
             <span className="fs-6" style={{ fontSize: '40px', display: 'flex', alignItems: 'center' }}>
   {selectedMachineBalance ? (
-    <>
+      <>
       <span style={{ fontSize: '20px', marginRight: '20px', }}>
         {selectedMachineBalance.currency || 'USD'}
       </span>
@@ -342,8 +340,8 @@ const GameComponent: React.FC = () => {
       </span>
     </>
   ) : (
-    'USD $0.00'
-  )}
+      'USD $0.00'
+    )}
 </span>
             </div>
           </div>
@@ -361,7 +359,7 @@ const GameComponent: React.FC = () => {
   </div>
           
           {isModalOpen && (
-            <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
+              <div className="dreamcatcher-cashier-overlay" onClick={toggleModal}>
               <div className="dreamcatcher-cashier-container">
                 <DreamcatcherCashier />
               </div>
@@ -372,7 +370,8 @@ const GameComponent: React.FC = () => {
 
     </div>
     
+      </>
   );
 };
 
-export default GameComponent;
+export default GameLayout;
