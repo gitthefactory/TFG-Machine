@@ -15,12 +15,14 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
   const [idMachine, setIdMachine] = useState<string>("");
   const [salaBalance, setSalaBalance] = useState<number | null>(null);
   const [salaData, setSalaData] = useState<any>(null);
-  
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const currencyLimits = {
     CLP: 300000,
     MXN: 3000,
     BRL: 1000,
   };
+
   useEffect(() => {
     const pathname = window.location.pathname;
     const urlParts = pathname.split("/");
@@ -61,7 +63,7 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
       })
       .then(salasData => {
         console.log('Salas API Response:', salasData);
-        
+
         const foundSalaData = salasData.data.find((sala: any) => sala.id_machine.includes(newNombre));
         if (foundSalaData) {
           console.log('Sala encontrada:', foundSalaData);
@@ -76,6 +78,12 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Verificar el límite de moneda antes de proceder
+    if (amount > currencyLimits[newCurrency as keyof typeof currencyLimits]) {
+      setErrorMessage(`El monto excede el límite permitido para ${newCurrency}: ${currencyLimits[newCurrency as keyof typeof currencyLimits]}.`);
+      return;
+    }
 
     if (!idMachine || salaBalance === null) {
       console.error('ID Machine o salaBalance están faltando.');
@@ -198,6 +206,9 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
                 className="w-full rounded border-[1.5px] border-stroke bg-gray-800 text-gray-100 px-5 py-3 outline-none transition focus:border-primary active:border-primary"
                 required
               />
+              {errorMessage && (
+                <p className="text-red-500 mt-2">{errorMessage}</p>
+              )}
             </div>
             <div className="mb-4">
               <label htmlFor="message" className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -216,15 +227,15 @@ const EditTransaction: React.FC<{ transaction: any }> = ({ transaction }) => {
             <div className="mt-6 flex justify-end gap-4">
               <Link
                 href="/dashboard/maquinas"
-                className="bg-gray-100 text-gray-600 hover:bg-gray-200 flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+                className="bg-gray-100 hover:bg-primary dark:bg-boxdark dark:hover:bg-primary inline-flex items-center justify-center gap-2.5 rounded-md py-3 px-8 font-medium text-black shadow-1 dark:text-white"
               >
                 Cancelar
               </Link>
               <button
                 type="submit"
-                className="flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                className="hover:bg-opacity-80 inline-flex items-center justify-center gap-2.5 rounded-md bg-primary py-3 px-8 font-medium text-white shadow-1"
               >
-                Guardar Cambios
+                Creditar
               </button>
             </div>
           </form>
