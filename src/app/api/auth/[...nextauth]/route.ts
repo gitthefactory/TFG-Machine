@@ -63,7 +63,7 @@ const machineProvider = CredentialsProvider({
     // Agregar el campo 'nombreCompleto' al objeto de usuario devuelto
     return {
       ...userFound.toObject(),
-      name: userFound.id_machine // Asegúrate de que el modelo de usuario tenga el campo 'nombreCompleto'
+      name: userFound.nombreCompleto // Asegúrate de que el modelo de usuario tenga el campo 'nombreCompleto'
     };
   },
 });

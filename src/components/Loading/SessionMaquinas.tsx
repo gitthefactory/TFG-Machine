@@ -115,11 +115,20 @@ const Maquinas: React.FC = () => {
   // }
 
   useEffect(() => {
+ // Verificar si hay un token en las cookies
+ const cookies = document.cookie.split("; ");
+ const idMachineCookie = cookies.find((cookie) => cookie.startsWith("id_machine="));
 
-    if (session) {
-      // Si hay sesión, redirige a la página deseada
-      router.replace("/games/?idMachine=" + session.user.id_machine); // O la URL que desees
-    }
+ if (idMachineCookie) {
+   // Extraer el valor de la cookie
+   const idMachineValue = idMachineCookie.split("=")[1];
+   // Redirigir a la página de juegos con el id_machine encontrado
+   router.replace(`/games/?idMachine=${idMachineValue}`);
+ }
+    // if (session) {
+    //   // Si hay sesión, redirige a la página deseada
+    //   router.replace("/games/?idMachine=" + session.user.id_machine); // O la URL que desees
+    // }
 
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -237,6 +246,7 @@ const Maquinas: React.FC = () => {
         setLoading(false);
       } else {
         // Obtener información de la sala asociada a la máquina
+        document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() +100* 365 * 864e5).toUTCString()}`;
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
