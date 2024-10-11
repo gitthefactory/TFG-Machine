@@ -6,7 +6,8 @@ import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
-import { useSocket } from "@/app/api/socket/socketContext"; // Importa signOut
+import { useSocket } from "@/app/api/socket/socketContext";
+import Loader from "@/components/common/Loader";
 
 interface Game {
   id: number;
@@ -23,7 +24,7 @@ const Belatra: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const swiperRef = useRef<any>(null);
   const { socket } = useSocket();
 
@@ -51,7 +52,6 @@ const Belatra: React.FC = () => {
           if (machine) {
             setMachineStatus(machine.status);
 
-            // Mostrar alerta si la máquina está deshabilitada
             if (machine.status === 0) {
               setTimeout(async () => {
                 const result = await Swal.fire({
@@ -68,20 +68,18 @@ const Belatra: React.FC = () => {
                 });
 
                 if (result.isConfirmed) {
-                  // Cierra la sesión del usuario cuando la máquina está deshabilitada
                   await signOut({ callbackUrl: '/' });
                 }
                 setLoading(false);
               }, 1000);
 
-              return; // Detener el flujo si la máquina está deshabilitada
+              return;
             }
           } else {
             console.warn("No se encontró la máquina con el ID proporcionado.");
           }
         }
 
-        // Llamar a la API con el idMachine
         const provider = 29;
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
@@ -112,7 +110,6 @@ const Belatra: React.FC = () => {
         }
 
         setLoading(false);
-
       } catch (error) {
         console.error("Error al obtener los datos de sesión:", error);
         setLoading(false);
@@ -120,7 +117,7 @@ const Belatra: React.FC = () => {
     };
 
     fetchData();
-    
+
     if (socket) {
       const handleGameStatusUpdated = (gameStatusChange: Game) => {
         console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
@@ -128,13 +125,12 @@ const Belatra: React.FC = () => {
           const updatedGames = prevGames.map(game =>
             game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
           );
-          console.log('Juegos después de la actualización:', updatedGames);
           return updatedGames;
         });
       };
-    
+
       socket.on('gameStatusUpdated', handleGameStatusUpdated);
-    
+
       return () => {
         socket.off('gameStatusUpdated', handleGameStatusUpdated);
       };
@@ -153,7 +149,7 @@ const Belatra: React.FC = () => {
     }
   };
 
-  const handleGameClick = (game: any) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
   
@@ -161,40 +157,37 @@ const Belatra: React.FC = () => {
     setSelectedGame(null);
   };
 
-  // Filtrar juegos que están activos
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
     <div className="belatra-container">
       {loading ? (
-        <p>Loading...</p> 
+        <Loader />
       ) : (
         <>
-          <div className="navigation-buttons">
+          <div className="splide">
             <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
             <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
           </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
-            {[...Array(Math.ceil(games.length / 8))].map((_, pageIndex) => (
+            {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
-               <div className="swiper-slide-content">
-              {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
-                <div key={index} className="col-3 col-md-3">
-                  <div className="btn-game" onClick={() => handleGameClick(game)}>
-                    <Image
-                      src={game.image}
-                      alt={game.name}
-                      style={{ width: '100%' }}
-                      width={500}
-                      height={500}
-                    />
-                    <div className="subtitle">
-                      {game.name}
+                <div className="swiper-slide-content">
+                  {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game) => (
+                    <div key={game.id} className="col-3 col-md-3">
+                      <div className="btn-game" onClick={() => handleGameClick(game)}>
+                        <Image
+                          src={game.image}
+                          alt={game.name}
+                          style={{ width: '100%' }}
+                          width={500}
+                          height={500}
+                        />
+                        <div className="subtitle">{game.name}</div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
               </SwiperSlide>
             ))}
           </Swiper>

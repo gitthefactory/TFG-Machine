@@ -15,6 +15,7 @@ import Loader from "@/components/common/Loader";
 import Image from "next/image";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
+import { useRouter } from 'next/router';
 
 type GameLayoutProps = {
     children: React.ReactNode; // Define children como un tipo que puede ser cualquier nodo de React
@@ -32,7 +33,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({children}) => {
   const [selectedMachineBalance, setSelectedMachineBalance] =
     useState<MachineBalance | null>(null);
   const { socket } = useSocket();
-
+  
   useEffect(() => {
     
     const fetchSelectedMachineBalance = async () => {
@@ -119,12 +120,6 @@ const GameLayout: React.FC<GameLayoutProps> = ({children}) => {
     });
     window.location.href = url;
   };
-
-
-
-
-
-  
 
   const handleSectionChange = (section: string) => {
     setIsLoading(true);
@@ -305,7 +300,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({children}) => {
 <div className="bottom_bar">
 <div style={{ width:'100%'}}> 
         <ul className="menubar">
-        <li><a href="#" onClick={handleAll}>TODOS</a></li>
+        <li><a onClick={handleAll}>TODOS</a></li>
           <li><a href="#" onClick={handleSlots}>SLOTS</a></li>
           <li><a href="#"onClick={handleLive}>CASINO EN VIVO</a></li>
           <li><a href="#">BINGO</a></li>

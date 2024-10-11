@@ -22,9 +22,12 @@ const Maquinas: React.FC = () => {
   const [showKeyboard, setShowKeyboard] = useState(false); // Estado para mostrar/ocultar el teclado
   const [activeInput, setActiveInput] = useState<string | null>(null); // Input activo
   const keyboardRef = useRef<HTMLDivElement>(null); // Referencia para el contenedor del teclado
-
   const router = useRouter();
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null); // Especificar el tipo correcto
+
+
   const { data: session } = useSession(); // Obtiene la sesión actual
+  
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     setInfo((prev) => ({
       ...prev,
@@ -34,6 +37,7 @@ const Maquinas: React.FC = () => {
           : e.target.value,
     }));
   }
+
   function handleInputFocus(inputName: string) {
     setActiveInput(inputName); // Cambia el input activo con el nombre pasado como argumento
     setShowKeyboard(true); // Muestra el teclado cuando haces foco en un input
@@ -68,7 +72,7 @@ const Maquinas: React.FC = () => {
       if (res.status === 200) {
         const machines = res.data.data;
         const machine = machines.find((m: any) => m.id_machine === idMachine);
-        console.log("LA MAKINA E :", machine);
+        console.log("LA MAQUINA E :", machine);
         if (machine && machine.status === 0) {
           return false; // Máquina con status 0, no se debe permitir el login
         }
@@ -82,53 +86,14 @@ const Maquinas: React.FC = () => {
     }
   }
 
-  // async function verificarEstadoSignIn(idMachine: string) {
-  //     try {
-  //         // Realiza una solicitud GET para obtener todas las máquinas
-  //         const res = await axios.get(`/api/maquinas`);
-
-  //         if (res.status === 200) {
-  //             // Extrae los datos de la respuesta
-  //             const machines = res.data.data;
-
-  //             // Busca la máquina con el id_machine especificado
-  //             const machine = machines.find((m: any) => m.id_machine === idMachine);
-
-  //             // Imprime la máquina encontrada para depuración
-  //             console.log('LA MAQUINA ES:', machine);
-
-  //             if (machine && machine.signIn === 1) {
-  //                 // Si la máquina tiene status 1, no se debe permitir el login
-  //                 return false;
-  //             }
-  //             // Si la máquina tiene status distinto de 1, se puede proceder
-  //             return true;
-  //         } else {
-  //             // Lanza un error si la respuesta no es 200 OK
-  //             throw new Error("Error al verificar el estado de la máquina");
-  //         }
-  //     } catch (error) {
-  //         // Imprime el error y lo lanza nuevamente
-  //         console.error("Error al verificar el estado de la máquina:", error);
-  //         throw error;
-  //     }
-  // }
-
   useEffect(() => {
- // Verificar si hay un token en las cookies
- const cookies = document.cookie.split("; ");
- const idMachineCookie = cookies.find((cookie) => cookie.startsWith("id_machine="));
+    const cookies = document.cookie.split("; ");
+    const idMachineCookie = cookies.find((cookie) => cookie.startsWith("id_machine="));
 
- if (idMachineCookie) {
-   // Extraer el valor de la cookie
-   const idMachineValue = idMachineCookie.split("=")[1];
-   // Redirigir a la página de juegos con el id_machine encontrado
-   router.replace(`/games/?idMachine=${idMachineValue}`);
- }
-    // if (session) {
-    //   // Si hay sesión, redirige a la página deseada
-    //   router.replace("/games/?idMachine=" + session.user.id_machine); // O la URL que desees
-    // }
+    if (idMachineCookie) {
+      const idMachineValue = idMachineCookie.split("=")[1];
+      router.push(`/game/?idMachine=${idMachineValue}`);
+    }
 
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -145,7 +110,7 @@ const Maquinas: React.FC = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeInput, keyboardRef,session, router]);
+  }, [activeInput, keyboardRef, session, router]);
 
   async function obtenerInformacionMaquina(idMachine: string) {
     try {
@@ -165,22 +130,18 @@ const Maquinas: React.FC = () => {
 
   async function actualizarEstadoSignIn(idMachine: string) {
     try {
-      // Primero, obtener la máquina para verificar que existe
       const res = await axios.get(`/api/maquinas`);
       if (res.status === 200) {
         const machines = res.data.data;
         const machine = machines.find((m: any) => m.id_machine === idMachine);
         if (machine) {
-          // Máquina encontrada, proceder a actualizar el estado
           const updateRes = await axios.put(`/api/maquinas/${machine._id}`, {
             signIn: 1,
           });
           if (updateRes.status === 200) {
             console.log("Estado de signIn actualizado correctamente.");
           } else {
-            throw new Error(
-              "Error al actualizar el estado de signIn de la máquina",
-            );
+            throw new Error("Error al actualizar el estado de signIn de la máquina");
           }
         } else {
           throw new Error("Máquina no encontrada");
@@ -203,26 +164,14 @@ const Maquinas: React.FC = () => {
 
     setLoading(true);
     try {
-      // Verificar estado de la máquina antes de iniciar sesión
-      // const estadoSignin = await verificarEstadoSignIn(info.id_machine)
       const estadoMaquina = await verificarEstadoMaquina(info.id_machine);
-      // if (!estadoSignin) {
-      //     setError("El usuario está activo en otra ubicación.");
-      //     setLoading(false);
-      //     return;
-      // }
       if (!estadoMaquina) {
-        setError(
-          "La máquina está inactiva. Por favor, contacte al administrador.",
-        );
+        setError("La máquina está inactiva. Por favor, contacte al administrador.");
         setLoading(false);
         return;
       }
 
-      console.log(
-        "Enviando solicitud al backend con los siguientes datos:",
-        info,
-      );
+      console.log("Enviando solicitud al backend con los siguientes datos:", info);
       const res = await signIn("credentialsmaquina", {
         id_machine: info.id_machine,
         password: info.password,
@@ -245,8 +194,7 @@ const Maquinas: React.FC = () => {
         });
         setLoading(false);
       } else {
-        // Obtener información de la sala asociada a la máquina
-        document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() +100* 365 * 864e5).toUTCString()}`;
+        document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
@@ -273,16 +221,13 @@ const Maquinas: React.FC = () => {
 
           if (result.isConfirmed) {
             await actualizarEstadoSignIn(info.id_machine);
-            router.replace(`/games/?idMachine=${info.id_machine}`);
+            setRedirectUrl(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
           }
           setLoading(false);
         }, 1000);
       }
     } catch (error) {
-      console.error(
-        "Ocurrió un error al manejar la respuesta del backend:",
-        error,
-      );
+      console.error("Ocurrió un error al manejar la respuesta del backend:", error);
       setError("Ocurrió un error al iniciar sesión");
       setLoading(false);
     }
@@ -412,6 +357,9 @@ const Maquinas: React.FC = () => {
         )}
       </div>
       </SessionProvider>
+      {redirectUrl && ( // Redirigir después de iniciar sesión correctamente
+        <Link href={redirectUrl} />
+      )}
     </>
   );
 };

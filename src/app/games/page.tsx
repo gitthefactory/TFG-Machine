@@ -1,22 +1,36 @@
 "use client";
-
-import React from 'react';
-import GameComponent from '@/components/game/GameComponent';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Belatra from '@/components/game/belatra';
+import Bgaming from '@/components/game/bgaming';
+import Aspect from '@/components/game/aspect';
+import Booming from '@/components/game/Booming';
+import PopOK from '@/components/game/PopOk';
 import GameLayout from '@/components/game/GameLayout';
-import Providers from '@/components/game/providers'
 import { SocketProvider } from '@/app/api/socket/socketContext';
-import { SessionProvider } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
-const GamePage: React.FC = () => {
+const Games: React.FC = () => {
+  const [visibleSection, setVisibleSection] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const provider = searchParams.get('provider');
+
+  useEffect(() => {
+    if (provider) {
+      setVisibleSection(provider.toLowerCase());
+    }
+  }, [provider]);
+
   return (
-    <SessionProvider>
     <SocketProvider>
       <GameLayout>
-        <Providers/>
+        {visibleSection === 'belatra' && <Belatra />}
+        {visibleSection === 'bgaming' && <Bgaming />}
+        {visibleSection === 'aspect' && <Aspect />}
+        {visibleSection === 'booming' && <Booming />}
+        {visibleSection === 'popok' && <PopOK />}
       </GameLayout>
     </SocketProvider>
-    </SessionProvider>
   );
 };
 
-export default GamePage;
+export default Games;
