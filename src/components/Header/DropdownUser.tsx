@@ -77,7 +77,9 @@ const DropdownUser = () => {
     </span>
     
     <span className="block text-xs">{user.name}</span>
-    <span className="balance">Balance disponible : {user.balance}</span>  
+    {user.typeProfile !== "master" && user.typeProfile !== "660ebaa7b02ce973cad66550" && (
+    <span className="balance">Balance disponible: {user.balance}</span>
+  )}
   </span>
   
 )}
