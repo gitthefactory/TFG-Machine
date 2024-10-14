@@ -18,7 +18,7 @@ interface Game {
   status: number;
 }
 
-const Belatra: React.FC = () => {
+const Igrosoft: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -80,7 +80,7 @@ const Belatra: React.FC = () => {
           }
         }
 
-        const provider = 29;
+        const provider = 89;
         const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
         const data = await response.json();
 
@@ -97,14 +97,14 @@ const Belatra: React.FC = () => {
 
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
+          const activeIgrosoftGames = data.data.games.filter((game: any) => game.maker === 'igrosoft' && game.status === 1);
 
-          const finalBelatraGames = activeBelatraGames.filter(belatraGame => 
-            activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
+          const finalIgrosoftGames = activeIgrosoftGames.filter(igrosoftGame => 
+            activeGlobalGames.some(globalGame => globalGame.id === igrosoftGame.id)
           );
 
-          console.log('Juegos activos de Belatra:', finalBelatraGames);
-          setGames(finalBelatraGames);
+          console.log('Juegos activos de Igrosoft:', finalIgrosoftGames);
+          setGames(finalIgrosoftGames);
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
         }
@@ -160,7 +160,7 @@ const Belatra: React.FC = () => {
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
-    <div className="belatra-container">
+    <div className="igrosoft-container">
       {loading ? (
         <Loader />
       ) : (
@@ -200,4 +200,4 @@ const Belatra: React.FC = () => {
   );
 }
 
-export default Belatra;
+export default Igrosoft;

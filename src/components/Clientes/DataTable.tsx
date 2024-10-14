@@ -5,7 +5,7 @@ import DeleteButton from '@/components/Clientes/DeleteButton'
 import Link from "next/link";
 import { FaPen } from "react-icons/fa";
 import { useSocket } from "@/app/api/socket/socketContext";
-
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 interface User {
   _id: string;
@@ -101,8 +101,13 @@ const UserDataTable: React.FC = () => {
       button: true,
     },
     {
-      name: 'ID',
-      selector: (row: User) => row._id,
+      name: 'Telefono 1',
+      selector: (row: User) => row.contactNumber1,
+      sortable: true,
+    },
+    {
+      name: 'Balance',
+      selector: (row: User) => row.balance,
       sortable: true,
     },
     {
@@ -110,11 +115,7 @@ const UserDataTable: React.FC = () => {
       selector: (row: User) => row.nombreCompleto,
       sortable: true,
     },
-    // {
-    //   name: 'Maquina',
-    //   selector: (row: User) => row.games.length > 0 ? "Sí" : "No",
-    //   sortable: true,
-    // },
+ 
     {
       name: 'Correo Electrónico',
       selector: (row: User) => row.email,
@@ -132,6 +133,14 @@ const UserDataTable: React.FC = () => {
             style={{ fontSize: '20px' }}
           >
             <FaPen />
+          </Link>
+          <Link
+            href={`/dashboard/usuarios/abonar/${row._id}`}
+            className="balance"
+            title="DepositarBalance"
+            style={{ fontSize: '20px' }}
+          >
+            <FaMoneyBillTransfer />
           </Link>
         </div>
       ),

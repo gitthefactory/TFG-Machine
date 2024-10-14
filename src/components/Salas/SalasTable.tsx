@@ -8,6 +8,8 @@ import { getSession } from "next-auth/react";
 import getRooms from '@/controllers/getRooms'; // Asegúrate de que esta función esté bien importada
 import { useSocket } from "@/app/api/socket/socketContext";
 import Loader from "../common/Loader";
+import { FaMoneyBill } from "react-icons/fa6";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 interface SalaData {
   _id: string;
@@ -178,6 +180,11 @@ const SalasTable: React.FC = () => {
       sortable: true,
     },
     {
+      name: 'Balance',
+      selector: (row: SalaData) => row.balance, // Une los elementos del array si es necesario
+      sortable: true,
+    },
+    {
       name: 'Acciones',
       cell: (row: SalaData) => (
         <div className="flex items-center space-x-3.5">
@@ -189,7 +196,24 @@ const SalasTable: React.FC = () => {
             style={{ fontSize: '20px' }}
           >
             <FaPen />
+            
           </Link>
+          <Link
+            href={`/dashboard/salas/creditRoom/${row._id}`}
+            className="transfer"
+            title="CreditRoom"
+            style={{ fontSize: '20px', color: 'green'}}
+          >
+            <FaMoneyBillTransfer />
+          </Link>
+          {/* <Link
+            href={`/dashboard/salas/transferir/${(row.id_machine)}`}
+            className="transfer"
+            title="debitRoom"
+            style={{ fontSize: '20px',color: 'red' }}
+          >
+            <FaMoneyBill />
+          </Link> */}
        
         </div>
       ),

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Splide from '@splidejs/splide'; // Asegúrate de haber instalado Splide
+import Splide from "@splidejs/splide";
 import Bgaming from "./bgaming";
 import Belatra from "./belatra";
 import getSessionData from "@/controllers/getSession";
-import Loader from "@/components/common/Loader";
 import Aspect from "./aspect";
 import Booming from "./Booming";
 import PopOK from "./PopOk";
-import '@splidejs/splide/dist/css/splide.min.css'; // Importa el CSS de Splide
+import { useRouter, useSearchParams } from "next/navigation";
+import "@splidejs/splide/dist/css/splide.min.css";
+import Link from "next/link";
+import Igrosoft from "./igrosoft";
 
 const Providers: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
@@ -16,12 +18,26 @@ const Providers: React.FC = () => {
   const [aspectStatus, setAspectStatus] = useState<number | null>(null);
   const [boomingStatus, setBoomingStatus] = useState<number | null>(null);
   const [popokGameStatus, setPopokGameStatus] = useState<number | null>(null);
+  const [igrosoftStatus, setIGROsoftStatus] = useState<number |null>(null);
   const [loading, setLoading] = useState(false);
   const [showBelatraButton, setShowBelatraButton] = useState(false);
   const [showBgamingButton, setShowBgamingButton] = useState(false);
   const [showAspectButton, setShowAspectButton] = useState(false);
   const [showBoomingButton, setShowBoomingButton] = useState(false);
   const [popokGameButton, setShowPopokGameButton] = useState(false);
+  const [igrosoftButton, setShowIGROsoftButton] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const idMachine = searchParams.get("idMachine");
+  const provider = searchParams.get("provider");
+
+  useEffect(() => {
+    if (idMachine && provider) {
+      // Lógica para manejar la data basada en `idMachine` y `provider`
+      console.log("idMachine:", idMachine);
+      console.log("provider:", provider);
+    }
+  }, [idMachine, provider]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,21 +46,16 @@ const Providers: React.FC = () => {
         const sessionData = await getSessionData();
 
         if (sessionData.status === 200) {
-          const { id_machine } = sessionData.data.user;
           const providersResponse = await fetch(`/api/providers`);
           const providersData = await providersResponse.json();
 
           if (providersData.message === "Ok") {
-            const params = new URLSearchParams(window.location.search);
-            const idMachineFromURL = params.get("idMachine");
-
-            if (idMachineFromURL) {
-              const response = await fetch(
-                `/api/juegosApi/${idMachineFromURL}`
-              );
+            if (idMachine) {
+              const response = await fetch(`/api/juegosApi/${idMachine}`);
               const data = await response.json();
 
               if (data.data && Array.isArray(data.data.providers)) {
+                // Procesa los proveedores
                 const belatraProvider = data.data.providers.find(
                   (p: any) => p.provider === 29
                 );
@@ -60,7 +71,11 @@ const Providers: React.FC = () => {
                 const popokProvider = data.data.providers.find(
                   (p: any) => p.provider === 88
                 );
+                const igrosoftProvider = data.data.providers.find(
+                  (p: any) => p.provider === 89
+                );
 
+                // Actualiza los estados de los proveedores según la respuesta
                 if (belatraProvider) {
                   setBelatraStatus(belatraProvider.status);
                   setShowBelatraButton(
@@ -84,6 +99,7 @@ const Providers: React.FC = () => {
                       )
                   );
                 }
+
                 if (aspectProvider) {
                   setAspectStatus(aspectProvider.status);
                   setShowAspectButton(
@@ -95,6 +111,7 @@ const Providers: React.FC = () => {
                       )
                   );
                 }
+
                 if (boomingProvider) {
                   setBoomingStatus(boomingProvider.status);
                   setShowBoomingButton(
@@ -106,6 +123,7 @@ const Providers: React.FC = () => {
                       )
                   );
                 }
+
                 if (popokProvider) {
                   setPopokGameStatus(popokProvider.status);
                   setShowPopokGameButton(
@@ -117,18 +135,25 @@ const Providers: React.FC = () => {
                       )
                   );
                 }
+                if (igrosoftProvider) {
+                  setIGROsoftStatus(igrosoftProvider.status);
+                  setShowIGROsoftButton(
+                    igrosoftProvider.status === 1 &&
+                      providersData.data.some(
+                        (p: any) =>
+                          p.provider_name.toLowerCase() === "igrosoft games" &&
+                          p.status === 1
+                      )
+                  );
+                }
               } else {
-                console.error(
-                  "La API /api/juegosApi no devolvió un estado válido."
-                );
+                console.error("La API /api/juegosApi no devolvió un estado válido.");
               }
             } else {
               console.error("idMachine parameter not found in URL");
             }
           } else {
-            console.error(
-              "La API /api/providers no devolvió un estado válido."
-            );
+            console.error("La API /api/providers no devolvió un estado válido.");
           }
         }
       } catch (error) {
@@ -139,65 +164,65 @@ const Providers: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [idMachine]);
 
-  const handleProvider = useCallback((provider: string) => {
-    setLoading(true);
-    setVisibleSection(provider);
-    setTimeout(() => setLoading(false), 900);
-  }, []);
+  const handleProvider = useCallback(
+    (provider: string) => {
+      if (idMachine) {
+        router.push(`/provider?idMachine=${idMachine}&provider=${provider}`);
+      } else {
+        console.error("idMachine no está disponible en la consulta.");
+      }
+    },
+    [idMachine, router]
+  );
 
   useEffect(() => {
-    const splide = new Splide('#splide', {
-      type: 'loop',
+    const splide = new Splide("#splide", {
+      type: "loop",
       perPage: 5,
       breakpoints: {
-        '1280': {
+        1280: {
           perPage: 2,
         },
       },
-      focus: 'center',
+      focus: "center",
       autoplay: true,
       interval: 5000,
       flickMaxPages: 3,
       updateOnMove: true,
       pagination: false,
-      padding: '10%',
+      padding: "10%",
       throttle: 300,
     });
 
     splide.mount();
 
-    // Cleanup function to destroy the instance when the component unmounts
     return () => splide.destroy();
-  }, []); // Solo se ejecuta una vez al montar el componente
+  }, []);
 
   return (
     <div id="splide" className="splide" style={{ textAlign: "center" }}>
       <div className="splide__track" style={{ display: "flex", justifyContent: "center" }}>
         <ul className="splide__list">
-          <li className="splide__slide" onClick={() => handleProvider("belatra")}>
-            <img src="/images/img/New-Providers/belatra.png" alt="Belatra" />
-          </li>
-          <li className="splide__slide" onClick={() => handleProvider("bgaming")}>
+          <Link href={`/games?idMachine=${idMachine}&provider=belatra`} className="splide__slide">
+            <img src="/images/img/New-Providers/belatra.png" alt="belatra" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=bgaming`} className="splide__slide">
             <img src="/images/img/New-Providers/bgaming.png" alt="Bgaming" />
-          </li>
-          <li className="splide__slide" onClick={() => handleProvider("aspect")}>
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=aspect`} className="splide__slide"  >
             <img src="/images/img/New-Providers/aspect.png" alt="Aspect" />
-          </li>
-        {/*   {showAspectButton && (
-            <button
-              className="splide__slide"
-              onClick={() => handleProvider("booming")}
-              style={{
-                display: visibleSection ? "none" : "inline-block",
-                margin: "0 5px",
-              }}
-            > */}
-          <li className="splide__slide" onClick={() => handleProvider("booming")}>
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=booming`} className="splide__slide">
             <img src="/images/img/New-Providers/booming.png" alt="Booming" />
-          </li>
-          {/* Agrega más proveedores según sea necesario */}
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=popok`} className="splide__slide">
+          <img src="/images/img/popok/popok.png" alt="" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=igrosoft`} className="splide__slide">
+          <img src="/images/img/igrosoft/igrosoft.png" alt="" />
+          </Link>
         </ul>
       </div>
       {visibleSection && (

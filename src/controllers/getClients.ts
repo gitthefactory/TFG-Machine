@@ -15,14 +15,14 @@ export default async function getClients(query: string, currentPage: number) {
 
       // Permitir el acceso completo si el typeProfile es '660ebaa7b02ce973cad66550'
       if (typeProfile === '660ebaa7b02ce973cad66550') {
-        const response = await fetch(`/api/clientes?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+        const response = await fetch(`/api/usuarios?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
           cache: "no-store",
         });
 
         const clients = await response.json();
         return clients.data;
       } else {
-        const response = await fetch(`/api/clientes?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
+        const response = await fetch(`/api/usuarios?query=${query}&limit=${ITEMS_PER_PAGE}&offset=${offset}`, {
           cache: "no-store",
         });
 

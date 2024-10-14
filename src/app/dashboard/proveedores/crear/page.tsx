@@ -85,6 +85,10 @@ export default function CrearProveedores() {
               setImg("/images/img/buttons/bgaming1.png");
               setProvider_name("Aspect");
         break;
+        case 89: // Aquí puedes agregar más casos según necesites
+        setImg("/images/img/buttons/bgaming1.png");
+        setProvider_name("Igrosoft");
+        break;
         case 999: // Aquí puedes agregar más casos según necesites
         // ...
         break;
