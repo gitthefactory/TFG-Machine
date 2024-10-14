@@ -175,7 +175,7 @@ const Belatra: React.FC = () => {
                 <div className="swiper-slide-content">
                   {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game) => (
                     <div key={game.id} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
+                      <div className="col p-1" onClick={() => handleGameClick(game)}>
                         <Image
                           src={game.image}
                           alt={game.name}
