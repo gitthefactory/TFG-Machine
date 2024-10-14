@@ -23,7 +23,8 @@ const provider = {
   68: "Bgaming",
   12 : "Booming Games",
   87 : "Aspect Gaming",
-  88 : "popOk"
+  88 : "popOk",
+  89 : "Igrosoft",
   // Añade más proveedores según sea necesario
 };
 
