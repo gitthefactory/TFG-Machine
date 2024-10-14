@@ -29,7 +29,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       action: 'BALANCE',
       amount,
       balance: user.balance,
-      message: 'Depósito exitoso',
+      message: `Creditación a usuario : ${user.nombreCompleto}`,
     });
 
     await newTransaction.save();
@@ -40,6 +40,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       user: {
         balance: user.balance,
         depositLimit: user.depositLimit,
+        user: user.nombreCompleto
       },
       transaction: newTransaction,
     }, { status: 201 });

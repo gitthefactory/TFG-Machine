@@ -15,6 +15,7 @@ const AbonarBalancePage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [amount, setAmount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   useEffect(() => {
     const fetchUser = async () => {
       try {
