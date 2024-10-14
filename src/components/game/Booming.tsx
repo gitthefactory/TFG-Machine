@@ -192,7 +192,7 @@ const Belatra: React.FC = () => {
                       .map((game, index) => (
                         <div key={index} className="col-3 col-md-3">
                           <div
-                            className="btn-game"
+                            className="col p-1"
                             onClick={() => handleGameClick(game)}
                           >
                             <Image
