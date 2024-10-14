@@ -67,14 +67,21 @@ const DropdownUser = () => {
   href="#"
 >
 {user && (
+  
   <span className="hidden text-right lg:block">
+    
     <span className="block text-sm font-medium text-black dark:text-white">
       {user.typeProfile === "660ebaa7b02ce973cad66550" ? "Master" : ""}
       {user.typeProfile === "660ebaa7b02ce973cad66551" ? "Cliente" : ""}
       {user.typeProfile === "660ebaa7b02ce973cad66552" ? "Operador" : ""}
     </span>
+    
     <span className="block text-xs">{user.name}</span>
+    {user.typeProfile !== "master" && user.typeProfile !== "660ebaa7b02ce973cad66550" && (
+    <span className="balance">Balance disponible: {user.balance}</span>
+  )}
   </span>
+  
 )}
         <FaAngleDown />
       </Link>

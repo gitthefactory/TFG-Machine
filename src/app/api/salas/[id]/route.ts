@@ -90,4 +90,48 @@ export async function GET(request: any, { params: { id } }: any) {
       );
     }
   }
+
+  // PATCH para actualizar el balance de una sala
+export async function PATCH(request: any, { params: { id } }: any) {
+  try {
+    const { balance } = await request.json();
+
+    // Conectar a la base de datos
+    await connectDB();
+
+    // Actualizar solo el balance
+    const updatedSala = await Room.findByIdAndUpdate(
+      id,
+      { balance }, // Solo actualizar el campo balance
+      { new: true } // Retornar el documento actualizado
+    );
+
+    if (!updatedSala) {
+      return NextResponse.json(
+        {
+          message: "Sala no encontrada",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        message: "Balance de sala actualizado con éxito",
+        data: updatedSala,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "Error al actualizar el balance de la sala",
+        error,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
   

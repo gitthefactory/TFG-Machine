@@ -12,6 +12,7 @@ interface Room extends Document {
   currency: string[]; 
   address: string;
   phone: number;
+  balance?:number  ; 
 
 }
 
@@ -35,6 +36,7 @@ const RoomSchema = new Schema<Room>({
   },
   address: { type: String, required: true },
   phone: { type: Number, default: 1 },
+  balance : {type: Number, default : 0 ,required: false}
   },
 {
   timestamps: true,

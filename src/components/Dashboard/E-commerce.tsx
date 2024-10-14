@@ -23,7 +23,8 @@ const provider = {
   68: "Bgaming",
   12 : "Booming Games",
   87 : "Aspect Gaming",
-  88 : "popOk"
+  88 : "popOk",
+  89 : "Igrosoft",
   // Añade más proveedores según sea necesario
 };
 
@@ -156,6 +157,7 @@ const ECommerce: React.FC = () => {
 
   return (
     <>
+    
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         {user === "660ebaa7b02ce973cad66550" && (
           <CardDataStats title="Total Clientes" total={users.length}>
