@@ -3,13 +3,13 @@ import Splide from "@splidejs/splide";
 import Bgaming from "./bgaming";
 import Belatra from "./belatra";
 import getSessionData from "@/controllers/getSession";
-import Loader from "@/components/common/Loader";
 import Aspect from "./aspect";
 import Booming from "./Booming";
 import PopOK from "./PopOk";
 import { useRouter, useSearchParams } from "next/navigation";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Link from "next/link";
+import Igrosoft from "./igrosoft";
 
 const Providers: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
@@ -18,12 +18,14 @@ const Providers: React.FC = () => {
   const [aspectStatus, setAspectStatus] = useState<number | null>(null);
   const [boomingStatus, setBoomingStatus] = useState<number | null>(null);
   const [popokGameStatus, setPopokGameStatus] = useState<number | null>(null);
+  const [igrosoftStatus, setIGROsoftStatus] = useState<number |null>(null);
   const [loading, setLoading] = useState(false);
   const [showBelatraButton, setShowBelatraButton] = useState(false);
   const [showBgamingButton, setShowBgamingButton] = useState(false);
   const [showAspectButton, setShowAspectButton] = useState(false);
   const [showBoomingButton, setShowBoomingButton] = useState(false);
   const [popokGameButton, setShowPopokGameButton] = useState(false);
+  const [igrosoftButton, setShowIGROsoftButton] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const idMachine = searchParams.get("idMachine");
@@ -68,6 +70,9 @@ const Providers: React.FC = () => {
                 );
                 const popokProvider = data.data.providers.find(
                   (p: any) => p.provider === 88
+                );
+                const igrosoftProvider = data.data.providers.find(
+                  (p: any) => p.provider === 89
                 );
 
                 // Actualiza los estados de los proveedores según la respuesta
@@ -126,6 +131,17 @@ const Providers: React.FC = () => {
                       providersData.data.some(
                         (p: any) =>
                           p.provider_name.toLowerCase() === "popok games" &&
+                          p.status === 1
+                      )
+                  );
+                }
+                if (igrosoftProvider) {
+                  setIGROsoftStatus(igrosoftProvider.status);
+                  setShowIGROsoftButton(
+                    igrosoftProvider.status === 1 &&
+                      providersData.data.some(
+                        (p: any) =>
+                          p.provider_name.toLowerCase() === "igrosoft games" &&
                           p.status === 1
                       )
                   );
@@ -200,6 +216,12 @@ const Providers: React.FC = () => {
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=booming`} className="splide__slide">
             <img src="/images/img/New-Providers/booming.png" alt="Booming" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=popok`} className="splide__slide">
+          <img src="/images/img/popok/popok.png" alt="" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=igrosoft`} className="splide__slide">
+          <img src="/images/img/igrosoft/igrosoft.png" alt="" />
           </Link>
         </ul>
       </div>

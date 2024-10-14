@@ -92,7 +92,7 @@ const Maquinas: React.FC = () => {
 
     if (idMachineCookie) {
       const idMachineValue = idMachineCookie.split("=")[1];
-      router.push(`/game/?idMachine=${idMachineValue}`);
+      router.push(`/provider/?idMachine=${idMachineValue}`);
     }
 
     function handleClickOutside(event: MouseEvent) {
