@@ -1,5 +1,6 @@
 "use client";
-import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import Belatra from '@/components/game/belatra';
 import Bgaming from '@/components/game/bgaming';
 import Aspect from '@/components/game/aspect';
@@ -8,9 +9,9 @@ import PopOK from '@/components/game/PopOk';
 import Igrosoft from '@/components/game/igrosoft';
 import GameLayout from '@/components/game/GameLayout';
 import { SocketProvider } from '@/app/api/socket/socketContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
-const Games: React.FC = () => {
+const GamesContent: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const provider = searchParams.get('provider');
@@ -22,17 +23,27 @@ const Games: React.FC = () => {
   }, [provider]);
 
   return (
-    <SocketProvider>
-      <GameLayout>
-        {visibleSection === 'belatra' && <Belatra />}
-        {visibleSection === 'bgaming' && <Bgaming />}
-        {visibleSection === 'aspect' && <Aspect />}
-        {visibleSection === 'booming' && <Booming />}
-        {visibleSection === 'popok' && <PopOK />}
-        {visibleSection === 'igrosoft' && <Igrosoft />}
-      </GameLayout>
-    </SocketProvider>
+    <GameLayout>
+      {visibleSection === 'belatra' && <Belatra />}
+      {visibleSection === 'bgaming' && <Bgaming />}
+      {visibleSection === 'aspect' && <Aspect />}
+      {visibleSection === 'booming' && <Booming />}
+      {visibleSection === 'popok' && <PopOK />}
+      {visibleSection === 'igrosoft' && <Igrosoft />}
+    </GameLayout>
   );
 };
 
-export default Games;
+const Games = dynamic(() => Promise.resolve(GamesContent), {
+  ssr: false,
+});
+
+export default function GamesPage() {
+  return (
+    <SocketProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Games />
+      </Suspense>
+    </SocketProvider>
+  );
+}
