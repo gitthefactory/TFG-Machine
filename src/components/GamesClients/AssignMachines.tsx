@@ -199,7 +199,7 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
     try {
       const updatedGamesPromises = providers.map(async (provider) => {
         const updatedGame = { ...provider, status: newStatus };
-    
+  
         const response = await fetch(`/api/maquinas/${maquina._id}`, {
           method: "PUT",
           headers: {
@@ -209,26 +209,23 @@ const EditarMaquina: React.FC<{ maquina: any }> = ({ maquina }) => {
             games: updatedGame,
           }),
         });
-    
+  
         if (response.ok) {
-          if (newStatus === 1) {
-            toast.success(`Juego ${provider.name} activado exitosamente`);
-          } else if (newStatus === 0) {
-            toast.error(`Juego ${provider.name} desactivado exitosamente`);
-          }
-    
           return updatedGame; // Devuelve el juego actualizado para Promise.all
         } else {
           console.error("Hubo un error al actualizar la máquina.");
           return null; // Manejar errores de manera adecuada
         }
       });
-    
+  
       const updatedGames = await Promise.all(updatedGamesPromises);
       
       // Actualiza el estado de providers con todos los juegos actualizados
       setProviders(updatedGames.filter(game => game !== null)); // Filtra los juegos nulos por si hubo errores
-    
+  
+      // Mensaje de éxito para todos los juegos
+      toast.success(`Todos los juegos se han actualizado con éxito`);
+  
     } catch (error) {
       console.error("Error de red:", error);
     }
