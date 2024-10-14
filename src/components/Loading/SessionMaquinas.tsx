@@ -194,7 +194,7 @@ const Maquinas: React.FC = () => {
         });
         setLoading(false);
       } else {
-        document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
+       
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
@@ -221,7 +221,8 @@ const Maquinas: React.FC = () => {
 
           if (result.isConfirmed) {
             await actualizarEstadoSignIn(info.id_machine);
-            setRedirectUrl(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
+            router.push(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
+            document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
           }
           setLoading(false);
         }, 1000);
