@@ -22,11 +22,11 @@
 }
 
 .swiper-button-prev-img {
-  background-image: url('/images/img/New-clients/arrow_right.png') !important;
+  background-image: url('/images/img/New-clients/arrow_left.png') !important;
   width: 82px !important;
   height: 100px !important;
   position: absolute;
-  left: -150px !important ;
+  left: -100px !important ;
 }
 
 

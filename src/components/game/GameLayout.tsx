@@ -117,13 +117,27 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
     window.location.href = url;
   };
 
-  const handleSectionChange = (section: string) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
+  const handleSectionChange = async (section: string) => {
+    setIsLoading(true); // Establecer loading a true
+  
+    try {
+      // Simular la carga de contenido (esto sería tu lógica real de carga)
+      await loadContentForSection(section); // Reemplaza esto con tu función de carga real
+    } catch (error) {
+      console.error("Error al cargar la sección:", error);
+    } finally {
+      setIsLoading(false); // Establecer loading a false una vez que la carga está completa
+    }
   };
-
+  
+  // Ejemplo de función que simula la carga de contenido
+  const loadContentForSection = (section: string): Promise<void> => {
+    return new Promise((resolve) => {
+      // Simula un tiempo de carga
+      const loadingTime = Math.random() * 1000 + 500; // Carga entre 500ms y 1500ms
+      setTimeout(resolve, loadingTime);
+    });
+  };
   const handleCrash = () => handleSectionChange("crash");
 
   const handleSlots = () => handleSectionChange("slots");
