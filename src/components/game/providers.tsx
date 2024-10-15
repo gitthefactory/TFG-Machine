@@ -225,15 +225,6 @@ const Providers: React.FC = () => {
           </Link>
         </ul>
       </div>
-      {visibleSection && (
-        <div className="section-content">
-          {visibleSection === "belatra" && <Belatra />}
-          {visibleSection === "bgaming" && <Bgaming />}
-          {visibleSection === "aspect" && <Aspect />}
-          {visibleSection === "booming" && <Booming />}
-          {visibleSection === "popok" && <PopOK />}
-        </div>
-      )}
     </div>
   );
 };

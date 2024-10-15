@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import axios from "axios";
 import "/src/css/swiper.css";
@@ -11,6 +11,7 @@ import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import e from "express";
 
 type GameLayoutProps = {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const idMachine = searchParams.get("idMachine");
+  const provider = searchParams.get("provider");
 
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
@@ -107,6 +109,17 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
       };
     }
   }, [socket, selectedMachineBalance]);
+
+  const handleProvider = useCallback(
+    (provider: string) => {
+      if (idMachine) {
+        router.push(`/provider?idMachine=${idMachine}&provider=${provider}`);
+      } else {
+        console.error("idMachine no está disponible en la consulta.");
+      }
+    },
+    [idMachine, router]
+  );
 
   const clearCookiesAndRedirect = (url: string) => {
     document.cookie.split(";").forEach((cookie) => {
@@ -278,12 +291,20 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   return (
     <>
+    
       <div className="background" style={{ paddingTop: "135px" }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <>
             {/* Top bar */}
-            <div style={{position:"fixed", top:"0"}} >
+            <div style={{
+  position: "fixed",
+  top: "0",
+  left: "50%",
+  transform: "translateX(-50%)",
+  display: "flex",
+  alignItems: "center",
+}} >
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
                   <div className="space-grotesk text-light text-top mt-4 w-100 text-center">

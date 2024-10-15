@@ -685,25 +685,32 @@ body, html {
 
 
 .btn-game {
-  width: 250px !important;
-  height: 250px !important;
+  position: relative;
+  width: 100%;
+  max-width: 250px;
   cursor: pointer;
+  overflow: hidden; /* Esto asegura que el subtítulo no se salga del contenedor */
+  height: auto; 
 }
+
 .btn-game img {
   width: 100%;
   height: auto;
   object-fit: cover;
+  display: block; /* Evita espacios en blanco debajo de la imagen */
 }
+
 .subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0; /* Ajusta según la altura deseada */
   font-family: Arial, Helvetica, sans-serif;
-  width: 232px;
   text-align: center;
   background-color: #6b2dc6;
   color: #fff;
-  text-decoration: none;
   font-size: 14px;
-  position: absolute;
-  bottom: 0; 
 }
 .screen {
   z-index: 99;

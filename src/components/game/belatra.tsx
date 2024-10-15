@@ -27,6 +27,7 @@ const Belatra: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const swiperRef = useRef<any>(null);
   const { socket } = useSocket();
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,16 +166,9 @@ const Belatra: React.FC = () => {
         <Loader />
       ) : (
         <>
-           <div className="navigation-buttons">
-            <div
-              className="swiper-button-prev swiper-button-prev-img"
-              onClick={handlePrevButtonClick}
-            > {/* <Image src="/images/img/arrow_left.png" alt="Arrow Left"  width={70}
-            height={70} onClick={handlePrevButtonClick}/> */}</div>
-            <div
-              className="swiper-button-next swiper-button-next-img"
-              onClick={handleNextButtonClick}
-            ></div>
+          <div className="splide">
+            <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
+            <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
           </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
