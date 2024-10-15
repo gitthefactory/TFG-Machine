@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 type GameLayoutProps = {
-  children: React.ReactNode; 
+  children: React.ReactNode;
 };
 
 interface MachineBalance {
@@ -119,7 +119,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   const handleSectionChange = async (section: string) => {
     setIsLoading(true); // Establecer loading a true
-  
+
     try {
       // Simular la carga de contenido (esto sería tu lógica real de carga)
       await loadContentForSection(section); // Reemplaza esto con tu función de carga real
@@ -129,7 +129,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
       setIsLoading(false); // Establecer loading a false una vez que la carga está completa
     }
   };
-  
+
   // Ejemplo de función que simula la carga de contenido
   const loadContentForSection = (section: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -278,29 +278,25 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <div className="background">
+      <div className="background" style={{ paddingTop: "135px" }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <>
             {/* Top bar */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div className="topbox acu d-flex justify-content-between align-items-center">
-                <div className="space-grotesk text-light text-top mt-4 w-100 text-center">
-                  <span className="fs-6">$</span>12.345.678,90
+            <div style={{position:"fixed", top:"0"}} >
+              <div className="d-flex justify-content-between align-items-center p-3">
+                <div className="topbox acu d-flex justify-content-between align-items-center">
+                  <div className="space-grotesk text-light text-top mt-4 w-100 text-center">
+                    <span className="fs-6">$</span>12.345.678,90
+                  </div>
                 </div>
-              </div>
-              <div className="logo">
-                <img src="/images/img/New-clients/tatan_gaming.png" />
-              </div>
-              <div className="topbox jac d-flex justify-content-between align-items-center">
-                <div className="text-light text-top mt-4 w-100 text-center">
-                  <span className="fs-6">$</span>12.345.678,90
+                <div className="logo">
+                  <img src="/images/img/New-clients/tatan_gaming.png" />
+                </div>
+                <div className="topbox jac d-flex justify-content-between align-items-center">
+                  <div className="text-light text-top mt-4 w-100 text-center">
+                    <span className="fs-6">$</span>12.345.678,90
+                  </div>
                 </div>
               </div>
             </div>
@@ -311,13 +307,13 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
               <div style={{ width: "100%" }}>
                 <ul className="menubar">
                   <li className="nav-section">
-
-                  <Link
-                    href={`/provider?idMachine=${idMachine}`}
-                    className="nav-section">
-                   Todos
-                  </Link>
-                    </li>
+                    <Link
+                      href={`/provider?idMachine=${idMachine}`}
+                      className="nav-section"
+                    >
+                      Todos
+                    </Link>
+                  </li>
                   <li className="nav-section">
                     <a href="#" onClick={handleSlots}>
                       SLOTS
