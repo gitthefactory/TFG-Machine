@@ -1,10 +1,8 @@
 "use client";
 
 import React from 'react';
-import GameComponent from '@/components/game/GameComponent';
 import GameLayout from '@/components/game/GameLayout';
 import Providers from '@/components/game/providers';
-import { useRouter } from 'next/navigation'; 
 import { SocketProvider } from '@/app/api/socket/socketContext';
 import { SessionProvider } from 'next-auth/react';
 

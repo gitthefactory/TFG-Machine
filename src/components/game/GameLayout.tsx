@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import axios from "axios";
 import "/src/css/swiper.css";
 import "/src/css/main.css";
 import "/src/css/bootstrap.min.css";
-import "/src/css/satoshi.css";
 import Loader from "@/components/common/Loader";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 type GameLayoutProps = {
-  children: React.ReactNode; // Define children como un tipo que puede ser cualquier nodo de React
+  children: React.ReactNode;
 };
 
 interface MachineBalance {
@@ -26,6 +27,9 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
   const [selectedMachineBalance, setSelectedMachineBalance] =
     useState<MachineBalance | null>(null);
   const { socket } = useSocket();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const idMachine = searchParams.get("idMachine");
 
   useEffect(() => {
     const fetchSelectedMachineBalance = async () => {
@@ -113,18 +117,31 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
     window.location.href = url;
   };
 
-  const handleSectionChange = (section: string) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
+  const handleSectionChange = async (section: string) => {
+    setIsLoading(true); // Establecer loading a true
+
+    try {
+      // Simular la carga de contenido (esto sería tu lógica real de carga)
+      await loadContentForSection(section); // Reemplaza esto con tu función de carga real
+    } catch (error) {
+      console.error("Error al cargar la sección:", error);
+    } finally {
+      setIsLoading(false); // Establecer loading a false una vez que la carga está completa
+    }
   };
 
+  // Ejemplo de función que simula la carga de contenido
+  const loadContentForSection = (section: string): Promise<void> => {
+    return new Promise((resolve) => {
+      // Simula un tiempo de carga
+      const loadingTime = Math.random() * 1000 + 500; // Carga entre 500ms y 1500ms
+      setTimeout(resolve, loadingTime);
+    });
+  };
   const handleCrash = () => handleSectionChange("crash");
-  const handleAll = () => handleSectionChange("providers");
+
   const handleSlots = () => handleSectionChange("slots");
   const handleLive = () => handleSectionChange("live");
-
 
   const formatBalance = (balance: number, currency: string | undefined) => {
     return currency === "CLP"
@@ -261,55 +278,56 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <div className="background">
+      <div className="background" style={{ paddingTop: "135px" }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <>
             {/* Top bar */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div className="topbox acu d-flex justify-content-between align-items-center">
-                <div className="text-light text-top mt-4 w-100 text-center">
-                  <span className="fs-6">$</span>12.345.678,90
+            <div style={{position:"fixed", top:"0"}} >
+              <div className="d-flex justify-content-between align-items-center p-3">
+                <div className="topbox acu d-flex justify-content-between align-items-center">
+                  <div className="space-grotesk text-light text-top mt-4 w-100 text-center">
+                    <span className="fs-6">$</span>12.345.678,90
+                  </div>
                 </div>
-              </div>
-              <div className="logo">
-                <img src="/images/img/New-clients/tatan_gaming.png" />
-              </div>
-              <div className="topbox jac d-flex justify-content-between align-items-center">
-                <div className="text-light text-top mt-4 w-100 text-center">
-                  <span className="fs-6">$</span>12.345.678,90
+                <div className="logo">
+                  <img src="/images/img/New-clients/tatan_gaming.png" />
+                </div>
+                <div className="topbox jac d-flex justify-content-between align-items-center">
+                  <div className="text-light text-top mt-4 w-100 text-center">
+                    <span className="fs-6">$</span>12.345.678,90
+                  </div>
                 </div>
               </div>
             </div>
             {/* end topbar */}
-            <div className="content-1">{children}</div>
+            <div className="splide">{children}</div>
             {/* bottom_bar */}
             <div className="bottom_bar">
               <div style={{ width: "100%" }}>
                 <ul className="menubar">
-                  <li>
-                    <a onClick={handleAll}>TODOS</a>
+                  <li className="nav-section">
+                    <Link
+                      href={`/provider?idMachine=${idMachine}`}
+                      className="nav-section"
+                    >
+                      Todos
+                    </Link>
                   </li>
-                  <li>
+                  <li className="nav-section">
                     <a href="#" onClick={handleSlots}>
                       SLOTS
                     </a>
                   </li>
-                  <li>
+                  <li className="nav-section">
                     <a href="#" onClick={handleLive}>
                       CASINO EN VIVO
                     </a>
                   </li>
-                  <li>
+                  <li className="nav-section">
                     <a href="#">BINGO</a>
                   </li>
-                  <li>
+                  <li className="nav-section">
                     <a href="#">VIRTUALES</a>
                   </li>
                   <li>
@@ -400,9 +418,14 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 <div style={{ width: "172px" }}></div>
               </div>
               <div className="dream_catcher">
-              <Image src="/images/img/DreamCatch/dream_catcher.png" alt ="" className="cashier" width={500} height={500} />
-            </div>
-
+                <Image
+                  src="/images/img/DreamCatch/dream_catcher.png"
+                  alt=""
+                  className="cashier"
+                  width={500}
+                  height={500}
+                />
+              </div>
             </div>
             {/*END  bottom_bar */}
 
@@ -412,8 +435,6 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
               <div className="particle"></div>
               <div className="particle"></div>
             </div>
-            
-            
           </>
         )}
       </div>
