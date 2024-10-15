@@ -138,7 +138,15 @@ const UserDataTable: React.FC = () => {
             href={`/dashboard/usuarios/abonar/${row._id}`}
             className="balance"
             title="DepositarBalance"
-            style={{ fontSize: '20px' }}
+            style={{ fontSize: '20px', color: 'green' }}
+          >
+            <FaMoneyBillTransfer />
+          </Link>
+          <Link
+            href={`/dashboard/usuarios/debit/${row._id}`}
+            className="balance"
+            title="DepositarBalance"
+            style={{ fontSize: '20px', color: 'red' }}
           >
             <FaMoneyBillTransfer />
           </Link>
