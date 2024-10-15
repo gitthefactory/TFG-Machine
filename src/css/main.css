@@ -1,9 +1,11 @@
 @font-face {
   font-family: 'SpaceGrotesk';
-  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype') !important;
   font-weight: normal;
   font-style: normal;
 }
+
+
 
 body, html {
   position: relative;
@@ -14,10 +16,14 @@ body, html {
   margin: 0px;
   padding: 0px;
   color: #fff !important;
-  font-family: "Madimi One", sans-serif;
+
   overflow: hidden;
   display: flex;
   justify-content: center;
+  font-family: 'SpaceGrotesk'!important;
+  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype') !important;
+  font-weight: normal;
+  font-style: normal;
 }
 
   div span {
@@ -913,6 +919,7 @@ body, html {
   border-left: 2px solid #ffcc00;
   padding: 0 25px;
 }
+
 .menubar li a {
   font-size: 18px;
   color: #fff;
