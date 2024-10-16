@@ -188,7 +188,7 @@ const Providers: React.FC = () => {
       },
       focus: "center",
       autoplay: true,
-      interval: 5000,
+      interval:4000,
       flickMaxPages: 3,
       updateOnMove: true,
       pagination: false,
@@ -197,8 +197,6 @@ const Providers: React.FC = () => {
     });
 
     splide.mount();
-
-    return () => splide.destroy();
   }, []);
 
   return (
