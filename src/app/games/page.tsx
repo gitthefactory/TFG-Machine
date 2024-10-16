@@ -13,9 +13,10 @@ import { SocketProvider } from '@/app/api/socket/socketContext';
 const Games: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
   const searchParams = useSearchParams();
+ 
 
   useEffect(() => {
-    const provider = searchParams.get('idMachine');
+    const provider = searchParams.get('provider');
     if (provider) {
       setVisibleSection(provider.toLowerCase());
     }
@@ -23,20 +24,14 @@ const Games: React.FC = () => {
 
   return (
     <SocketProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <GameLayout>
-          {/* Muestra el contenido basado en la sección visible */}
-          <Suspense fallback={<div>Loading game...</div>}>
-            {visibleSection === 'belatra' && <Belatra />}
-            {visibleSection === 'bgaming' && <Bgaming />}
-            {visibleSection === 'aspect' && <Aspect />}
-            {visibleSection === 'booming' && <Booming />}
-            {visibleSection === 'popok' && <PopOK />}
-            {visibleSection === 'igrosoft' && <Igrosoft />}
-            {/* Si no hay sección visible, podrías mostrar un mensaje o componente por defecto */}
-          </Suspense>
-        </GameLayout>
-      </Suspense>
+      <GameLayout>
+        {visibleSection === 'belatra' && <Belatra />}
+        {visibleSection === 'bgaming' && <Bgaming />}
+        {visibleSection === 'aspect' && <Aspect />}
+        {visibleSection === 'booming' && <Booming />}
+        {visibleSection === 'popok' && <PopOK />}
+        {visibleSection === 'igrosoft' && <Igrosoft />}
+      </GameLayout>
     </SocketProvider>
   );
 };

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
 import { useSocket } from "@/app/api/socket/socketContext";
 import Loader from "@/components/common/Loader";
+import { useSearchParams } from "next/navigation";
 
 interface Game {
   id: number;
@@ -22,97 +23,34 @@ const Belatra: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [idMachine, setIdMachine] = useState<string | null>(null);
-  const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const swiperRef = useRef<any>(null);
   const { socket } = useSocket();
-  
+  const searchParams = useSearchParams();
+  const idMachine = searchParams.get("idMachine");
+  const provider = searchParams.get("provider") || "29"; // Valor por defecto
 
   useEffect(() => {
+    
     const fetchData = async () => {
+      setLoading(true);
       try {
         const sessionData = await getSessionData();
-        
         if (!sessionData || sessionData.status !== 200) {
           console.error("Datos de sesión inválidos:", sessionData);
-          setLoading(false);
           return;
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const idMachineFromURL = params.get('idMachine');
-        setIdMachine(idMachineFromURL);
-        console.log("ID de máquina desde la URL:", idMachineFromURL);
-
-        if (idMachineFromURL) {
-          const machineResponse = await fetch(`/api/maquinas`);
-          const machineData = await machineResponse.json();
-          const machine = machineData.data.find((m: any) => m.id_machine === idMachineFromURL);
-
-          if (machine) {
-            setMachineStatus(machine.status);
-
-            if (machine.status === 0) {
-              setTimeout(async () => {
-                const result = await Swal.fire({
-                  title: 'ALERTA',
-                  html: `<p><span class="bold-text" style="color: black;">SU MAQUINA HA SIDO DESHABILITADA :</span></p>`,
-                  icon: 'warning',
-                  showCancelButton: false,
-                  confirmButtonColor: 'rgb(227, 17, 108)',
-                  confirmButtonText: 'ACEPTAR',
-                  customClass: {
-                    title: 'custom-title',
-                    htmlContainer: 'custom-html',
-                  },
-                });
-
-                if (result.isConfirmed) {
-                  await signOut({ callbackUrl: '/' });
-                }
-                setLoading(false);
-              }, 1000);
-
-              return;
-            }
-          } else {
-            console.warn("No se encontró la máquina con el ID proporcionado.");
-          }
-        }
-
-        const provider = 29;
-        const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
-        const data = await response.json();
-
-        if (data.data?.token) {
-          setToken(data.data.token);
+        // Asegúrate de que idMachine esté definido antes de hacer la solicitud
+        if (idMachine) {
+          await fetchMachineData(idMachine);
+          await fetchGamesData(idMachine, parseInt(provider));
         } else {
-          console.error("Token no disponible en la respuesta.");
-          setLoading(false);
-          return;
+          console.warn("El ID de la máquina no está disponible.");
         }
-
-        const globalGamesResponse = await fetch('/api/juegosApi');
-        const globalGamesData = await globalGamesResponse.json();
-
-        if (Array.isArray(globalGamesData.data)) {
-          const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
-
-          const finalBelatraGames = activeBelatraGames.filter(belatraGame => 
-            activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
-          );
-
-          console.log('Juegos activos de Belatra:', finalBelatraGames);
-          setGames(finalBelatraGames);
-        } else {
-          console.error("Estructura de datos inesperada:", globalGamesData);
-        }
-
-        setLoading(false);
       } catch (error) {
         console.error("Error al obtener los datos de sesión:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -120,40 +58,83 @@ const Belatra: React.FC = () => {
     fetchData();
 
     if (socket) {
-      const handleGameStatusUpdated = (gameStatusChange: Game) => {
-        console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
-        setGames(prevGames => {
-          const updatedGames = prevGames.map(game =>
-            game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
-          );
-          return updatedGames;
-        });
-      };
-
       socket.on('gameStatusUpdated', handleGameStatusUpdated);
-
       return () => {
         socket.off('gameStatusUpdated', handleGameStatusUpdated);
       };
     }
-  }, [socket]);
+  }, [socket, idMachine, provider]); // Añadir provider a las dependencias
 
-  const handlePrevButtonClick = () => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slidePrev();
+  const fetchMachineData = async (idMachineFromURL: string) => {
+    const response = await fetch(`/api/maquinas`);
+    const machineData = await response.json();
+    const machine = machineData.data.find((m: any) => m.id_machine === idMachineFromURL);
+
+    if (machine) {
+      if (machine.status === 0) {
+        await showDisabledMachineAlert();
+      }
+    } else {
+      console.warn("No se encontró la máquina con el ID proporcionado.");
     }
   };
 
-  const handleNextButtonClick = () => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slideNext();
+  const showDisabledMachineAlert = async () => {
+    const result = await Swal.fire({
+      title: 'ALERTA',
+      html: `<p><span class="bold-text" style="color: black;">SU MAQUINA HA SIDO DESHABILITADA :</span></p>`,
+      icon: 'warning',
+      showCancelButton: false,
+      confirmButtonColor: 'rgb(227, 17, 108)',
+      confirmButtonText: 'ACEPTAR',
+      customClass: {
+        title: 'custom-title',
+        htmlContainer: 'custom-html',
+      },
+    });
+
+    if (result.isConfirmed) {
+      await signOut({ callbackUrl: '/' });
     }
+  };
+
+  const fetchGamesData = async (idMachineFromURL: string, provider: number) => {
+    const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
+    const data = await response.json();
+    if (data.data?.token) {
+      setToken(data.data.token);
+      const globalGamesData = await fetchGlobalGamesData();
+      const finalBelatraGames = filterActiveGames(data.data.games, globalGamesData);
+      setGames(finalBelatraGames);
+    } else {
+      console.error("Token no disponible en la respuesta.");
+    }
+  };
+
+  const fetchGlobalGamesData = async () => {
+    const response = await fetch('/api/juegosApi');
+    const data = await response.json();
+    return data.data || [];
+  };
+
+  const filterActiveGames = (belatraGames: Game[], globalGames: Game[]) => {
+    const activeGlobalGames = globalGames.flatMap(providerData => providerData.games).filter(game => game.status === 1);
+    return belatraGames.filter(belatraGame => 
+      activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id && belatraGame.status === 1)
+    );
+  };
+
+  const handleGameStatusUpdated = (gameStatusChange: Game) => {
+    console.log('Evento gameStatusUpdated recibido:', gameStatusChange);
+    setGames(prevGames => prevGames.map(game =>
+      game.id === gameStatusChange.id ? { ...game, status: gameStatusChange.status } : game
+    ));
   };
 
   const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
-  
+
   const closeGameUrl = () => {
     setSelectedGame(null);
   };
@@ -166,10 +147,6 @@ const Belatra: React.FC = () => {
         <Loader />
       ) : (
         <>
-          <div className="splide">
-            <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
-            <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
-          </div>
           <Swiper slidesPerView={1} spaceBetween={10} ref={swiperRef}>
             {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
