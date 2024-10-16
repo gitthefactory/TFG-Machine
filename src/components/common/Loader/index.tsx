@@ -22,7 +22,7 @@ const Loader = ({ sidebarWidth = 250, isSidebarOpen }: LoaderProps) => {
         justifyContent: "center",
       }}
     >
-      <div className="h-16 w-16 animate-spin rounded-full border-4 border-t-transparent border-pink-500"></div>
+      <div className="h-16 w-16 animate-spin rounded-full border-4 border-t-transparent border-yellow-400"></div>
     </div>
   );
 };

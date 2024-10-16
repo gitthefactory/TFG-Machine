@@ -118,7 +118,7 @@ export default function DetalleProveedores() {
 
           // Emitir evento de estado de juego actualizado para todos
           if (socket) {
-            socket.emit('gameStatusUpdated', { id: game.id, status: newStatus });
+            socket.emit('TODOS LOS JUEGOS HAN SIDO ACTIVADOS');
           }
 
           return { ...game, status: newStatus };

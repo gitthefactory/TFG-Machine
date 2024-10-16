@@ -172,7 +172,7 @@ const Belatra: React.FC = () => {
                 <div className="swiper-slide-content">
                   {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
                     <div key={index} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
+                      <div className="btn-game"  onClick={() => handleGameClick(game)}>
                         <Image
                           src={game.image}
                           alt={game.name}
@@ -191,7 +191,7 @@ const Belatra: React.FC = () => {
             ))}
           </Swiper>
           {selectedGame && token && (
-            <GameUrl game={selectedGame} token={token} idMachine={idMachineFromURL} onClose={closeGameUrl} />
+            <GameUrl game={selectedGame} token={token} onClose={closeGameUrl} />
           )}
         </>
       )}

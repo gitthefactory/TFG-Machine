@@ -1,9 +1,11 @@
 @font-face {
   font-family: 'SpaceGrotesk';
-  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype') !important;
   font-weight: normal;
   font-style: normal;
 }
+
+
 
 body, html {
   position: relative;
@@ -14,10 +16,14 @@ body, html {
   margin: 0px;
   padding: 0px;
   color: #fff !important;
-  font-family: "Madimi One", sans-serif;
+
   overflow: hidden;
   display: flex;
   justify-content: center;
+  font-family: 'SpaceGrotesk'!important;
+  src: url('/fonts/SpaceGrotesk-Regular.ttf') format('truetype') !important;
+  font-weight: normal;
+  font-style: normal;
 }
 
   div span {
@@ -679,25 +685,32 @@ body, html {
 
 
 .btn-game {
-  width: 250px !important;
-  height: 250px !important;
+  position: relative;
+  width: 100%;
+  max-width: 250px;
   cursor: pointer;
+  overflow: hidden; /* Esto asegura que el subtítulo no se salga del contenedor */
+  height: auto; 
 }
+
 .btn-game img {
   width: 100%;
   height: auto;
   object-fit: cover;
+  display: block; /* Evita espacios en blanco debajo de la imagen */
 }
+
 .subtitle {
-  font-family: Arial, Helvetica, sans-serif;
-  width: 250px;
-  text-align: center;
-  background-color: #a0081b;
-  color: #fff;
-  text-decoration: none;
-  font-size: 14px;
   position: absolute;
-  bottom: 0; 
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0; /* Ajusta según la altura deseada */
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  background-color: #6b2dc6;
+  color: #fff;
+  font-size: 14px;
 }
 .screen {
   z-index: 99;
@@ -913,6 +926,7 @@ body, html {
   border-left: 2px solid #ffcc00;
   padding: 0 25px;
 }
+
 .menubar li a {
   font-size: 18px;
   color: #fff;

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signIn , useSession} from "next-auth/react";
@@ -194,7 +195,7 @@ const Maquinas: React.FC = () => {
         });
         setLoading(false);
       } else {
-        document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
+       
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
@@ -221,7 +222,8 @@ const Maquinas: React.FC = () => {
 
           if (result.isConfirmed) {
             await actualizarEstadoSignIn(info.id_machine);
-            setRedirectUrl(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
+            router.push(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
+            document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
           }
           setLoading(false);
         }, 1000);
@@ -234,7 +236,9 @@ const Maquinas: React.FC = () => {
   }
 
   return (
+
     <>
+   
     <SessionProvider>
       {loading && (
         <div
@@ -252,6 +256,7 @@ const Maquinas: React.FC = () => {
             backgroundColor: "rgba(0, 0, 0, 0.8)",
           }}
         >
+           
           <div
             style={{
               width: "50px",
