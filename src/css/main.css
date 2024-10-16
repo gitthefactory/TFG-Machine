@@ -239,15 +239,13 @@ body, html {
 
 
 .splide {
-  /* background-color: #ccc; */
+  
   padding: 20px 0;
   margin: 0 100px;
 }
 
 
 .splide__slide {
-  /* border: 5px solid #ffcc00;
-  background-color: #ff0000; */
   display: flex;
   justify-content: center !important;
 }
