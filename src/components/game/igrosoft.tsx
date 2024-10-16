@@ -165,7 +165,7 @@ const Igrosoft: React.FC = () => {
         <Loader />
       ) : (
         <>
-          <div className="splide">
+           <div className="navigation-buttons">
             <div className="swiper-button-prev swiper-button-prev-img" onClick={handlePrevButtonClick}></div>
             <div className="swiper-button-next swiper-button-next-img" onClick={handleNextButtonClick}></div>
           </div>
