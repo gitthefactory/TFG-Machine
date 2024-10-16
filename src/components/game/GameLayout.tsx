@@ -322,7 +322,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
               </div>
             </div>
             {/* end topbar */}
-            <div className="splide">{children}</div>
+            <div className="content-1">{children}</div>
             {/* bottom_bar */}
             <div className="bottom_bar">
               <div style={{ width: "100%" }}>
