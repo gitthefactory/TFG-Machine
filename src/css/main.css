@@ -1113,3 +1113,14 @@ body, html {
   width: 2px;
   height: 2px;
 }
+
+/*BOTONES PREVISUALIZACIÓN TICKETERA  */
+.btn-confirm {
+  background-color: green !important; /* Botón "Imprimir" verde */
+  color: white !important; /* Texto blanco */
+}
+
+.btn-cancel {
+  background-color: red !important; /* Botón "Cancelar" rojo */
+  color: white !important; /* Texto blanco */
+}

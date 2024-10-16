@@ -173,7 +173,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
     });
 
     const receiptContent = `
-           <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
+           <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%; ">
       <img src="/images/img/allplay_print.png" alt="Logo" style="max-width: 100%;"/>
       <p style="text-align: center;">RECIBO<br>
       <table style="border-collapse: collapse; width: 100%;">
@@ -192,7 +192,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
           </tr>
           <tr>
   <td colspan="2" style="text-align: center;">
-    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 80px;">
+    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
       <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=100x100">
     </div>
   </td>
@@ -204,15 +204,17 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
   `;
 
     Swal.fire({
-      title: "Previsualización de Recibo",
+      
       html: receiptContent,
       showCancelButton: true,
       confirmButtonText: "Imprimir",
       cancelButtonText: "Cancelar",
-      background: "#DDCDEE",
+      background: "#white",
       iconColor: "black",
       customClass: {
         popup: "swal-wide",
+        confirmButton: "btn-confirm",
+        cancelButton: "btn-cancel",
       },
     }).then((result) => {
       if (result.isConfirmed) {

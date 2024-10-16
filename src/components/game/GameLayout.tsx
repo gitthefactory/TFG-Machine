@@ -192,7 +192,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
           </tr>
           <tr>
   <td colspan="2" style="text-align: center;">
-    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 80px;">
+    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 20px;">
       <img src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=100x100">
     </div>
   </td>
@@ -209,10 +209,12 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
       showCancelButton: true,
       confirmButtonText: "Imprimir",
       cancelButtonText: "Cancelar",
-      background: "#DDCDEE",
+      background: "#white",
       iconColor: "black",
       customClass: {
         popup: "swal-wide",
+        confirmButton: "btn-confirm",
+        cancelButton: "btn-cancel",
       },
     }).then((result) => {
       if (result.isConfirmed) {
