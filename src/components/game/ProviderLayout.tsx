@@ -307,14 +307,14 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 }} >
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
-                  <div className="space-grotesk text-light text-top mt-4 w-100 text-center">
+                  <div className="text-light text-top mt-4 w-100 text-center font-spaceGrotesk">
                     <span className="fs-6">$</span>12.345.678,90
                   </div>
                 </div>
                 <div className="logo">
                   <img src="/images/img/New-clients/tatan_gaming.png" />
                 </div>
-                <div className="topbox jac d-flex justify-content-between align-items-center">
+                <div className="topbox jac d-flex justify-content-between align-items-center font-spaceGrotesk">
                   <div className="text-light text-top mt-4 w-100 text-center">
                     <span className="fs-6">$</span>12.345.678,90
                   </div>

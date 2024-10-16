@@ -11,7 +11,6 @@ import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import e from "express";
 
 type GameLayoutProps = {
   children: React.ReactNode;
@@ -307,7 +306,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 }} >
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
-                  <div className="space-grotesk text-light text-top mt-4 w-100 text-center">
+                  <div className="text-light text-top mt-4 w-100 text-center font-spaceGrotesk">
                     <span className="fs-6">$</span>12.345.678,90
                   </div>
                 </div>
@@ -316,7 +315,11 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 </div>
                 <div className="topbox jac d-flex justify-content-between align-items-center">
                   <div className="text-light text-top mt-4 w-100 text-center">
+                    <div className="font-spaceGrotesk">
+
+
                     <span className="fs-6">$</span>12.345.678,90
+                    </div>
                   </div>
                 </div>
               </div>

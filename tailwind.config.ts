@@ -11,6 +11,8 @@ const config: Config = {
   theme: {
     fontFamily: {
       satoshi: ["Satoshi", "sans-serif"],
+      spaceGrotesk: ["Space Grotesk", "sans-serif"]
+
     },
     screens: {
       "2xsm": "375px",
