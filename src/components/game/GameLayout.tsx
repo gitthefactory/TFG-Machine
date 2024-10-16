@@ -312,7 +312,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   </div>
                 </div>
                 <div className="logo">
-                  <img src="/images/img/New-clients/tatan_gaming.png" />
+                  <Image src="/images/img/New-clients/tatan_gaming.png" alt='logo'height={350} width={350} />
                 </div>
                 <div className="topbox jac d-flex justify-content-between align-items-center">
                   <div className="text-light text-top mt-4 w-100 text-center">
@@ -367,7 +367,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
               >
                 <div className="pay">
                   <a href="#" onClick={() => handlePrint()}>
-                    <img src="/images/img/New_bottomBar/pay.png" alt="pay" />
+                    <Image src="/images/img/New_bottomBar/pay.png" alt="pay" width={150} height={150} />
                   </a>
                 </div>
                 <div className="bar" style={{ flexGrow: "1" }}>
