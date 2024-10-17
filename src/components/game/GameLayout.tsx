@@ -10,6 +10,7 @@ import Loader from "@/components/common/Loader";
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
+import "/src/css/Space.css";
 import Link from "next/link";
 
 type GameLayoutProps = {
@@ -290,23 +291,23 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   return (
     <>
-    
-      <div className="background" style={{ paddingTop: "135px" }}>
+
+      <div className="background" style={{ fontFamily: 'Space Grotesk', paddingTop: "135px" }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <>
             {/* Top bar */}
             <div style={{
-  position: "fixed",
-  top: "0",
-  left: "50%",
-  transform: "translateX(-50%)",
-  display: "flex",
-  alignItems: "center",
-}} >
+              position: "fixed",
+              top: "0",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              alignItems: "center",
+            }} >
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
-                  <div className="text-light text-top mt-4 w-100 text-center font-spaceGrotesk">
+                  <div className="text-light text-top mt-4 w-100 text-center " style={{ fontFamily: 'Space Grotesk' }}>
                     <span className="fs-6">$</span>12.345.678,90
                   </div>
                 </div>
@@ -314,12 +315,12 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   <img src="/images/img/New-clients/tatan_gaming.png" />
                 </div>
                 <div className="topbox jac d-flex justify-content-between align-items-center">
-                  <div className="text-light text-top mt-4 w-100 text-center">
-                    <div className="font-spaceGrotesk">
+                  <div className="text-light text-top mt-4 w-100 text-center" style={{ fontFamily: 'Space Grotesk' }}>
+
 
 
                     <span className="fs-6">$</span>12.345.678,90
-                    </div>
+
                   </div>
                 </div>
               </div>
@@ -382,7 +383,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                     }}
                   >
                     <div
-                      style={{ width: "25%", textAlign: "center" }}
+                       style={{ width: "25%", textAlign: "center", fontFamily: 'Space Grotesk' }}
                       className="machine_id"
                     >
                       {selectedMachineBalance?.user}
@@ -398,8 +399,8 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                     >
                       {selectedMachineBalance
                         ? formatBalanceWithoutDecimals(
-                            selectedMachineBalance.balance,
-                          )
+                          selectedMachineBalance.balance,
+                        )
                         : "000"}
                       <span className="credits">CRÉDITOS</span>
                     </div>
@@ -413,6 +414,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                           fontSize: "40px",
                           display: "flex",
                           alignItems: "center",
+                          fontFamily: 'Space Grotesk'
                         }}
                       >
                         {selectedMachineBalance ? (
