@@ -293,36 +293,33 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
 
   return (
     <>
-
-      <div className="background" style={{ fontFamily: 'Space Grotesk', paddingTop: "135px" }}>
+ 
+ <div style={{ fontFamily: 'Space Grotesk', paddingTop: "135px" }}  className="background"
+    >
         {isLoading && <Loader />}
         {!isLoading && (
           <>
             {/* Top bar */}
             <div style={{
-              position: "fixed",
-              top: "0",
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              alignItems: "center",
-            }} >
+  position: "fixed",
+  top: "0",
+  left: "50%",
+  transform: "translateX(-50%)",
+  display: "flex",
+  alignItems: "center",
+}} >
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
-                  <div className="text-light text-top mt-4 w-100 text-center " style={{ fontFamily: 'Space Grotesk' }}>
+                  <div  className="text-light text-top mt-4 w-100 text-center" style={{ fontFamily: 'Space Grotesk' }}>
                     <span className="fs-6">$</span>12.345.678,90
                   </div>
                 </div>
                 <div className="logo">
                   <Image src="/images/img/New-clients/tatan_gaming.png" alt='logo'height={350} width={350} />
                 </div>
-                <div className="topbox jac d-flex justify-content-between align-items-center">
-                  <div className="text-light text-top mt-4 w-100 text-center" style={{ fontFamily: 'Space Grotesk' }}>
-
-
-
+                <div className="topbox jac d-flex justify-content-between align-items-center" style={{ fontFamily: 'Space Grotesk' }}>
+                  <div className="text-light text-top mt-4 w-100 text-center">
                     <span className="fs-6">$</span>12.345.678,90
-
                   </div>
                 </div>
               </div>
@@ -332,13 +329,13 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
             {/* bottom_bar */}
             <div className="bottom_bar">
               <div style={{ width: "100%" }}>
-                <ul className="menubar">
+                <ul className="menubar" style={{fontFamily: 'Space Grotesk'}}>
                   <li className="nav-section">
                     <Link
                       href={`/provider?idMachine=${idMachine}`}
-                      className="nav-section"
+                      
                     >
-                      Todos
+                      TODOS
                     </Link>
                   </li>
                   <li className="nav-section">
@@ -385,7 +382,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                     }}
                   >
                     <div
-                       style={{ width: "25%", textAlign: "center", fontFamily: 'Space Grotesk' }}
+                      style={{ width: "25%", textAlign: "center", fontFamily: 'Space Grotesk' }}
                       className="machine_id"
                     >
                       {selectedMachineBalance?.user}
@@ -396,15 +393,17 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                         textAlign: "center",
                         marginTop: "1rem",
                         marginLeft: "9rem",
+                         fontFamily: 'Space Grotesk'
+                        
                       }}
                       className="text-light text-bottom mt-2"
                     >
                       {selectedMachineBalance
                         ? formatBalanceWithoutDecimals(
-                          selectedMachineBalance.balance,
-                        )
+                            selectedMachineBalance.balance,
+                          )
                         : "000"}
-                      <span className="credits">CRÉDITOS</span>
+                      <span className="credits" style={{fontFamily: 'Space Grotesk'}}>CRÉDITOS</span>
                     </div>
                     <div
                       style={{ width: "25%", textAlign: "center" }}
@@ -422,7 +421,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                         {selectedMachineBalance ? (
                           <>
                             <span
-                              style={{ fontSize: "20px", marginRight: "20px" }}
+                              style={{ fontSize: "20px", marginRight: "20px", fontFamily: 'Space Grotesk'}}
                             >
                               {selectedMachineBalance.currency || "USD"}
                             </span>
@@ -445,7 +444,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 </div>
                 <div style={{ width: "172px" }}></div>
               </div>
-              <div className="dream_catcher">
+             {/*  <div className="dream_catcher">
                 <Image
                   src="/images/img/DreamCatch/dream_catcher.png"
                   alt=""
@@ -453,7 +452,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   width={500}
                   height={500}
                 />
-              </div>
+              </div> */}
             </div>
             {/*END  bottom_bar */}
 

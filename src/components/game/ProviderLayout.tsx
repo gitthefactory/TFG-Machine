@@ -331,13 +331,13 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
             {/* bottom_bar */}
             <div className="bottom_bar">
               <div style={{ width: "100%" }}>
-                <ul className="menubar">
+                <ul className="menubar" style={{fontFamily: 'Space Grotesk'}}>
                   <li className="nav-section">
                     <Link
                       href={`/provider?idMachine=${idMachine}`}
-                      className="nav-section"
+                      
                     >
-                      Todos
+                      TODOS
                     </Link>
                   </li>
                   <li className="nav-section">
@@ -395,6 +395,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                         textAlign: "center",
                         marginTop: "1rem",
                         marginLeft: "9rem",
+                         fontFamily: 'Space Grotesk'
                         
                       }}
                       className="text-light text-bottom mt-2"
@@ -404,7 +405,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                             selectedMachineBalance.balance,
                           )
                         : "000"}
-                      <span className="credits">CRÉDITOS</span>
+                      <span className="credits" style={{fontFamily: 'Space Grotesk'}}>CRÉDITOS</span>
                     </div>
                     <div
                       style={{ width: "25%", textAlign: "center" }}
@@ -445,7 +446,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 </div>
                 <div style={{ width: "172px" }}></div>
               </div>
-              <div className="dream_catcher">
+             {/*  <div className="dream_catcher">
                 <Image
                   src="/images/img/DreamCatch/dream_catcher.png"
                   alt=""
@@ -453,7 +454,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   width={500}
                   height={500}
                 />
-              </div>
+              </div> */}
             </div>
             {/*END  bottom_bar */}
 

@@ -288,7 +288,7 @@ body, html {
   background-image: url("/images/img/New-clients/arrow_left.png");
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 60px auto;
+  background-size: 25px auto;
 }
 
 .splide__arrow.splide__arrow--next {
@@ -298,7 +298,7 @@ body, html {
   background-image: url("/images/img/New-clients/arrow_right.png");
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 60px auto;
+  background-size: 35px auto;
 }
 
 

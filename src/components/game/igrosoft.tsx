@@ -160,7 +160,7 @@ const Igrosoft: React.FC = () => {
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
-    <div className="igrosoft-container">
+    <div className="belatra-container">
       {loading ? (
         <Loader />
       ) : (
