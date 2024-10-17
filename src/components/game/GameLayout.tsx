@@ -331,12 +331,12 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
             <div className="bottom_bar">
               <div style={{ width: "100%" }}>
                 <ul className="menubar">
-                  <li className="nav-section">
+                  <li className="nav-section" style={{fontFamily: 'Space Grotesk'}}>
                     <Link
                       href={`/provider?idMachine=${idMachine}`}
-                      className="nav-section"
+                      
                     >
-                      Todos
+                      TODOS
                     </Link>
                   </li>
                   <li className="nav-section">
@@ -394,6 +394,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                         textAlign: "center",
                         marginTop: "1rem",
                         marginLeft: "9rem",
+                         fontFamily: 'Space Grotesk'
                       }}
                       className="text-light text-bottom mt-2"
                     >
@@ -420,12 +421,16 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                         {selectedMachineBalance ? (
                           <>
                             <span
-                              style={{ fontSize: "20px", marginRight: "20px" }}
+                              style={{ fontSize: "20px", marginRight: "20px"
+                                 fontFamily: 'Space Grotesk'
+                               }}
                             >
                               {selectedMachineBalance.currency || "USD"}
                             </span>
                             <span
-                              style={{ marginLeft: "0px", fontSize: "20px" }}
+                              style={{ marginLeft: "0px", fontSize: "20px",
+                                 fontFamily: 'Space Grotesk'
+                               }}
                             >
                               $
                               {formatBalance(
@@ -443,7 +448,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 </div>
                 <div style={{ width: "172px" }}></div>
               </div>
-              <div className="dream_catcher">
+             {/*  <div className="dream_catcher">
                 <Image
                   src="/images/img/DreamCatch/dream_catcher.png"
                   alt=""
@@ -451,7 +456,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   width={500}
                   height={500}
                 />
-              </div>
+              </div> */}
             </div>
             {/*END  bottom_bar */}
 
