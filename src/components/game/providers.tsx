@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Link from "next/link";
 import Igrosoft from "./igrosoft";
+import Image from "next/image"; // Importa el componente Image
 
 const Providers: React.FC = () => {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
@@ -204,36 +205,63 @@ const Providers: React.FC = () => {
   return (
     <div id="splide" className="splide" style={{ textAlign: "center" }}>
       <div className="splide__track" style={{ display: "flex", justifyContent: "center" }}>
-        <ul className="splide__list">
+      <ul className="splide__list">
           <Link href={`/games?idMachine=${idMachine}&provider=belatra`} className="splide__slide">
-            <img src="/images/img/New-Providers/belatra.png" alt="belatra" />
+            <Image 
+              src="/images/img/New-Providers/belatra.png" 
+              alt="belatra" 
+              width={300} // Ajusta el ancho según tus necesidades
+              height={150} // Ajusta la altura según tus necesidades
+              priority // Carga la imagen de forma prioritaria si es necesario
+            />
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=bgaming`} className="splide__slide">
-            <img src="/images/img/New-Providers/bgaming.png" alt="Bgaming" />
+            <Image 
+              src="/images/img/New-Providers/bgaming.png" 
+              alt="Bgaming" 
+              width={300} 
+              height={150}
+              priority
+            />
           </Link>
-          <Link href={`/games?idMachine=${idMachine}&provider=aspect`} className="splide__slide"  >
-            <img src="/images/img/New-Providers/aspect.png" alt="Aspect" />
+          <Link href={`/games?idMachine=${idMachine}&provider=aspect`} className="splide__slide">
+            <Image 
+              src="/images/img/New-Providers/aspect.png" 
+              alt="Aspect" 
+              width={300} 
+              height={150}
+              priority
+            />
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=booming`} className="splide__slide">
-            <img src="/images/img/New-Providers/booming.png" alt="Booming" />
+            <Image 
+              src="/images/img/New-Providers/booming.png" 
+              alt="Booming" 
+              width={300} 
+              height={150}
+              priority
+            />
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=popok`} className="splide__slide">
-          <img src="/images/img/popok/popok.png" alt="" />
+            <Image 
+              src="/images/img/popok/popok.png" 
+              alt="Popok" 
+              width={300} 
+              height={150}
+              priority
+            />
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=igrosoft`} className="splide__slide">
-          <img src="/images/img/igrosoft/igrosoft.png" alt="" />
+            <Image 
+              src="/images/img/igrosoft/igrosoft.png" 
+              alt="Igrosoft" 
+              width={300} 
+              height={150}
+              priority
+            />
           </Link>
         </ul>
       </div>
-      {visibleSection && (
-        <div className="section-content">
-          {visibleSection === "belatra" && <Belatra />}
-          {visibleSection === "bgaming" && <Bgaming />}
-          {visibleSection === "aspect" && <Aspect />}
-          {visibleSection === "booming" && <Booming />}
-          {visibleSection === "popok" && <PopOK />}
-        </div>
-      )}
     </div>
   );
 };

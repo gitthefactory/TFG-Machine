@@ -173,7 +173,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
     });
 
     const receiptContent = `
-           <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%;">
+           <div style="font-size: 20px; font-family: 'Times New Roman'; min-width: 100%; ">
       <img src="/images/img/allplay_print.png" alt="Logo" style="max-width: 100%;"/>
       <p style="text-align: center;">RECIBO<br>
       <table style="border-collapse: collapse; width: 100%;">
@@ -204,7 +204,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
   `;
 
     Swal.fire({
-      title: "Previsualización de Recibo",
+      
       html: receiptContent,
       showCancelButton: true,
       confirmButtonText: "Imprimir",
@@ -314,7 +314,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                   </div>
                 </div>
                 <div className="logo">
-                  <Image src="/images/img/New-clients/tatan_gaming.png" alt='logo'height={350} width={350} />
+                  <Image src="/images/img/New-clients/tatan_gaming.png" alt='logo'height={350} width={350}/>
                 </div>
                 <div className="topbox jac d-flex justify-content-between align-items-center">
                   <div className="text-light text-top mt-4 w-100 text-center">
@@ -368,7 +368,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 }}
               >
                 <div className="pay">
-                  <a href="#" onClick={() => handlePrint()}>
+                <a href="#" onClick={() => handlePrint()}>
                     <Image src="/images/img/New_bottomBar/pay.png" alt="pay" width={150} height={150} />
                   </a>
                 </div>

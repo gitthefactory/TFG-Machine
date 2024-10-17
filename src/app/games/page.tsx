@@ -35,7 +35,7 @@ const GamesContent: React.FC = () => {
 };
 
 const Games = dynamic(() => Promise.resolve(GamesContent), {
-  ssr: false,
+  ssr: true,
 });
 
 export default function GamesPage() {

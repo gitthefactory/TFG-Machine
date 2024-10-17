@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signIn , useSession} from "next-auth/react";
@@ -235,7 +236,9 @@ const Maquinas: React.FC = () => {
   }
 
   return (
+
     <>
+   
     <SessionProvider>
       {loading && (
         <div
@@ -253,6 +256,7 @@ const Maquinas: React.FC = () => {
             backgroundColor: "rgba(0, 0, 0, 0.8)",
           }}
         >
+           
           <div
             style={{
               width: "50px",
