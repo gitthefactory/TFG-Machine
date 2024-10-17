@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Splide from "@splidejs/splide";
-import Bgaming from "./bgaming";
-import Belatra from "./belatra";
 import getSessionData from "@/controllers/getSession";
-import Aspect from "./aspect";
-import Booming from "./Booming";
-import PopOK from "./PopOk";
 import { useRouter, useSearchParams } from "next/navigation";
 import "@splidejs/splide/dist/css/splide.min.css";
 import Link from "next/link";
@@ -181,31 +176,32 @@ const Providers: React.FC = () => {
   useEffect(() => {
     const splide = new Splide("#splide", {
       type: "loop",
-      perPage: 5,
+      perPage:6 ,
       breakpoints: {
         1280: {
-          perPage: 2,
+          perPage: 3,
         },
       },
       focus: "center",
       autoplay: true,
-      interval: 5000,
+      interval: 4000,
       flickMaxPages: 3,
       updateOnMove: true,
       pagination: false,
       padding: "10%",
       throttle: 300,
-    });
+    }).mount();
 
-    splide.mount();
-
-    return () => splide.destroy();
+    // Cleanup function to destroy Splide when the component unmounts
+    return () => {
+      splide.destroy();
+    };
   }, []);
 
   return (
     <div id="splide" className="splide" style={{ textAlign: "center" }}>
-      <div className="splide__track" style={{ display: "flex", justifyContent: "center" }}>
-      <ul className="splide__list">
+      <div className="splide__track" /* style={{ display: "flex", justifyContent: "center" }} */>
+        <ul className="splide__list">
           <Link href={`/games?idMachine=${idMachine}&provider=belatra`} className="splide__slide">
             <Image 
               src="/images/img/New-Providers/belatra.png" 
