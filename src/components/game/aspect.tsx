@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
 import { useSocket } from "@/app/api/socket/socketContext"; // Importa signOut
+import Loader from "@/components/common/Loader";
 
 interface Game {
   id: number;
@@ -158,7 +159,11 @@ const Belatra: React.FC = () => {
   };
   
   const closeGameUrl = () => {
-    setSelectedGame(null);
+    setLoading(true); 
+    setTimeout(() => {
+      setSelectedGame(null); 
+      setLoading(false); 
+    }, 2000); 
   };
 
   // Filtrar juegos que están activos
@@ -167,7 +172,7 @@ const Belatra: React.FC = () => {
   return (
     <div className="belatra-container">
       {loading ? (
-        <p>Loading...</p> 
+       <Loader isSidebarOpen={false}/>
       ) : (
         <>
           <div className="navigation-buttons">

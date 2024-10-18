@@ -154,7 +154,11 @@ const Igrosoft: React.FC = () => {
   };
   
   const closeGameUrl = () => {
-    setSelectedGame(null);
+    setLoading(true); 
+    setTimeout(() => {
+      setSelectedGame(null); 
+      setLoading(false); 
+    }, 2000); 
   };
 
   const filteredGames = games.filter(game => game.status === 1);
@@ -162,7 +166,7 @@ const Igrosoft: React.FC = () => {
   return (
     <div className="belatra-container">
       {loading ? (
-        <Loader />
+       <Loader isSidebarOpen={false}/>
       ) : (
         <>
            <div className="navigation-buttons">

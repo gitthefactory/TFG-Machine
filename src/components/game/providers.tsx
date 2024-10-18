@@ -14,7 +14,9 @@ const Providers: React.FC = () => {
   const [boomingStatus, setBoomingStatus] = useState<number | null>(null);
   const [popokGameStatus, setPopokGameStatus] = useState<number | null>(null);
   const [igrosoftStatus, setIGROsoftStatus] = useState<number |null>(null);
+  const [caletaStatus, setCaletaStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showCaletaButton, setShowCaletaButton] = useState(false);
   const [showBelatraButton, setShowBelatraButton] = useState(false);
   const [showBgamingButton, setShowBgamingButton] = useState(false);
   const [showAspectButton, setShowAspectButton] = useState(false);
@@ -69,6 +71,7 @@ const Providers: React.FC = () => {
                 const igrosoftProvider = data.data.providers.find(
                   (p: any) => p.provider === 89
                 );
+                const caletaProvider = data.data.providers.find((p:any) => p.provider === 2);
 
                 // Actualiza los estados de los proveedores según la respuesta
                 if (belatraProvider) {
@@ -139,6 +142,17 @@ const Providers: React.FC = () => {
                           p.provider_name.toLowerCase() === "igrosoft games" &&
                           p.status === 1
                       )
+                  );
+                }
+                if (caletaProvider) {
+                  setShowCaletaButton(caletaProvider.status);
+                  setShowCaletaButton(caletaProvider.status === 1 &&
+                    providersData.data.some(
+                        (p: any) =>
+                          p.provider_name.toLowerCase() === "Caleta Gaming" &&
+                          p.status === 1
+                      )
+  
                   );
                 }
               } else {
@@ -218,6 +232,9 @@ const Providers: React.FC = () => {
           </Link>
           <Link href={`/games?idMachine=${idMachine}&provider=igrosoft`} className="splide__slide">
           <img src="/images/img/igrosoft/igrosoft.png" alt="" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=caleta`} className="splide__slide">
+          <img src="/images/img/caleta/caleta.png" alt="" />
           </Link>
         </ul>
       </div>
