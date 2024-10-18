@@ -240,6 +240,8 @@ body, html {
   justify-content: center !important;
   padding: 20px 0;
   margin: 0 100px;
+  height: 80;
+
 }
 
 
@@ -288,7 +290,7 @@ body, html {
   background-image: url("/images/img/New-clients/arrow_left.png");
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 25px auto;
+  background-size: 35px auto;
 }
 
 .splide__arrow.splide__arrow--next {
@@ -956,7 +958,7 @@ body, html {
   height: 180px;
   position: fixed;
   bottom: 0;
-  
+  z-index: 4;
 }
 .pay {
   width: 172px;
