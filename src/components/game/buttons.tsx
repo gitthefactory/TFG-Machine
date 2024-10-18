@@ -5,6 +5,8 @@ import Aspect from "./aspect";
 import Booming from './Booming';
 import Popok from './PopOk';
 import Igrosoft from "./igrosoft";
+import Caleta from "./Caleta";
+import Net from "./net"
 
 interface ButtonsProps {
   onSelectProvider: (provider: { id: number, provider_name: string }) => void;
@@ -16,7 +18,9 @@ const Buttons: React.FC<ButtonsProps> = ({ onSelectProvider }) => {
   const aspectProps = { id: 87, provider_name: "Aspect" };
   const boomingPros = { id: 12, provider_name: "Booming Games" };
   const popokPros = { id: 88, provider_name: "PopOk" };
-  const igrosoftPros = {id: 89 , provider_name:"Igrosoft" };  // Añade los proveedores según sea necesario
+  const igrosoftPros = {id: 89 , provider_name:"Igrosoft" };
+  const caletaPros = {id: 2, provider_name:"Caleta"} ;
+  const netPros = {id: 81, provider_name:"NetGaming"} // Añade los proveedores según sea necesario
 
   return (
     <div>
@@ -26,6 +30,8 @@ const Buttons: React.FC<ButtonsProps> = ({ onSelectProvider }) => {
       <Booming onClick={() => onSelectProvider(boomingPros)}/>
       <Popok onClick={() => onSelectProvider(popokPros)}/>  
       <Igrosoft onClick={() => onSelectProvider(igrosoftPros)}/>
+      <Caleta onClick={() => onSelectProvider(caletaPros)}/>  
+      <Net onClick={() => onSelectProvider(netPros)}/>  // Añade los botones según sea necesario
       
     </div>
   );

@@ -4,10 +4,10 @@ import 'swiper/css';
 import getSessionData from "@/controllers/getSession";
 import GameUrl from '@/components/game/gameUrl';
 import Image from 'next/image';
+import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
-import { useSocket } from "@/app/api/socket/socketContext";
-import Loader from "@/components/common/Loader";
+import Loader from "../common/Loader";
 
 interface Game {
   id: number;
@@ -26,14 +26,13 @@ const Belatra: React.FC = () => {
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const swiperRef = useRef<any>(null);
+  const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
   const { socket } = useSocket();
-  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessionData = await getSessionData();
-        
         if (!sessionData || sessionData.status !== 200) {
           console.error("Datos de sesión inválidos:", sessionData);
           setLoading(false);
@@ -41,14 +40,15 @@ const Belatra: React.FC = () => {
         }
 
         const params = new URLSearchParams(window.location.search);
-        const idMachineFromURL = params.get('idMachine');
-        setIdMachine(idMachineFromURL);
+        const idMachine = params.get('idMachine');
+        setIdMachineFromURL(idMachine);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
 
-        if (idMachineFromURL) {
+
+        if (idMachine) {
           const machineResponse = await fetch(`/api/maquinas`);
           const machineData = await machineResponse.json();
-          const machine = machineData.data.find((m: any) => m.id_machine === idMachineFromURL);
+          const machine = machineData.data.find((m: any) => m.id_machine === idMachine);
 
           if (machine) {
             setMachineStatus(machine.status);
@@ -81,8 +81,8 @@ const Belatra: React.FC = () => {
           }
         }
 
-        const provider = 29;
-        const response = await fetch(`/api/juegosApi/${idMachineFromURL}/${provider}`);
+        const provider = 2;
+        const response = await fetch(`/api/juegosApi/${idMachine}/${provider}`);
         const data = await response.json();
 
         if (data.data?.token) {
@@ -98,14 +98,14 @@ const Belatra: React.FC = () => {
 
         if (Array.isArray(globalGamesData.data)) {
           const activeGlobalGames = globalGamesData.data.flatMap(providerData => providerData.games).filter(game => game.status === 1);
-          const activeBelatraGames = data.data.games.filter((game: any) => game.maker === 'belatra' && game.status === 1);
+          const activeCaletaGames = data.data.games.filter((game: any) => game.maker === 'caleta gaming' && game.status === 1);
 
-          const finalBelatraGames = activeBelatraGames.filter(belatraGame => 
-            activeGlobalGames.some(globalGame => globalGame.id === belatraGame.id)
+          const finalCaletaGames = activeCaletaGames.filter(caletaGame =>
+            activeGlobalGames.some(globalGame => globalGame.id === caletaGame.id)
           );
 
-          console.log('Juegos activos de Belatra:', finalBelatraGames);
-          setGames(finalBelatraGames);
+          console.log('Juegos activos de Caleta:', finalCaletaGames);
+          setGames(finalCaletaGames);
         } else {
           console.error("Estructura de datos inesperada:", globalGamesData);
         }
@@ -150,24 +150,23 @@ const Belatra: React.FC = () => {
     }
   };
 
-  const handleGameClick = async (game: Game) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
   };
-  
+
   const closeGameUrl = () => {
     setLoading(true); 
     setTimeout(() => {
-      setSelectedGame(null);
+      setSelectedGame(null); 
       setLoading(false); 
     }, 2000); 
   };
-
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
     <div className="belatra-container">
       {loading ? (
-        <Loader isSidebarOpen={false} />
+      <Loader isSidebarOpen={false}/>
       ) : (
         <>
           <div className="navigation-buttons">
@@ -178,9 +177,9 @@ const Belatra: React.FC = () => {
             {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
                 <div className="swiper-slide-content">
-                  {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game) => (
-                    <div key={game.id} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
+                  {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game, index) => (
+                    <div key={index} className="col-3 col-md-3">
+                      <div className="btn-game"  onClick={() => handleGameClick(game)}>
                         <Image
                           src={game.image}
                           alt={game.name}
@@ -188,7 +187,9 @@ const Belatra: React.FC = () => {
                           width={500}
                           height={500}
                         />
-                        <div className="subtitle">{game.name}</div>
+                        <div className="subtitle">
+                          {game.name}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -203,6 +204,6 @@ const Belatra: React.FC = () => {
       )}
     </div>
   );
-}
+};
 
 export default Belatra;

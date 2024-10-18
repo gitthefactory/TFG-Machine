@@ -7,6 +7,8 @@ import Aspect from '@/components/game/aspect';
 import Booming from '@/components/game/Booming';
 import PopOK from '@/components/game/PopOk';
 import Igrosoft from '@/components/game/igrosoft';
+import Caleta from '@/components/game/Caleta';
+import Net from '@/components/game/net';
 import GameLayout from '@/components/game/GameLayout';
 import { SocketProvider } from '@/app/api/socket/socketContext';
 import { useEffect, useState, Suspense } from 'react';
@@ -30,6 +32,9 @@ const GamesContent: React.FC = () => {
       {visibleSection === 'booming' && <Booming />}
       {visibleSection === 'popok' && <PopOK />}
       {visibleSection === 'igrosoft' && <Igrosoft />}
+      {visibleSection === 'caleta' && <Caleta />}
+      {visibleSection === 'netgaming' && <Net/>}
+
     </GameLayout>
   );
 };

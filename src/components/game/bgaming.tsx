@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
+import Loader from "../common/Loader";
 
 interface Game {
   id: number;
@@ -23,7 +24,7 @@ const Belatra: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const swiperRef = useRef<any>(null);
   const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
   const { socket } = useSocket();
@@ -151,15 +152,18 @@ const Belatra: React.FC = () => {
   };
 
   const closeGameUrl = () => {
-    setSelectedGame(null);
+    setLoading(true); 
+    setTimeout(() => {
+      setSelectedGame(null); 
+      setLoading(false); 
+    }, 2000); 
   };
-
   const filteredGames = games.filter(game => game.status === 1);
 
   return (
     <div className="belatra-container">
       {loading ? (
-        <p>Loading...</p>
+      <Loader isSidebarOpen={false}/>
       ) : (
         <>
           <div className="navigation-buttons">

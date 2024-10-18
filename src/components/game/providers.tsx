@@ -15,7 +15,11 @@ const Providers: React.FC = () => {
   const [boomingStatus, setBoomingStatus] = useState<number | null>(null);
   const [popokGameStatus, setPopokGameStatus] = useState<number | null>(null);
   const [igrosoftStatus, setIGROsoftStatus] = useState<number |null>(null);
+  const [caletaStatus, setCaletaStatus] = useState<number | null>(null);
+  const [netStatus, setNetStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showCaletaButton, setShowCaletaButton] = useState(false);
+  const [showNetButton, setShowNetButton] = useState(false);
   const [showBelatraButton, setShowBelatraButton] = useState(false);
   const [showBgamingButton, setShowBgamingButton] = useState(false);
   const [showAspectButton, setShowAspectButton] = useState(false);
@@ -70,6 +74,9 @@ const Providers: React.FC = () => {
                 const igrosoftProvider = data.data.providers.find(
                   (p: any) => p.provider === 89
                 );
+                const caletaProvider = data.data.providers.find((p:any) => p.provider === 2);
+
+                const netProvider = data.data.providers.find((p: any) => p.provider === 81);
 
                 // Actualiza los estados de los proveedores según la respuesta
                 if (belatraProvider) {
@@ -141,6 +148,26 @@ const Providers: React.FC = () => {
                           p.status === 1
                       )
                   );
+                }
+                if (caletaProvider) {
+                  setShowCaletaButton(caletaProvider.status);
+                  setShowCaletaButton(caletaProvider.status === 1 &&
+                    providersData.data.some(
+                        (p: any) =>
+                          p.provider_name.toLowerCase() === "Caleta Gaming" &&
+                          p.status === 1
+                      ) 
+                    );
+                }
+                if (netProvider) {
+                  setShowNetButton(netProvider.status);
+                  setShowNetButton(netProvider.status === 1 &&
+                    providersData.data.some(
+                        (p: any) =>
+                          p.provider_name.toLowerCase() === "netgaming" &&
+                          p.status === 1
+                      ) 
+                    );
                 }
               } else {
                 console.error("La API /api/juegosApi no devolvió un estado válido.");
@@ -255,6 +282,12 @@ const Providers: React.FC = () => {
               height={150}
               priority
             />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=caleta`} className="splide__slide">
+          <img src="/images/img/caleta/caleta.png" alt="" />
+          </Link>
+          <Link href={`/games?idMachine=${idMachine}&provider=netgaming`} className="splide__slide">
+          <img src="/images/img/goldenrace/goldenrace.png" alt="" />
           </Link>
         </ul>
       </div>

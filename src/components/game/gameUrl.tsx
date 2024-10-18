@@ -114,8 +114,8 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
   return (
     <div id="crash">
       {showVideo && game && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(120, 0, 0, 0.9)", zIndex: 999 }}>
-          <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(120, 0, 0, 0.9)", zIndex: 999 }}>
+        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "#000", zIndex: 999 }}>
+          <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "#000", zIndex: 999 }}>
             <button onClick={closeGame} style={{
               position: "absolute",
               top: "20px",
