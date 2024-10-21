@@ -37,6 +37,7 @@ const Providers: React.FC = () => {
       console.log("provider:", provider);
     }
   }, [idMachine, provider]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
