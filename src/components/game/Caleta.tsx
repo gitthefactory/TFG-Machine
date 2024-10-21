@@ -24,13 +24,13 @@ const Belatra: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const swiperRef = useRef<any>(null);
   const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
   const { socket } = useSocket();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async () => { 
       try {
         const sessionData = await getSessionData();
         if (!sessionData || sessionData.status !== 200) {
