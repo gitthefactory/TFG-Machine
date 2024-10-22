@@ -195,7 +195,24 @@ const Maquinas: React.FC = () => {
         });
         setLoading(false);
       } else {
-       
+        // Obtén los detalles de la máquina
+        const resMaquinas = await axios.get(`/api/maquinas`);
+        const machines = resMaquinas.data.data;
+        const machine = machines.find((m: any) => m.id_machine === info.id_machine);
+        
+        if (!machine) {
+          setError("Máquina no encontrada");
+          setLoading(false);
+          return;
+        }
+
+        // Enviar los datos de la máquina al servidor para guardar en el archivo JSON
+        await axios.post('/api/machineData', {
+          id_machine: machine.id_machine,
+          token: machine.token,
+          status: machine.status,
+          // Puedes agregar más campos si es necesario
+        });
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
