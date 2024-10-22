@@ -6,7 +6,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
   try {
     const { id } = params;
     const data = await request.json();
-
+   // Log para ver los datos recibidos
+    console.log("Datos recibidos:", data);
     if (data.action !== 'CREDIT') {
       throw new Error('Acción no permitida. Solo se permite CREDIT en este endpoint.');
     }
