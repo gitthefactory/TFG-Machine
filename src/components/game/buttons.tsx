@@ -30,8 +30,7 @@ const Buttons: React.FC<ButtonsProps> = ({ onSelectProvider }) => {
       <Popok onClick={() => onSelectProvider(popokPros)}/>  
       <Igrosoft onClick={() => onSelectProvider(igrosoftPros)}/>
       <Caleta onClick={() => onSelectProvider(caletaPros)}/>  
-      <Net onClick={() => onSelectProvider(netPros)}/>  // Añade los botones según sea necesario
-      
+      <Net onClick={() => onSelectProvider(netPros)}/>  
     </div>
   );
 }
