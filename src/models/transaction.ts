@@ -18,6 +18,7 @@ interface Transaction extends Document {
   message?: string;
   debit?: number;
   credit?: number;
+  token?: string;
 }
 
 // Interfaz para el modelo con métodos estáticos
@@ -58,6 +59,7 @@ const TransactionSchema = new Schema<Transaction>({
   game: { type: Number, required: false },
   type: { type: Number, required: false },
   provider: { type: Number, required: false },
+  token: { type: String, required: false },
 });
 
 // Middleware para actualizar el balance antes de guardar

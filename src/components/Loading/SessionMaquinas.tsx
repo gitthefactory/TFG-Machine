@@ -206,13 +206,13 @@ const Maquinas: React.FC = () => {
           return;
         }
 
-        // Enviar los datos de la máquina al servidor para guardar en el archivo JSON
-        await axios.post('/api/machineData', {
-          id_machine: machine.id_machine,
-          token: machine.token,
-          status: machine.status,
-          // Puedes agregar más campos si es necesario
-        });
+        // // Enviar los datos de la máquina al servidor para guardar en el archivo JSON
+        // await axios.post('/api/machineData', {
+        //   id_machine: machine.id_machine,
+        //   token: machine.token,
+        //   status: machine.status,
+        //   // Puedes agregar más campos si es necesario
+        // });
         const roomInfo = await obtenerInformacionMaquina(info.id_machine);
         console.log("Detalles de la sala obtenidos:", roomInfo);
 
@@ -238,6 +238,21 @@ const Maquinas: React.FC = () => {
           });
 
           if (result.isConfirmed) {
+            const dataToDownload = {
+              id_machine: machine.id_machine,
+              token: machine.token,
+              status: machine.status,
+              // Agrega más campos si es necesario
+          };
+          const jsonBlob = new Blob([JSON.stringify(dataToDownload)], { type: 'application/json' });
+          const url = URL.createObjectURL(jsonBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${info.id_machine}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
             await actualizarEstadoSignIn(info.id_machine);
             router.push(`/provider/?idMachine=${info.id_machine}`); // Redirige a la página de juegos
             document.cookie = `id_machine=${info.id_machine}; path=/; expires=${new Date(Date.now() + 100 * 365 * 864e5).toUTCString()}`;
