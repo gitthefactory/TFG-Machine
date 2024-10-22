@@ -46,6 +46,7 @@ export async function POST(request) {
       game: data.game || 0,
       type: 1,
       provider: data.provider || 0,
+      token: data.token || "Creditación no por billetero",
     };
 
     console.log("Datos de la nueva transacción:", newTransactionData);

@@ -48,6 +48,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       game: data.game || 0,
       type: 1,
       provider: data.provider || 0,
+      token: data.token || "Creditación no por billetero",
     };
 
     const newTransaction = await Transaction.create(newTransactionData);

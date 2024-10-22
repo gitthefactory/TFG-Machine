@@ -254,6 +254,13 @@ body, html {
 .splide__slide {
   display: flex;
   justify-content: center !important;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  list-style-type: none !important;
+  margin: 0;
+  position: relative;
 }
 .splide__slide img {
   display: block;

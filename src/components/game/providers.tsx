@@ -15,8 +15,8 @@ const Providers: React.FC = () => {
   const [boomingStatus, setBoomingStatus] = useState<number | null>(null);
   const [popokGameStatus, setPopokGameStatus] = useState<number | null>(null);
   const [igrosoftStatus, setIGROsoftStatus] = useState<number |null>(null);
-  const [caletaStatus, setCaletaStatus] = useState<number | null>(null);
-  const [netStatus, setNetStatus] = useState<number | null>(null);
+  const [setcaletaStatus, setCaletaStatus] = useState<number | null>(null);
+  const [setnetStatus, setNetStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [showCaletaButton, setShowCaletaButton] = useState(false);
   const [showNetButton, setShowNetButton] = useState(false);
@@ -38,6 +38,7 @@ const Providers: React.FC = () => {
       console.log("provider:", provider);
     }
   }, [idMachine, provider]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -150,7 +151,7 @@ const Providers: React.FC = () => {
                   );
                 }
                 if (caletaProvider) {
-                  setShowCaletaButton(caletaProvider.status);
+                  setCaletaStatus(caletaProvider.status);
                   setShowCaletaButton(caletaProvider.status === 1 &&
                     providersData.data.some(
                         (p: any) =>
@@ -160,7 +161,7 @@ const Providers: React.FC = () => {
                     );
                 }
                 if (netProvider) {
-                  setShowNetButton(netProvider.status);
+                  setNetStatus(netProvider.status);
                   setShowNetButton(netProvider.status === 1 &&
                     providersData.data.some(
                         (p: any) =>

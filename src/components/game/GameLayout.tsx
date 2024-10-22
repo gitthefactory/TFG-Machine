@@ -442,7 +442,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                     </div>
                   </div>
                 </div>
-                <div style={{ width: "172px" }}></div>
+                {/* <div style={{ width: "172px" }}></div> */}
               </div>
              {/*  <div className="dream_catcher">
                 <Image
