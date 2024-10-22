@@ -20,8 +20,7 @@ const Buttons: React.FC<ButtonsProps> = ({ onSelectProvider }) => {
   const popokPros = { id: 88, provider_name: "PopOk" };
   const igrosoftPros = {id: 89 , provider_name:"Igrosoft" };
   const caletaPros = {id: 2, provider_name:"Caleta"} ;
-  const netPros = {id: 81, provider_name:"NetGaming"} // Añade los proveedores según sea necesario
-
+  const netPros = {id: 81, provider_name:"NetGaming"} 
   return (
     <div>
       <Bgaming onClick={() => onSelectProvider(bgamingProps)} />
