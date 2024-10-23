@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import axios from "axios";
 import "/src/css/swiper.css";
@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import e from "express";
+import { CountUp } from 'countup.js';
 import "/src/css/Space.css";
 
 type GameLayoutProps = {
@@ -33,6 +34,11 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
   const searchParams = useSearchParams();
   const idMachine = searchParams.get("idMachine");
   const provider = searchParams.get("provider");
+
+  const jackpotRef = useRef(null);
+  const acumuladoRef = useRef(null);
+  const [jackpotValue, setJackpotValue] = useState(0);
+  const [acumuladoValue, setAcumuladoValue] = useState(0);
 
 
   useEffect(() => {
@@ -290,7 +296,48 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
       await Swal.fire("Error", "Ocurrió un error durante el retiro.", "error");
     }
   };
+  useEffect(() => {
+    if (selectedMachineBalance) {
+      const targetAmount = 5000000; // Meta final del acumulado y jackpot
 
+      // Función para generar un incremento aleatorio entre 1,000 y 50,000 pesos
+      const getRandomIncrement = () => Math.floor(Math.random() * 49000) + 1000;
+
+      // Función para generar un intervalo aleatorio entre 1 y 3 segundos
+      const getRandomInterval = () => Math.random() * 1000 + 3000;
+
+      // Función que maneja el incremento progresivo
+      const incrementBalance = (currentValue: number, setValue: Function, updateRef: React.MutableRefObject<any>) => {
+        if (currentValue < targetAmount) {
+          const increment = getRandomIncrement();
+          const newValue = currentValue + increment > targetAmount ? targetAmount : currentValue + increment;
+
+          // Actualizamos el estado con el nuevo valor
+          setValue(newValue);
+
+          // Utilizamos CountUp.js para actualizar el DOM de forma suave sin reiniciar el contador
+          const countUpInstance = new CountUp(updateRef.current, newValue, {
+            startVal: currentValue,
+            decimalPlaces: selectedMachineBalance.currency === "CLP" ? 0 : 2,
+            separator: selectedMachineBalance.currency === "CLP" ? "." : ",",
+            prefix: "$",
+            duration: 5.00000 // Duración más larga para que el cambio sea visible
+          });
+
+          if (!countUpInstance.error) {
+            countUpInstance.start();
+          }
+
+          // Programamos la siguiente actualización con un intervalo aleatorio
+          setTimeout(() => incrementBalance(newValue, setValue, updateRef), getRandomInterval());
+        }
+      };
+
+      // Iniciar los incrementos para ambos valores (jackpot y acumulado)
+      incrementBalance(jackpotValue, setJackpotValue, jackpotRef);
+      incrementBalance(acumuladoValue, setAcumuladoValue, acumuladoRef);
+    }
+  }, [selectedMachineBalance, jackpotValue, acumuladoValue]);
   return (
     <>
     
@@ -311,7 +358,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
               <div className="d-flex justify-content-between align-items-center p-3">
                 <div className="topbox acu d-flex justify-content-between align-items-center">
                   <div  className="text-light text-top mt-4 w-100 text-center" style={{ fontFamily: 'Space Grotesk' }}>
-                    <span className="fs-6">$</span>12.345.678,90
+                     <span ref={acumuladoRef}>0</span>
                   </div>
                 </div>
                 <div className="logo">
@@ -319,7 +366,7 @@ const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
                 </div>
                 <div className="topbox jac d-flex justify-content-between align-items-center" style={{ fontFamily: 'Space Grotesk' }}>
                   <div className="text-light text-top mt-4 w-100 text-center">
-                    <span className="fs-6">$</span>12.345.678,90
+                    <span ref={jackpotRef}>0</span>
                   </div>
                 </div>
               </div>
