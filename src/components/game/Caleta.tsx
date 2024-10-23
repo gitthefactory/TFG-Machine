@@ -48,15 +48,15 @@ const Belatra: React.FC = () => {
         }
 
         const params = new URLSearchParams(window.location.search);
-        const idMachine = params.get('idMachine');
-        setIdMachineFromURL(idMachine);
+        const IdMachineFromURL = params.get('idMachine');
+        setIdMachineFromURL(IdMachineFromURL);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
 
 
-        if (idMachine) {
+        if (IdMachineFromURL) {
           const machineResponse = await fetch(`/api/maquinas`);
           const machineData = await machineResponse.json();
-          const machine = machineData.data.find((m: any) => m.id_machine === idMachine);
+          const machine = machineData.data.find((m: any) => m.id_machine === IdMachineFromURL);
 
           if (machine) {
             setMachineStatus(machine.status);
@@ -90,7 +90,7 @@ const Belatra: React.FC = () => {
         }
 
         const provider = 2;
-        const response = await fetch(`/api/juegosApi/${idMachine}/${provider}`);
+        const response = await fetch(`/api/juegosApi/${IdMachineFromURL}/${provider}`);
         const data = await response.json();
 
         if (data.data?.token) {
@@ -169,7 +169,7 @@ const Belatra: React.FC = () => {
       setTimeout(() => {
         setSelectedGame(null);
         // Restablecer la URL original sin recargar la página
-        router.replace(`/games?idMachine=${idMachineFromURL}&provider=bgaming`, undefined, { shallow: true });
+        router.replace(`/games?idMachine=${idMachineFromURL}&provider=caleta`, undefined, { shallow: true });
         setLoading(false);
       }, 2000);
     }

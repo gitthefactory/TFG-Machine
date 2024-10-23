@@ -171,7 +171,7 @@ const Belatra: React.FC = () => {
       setTimeout(() => {
         setSelectedGame(null);
         // Restablecer la URL original sin recargar la página
-        router.replace(`/games?idMachine=${idMachineFromURL}&provider=bgaming`, undefined, { shallow: true });
+        router.replace(`/games?idMachine=${idMachineFromURL}&provider=belatra`, undefined, { shallow: true });
         setLoading(false);
       }, 2000);
     }
@@ -207,7 +207,7 @@ const Belatra: React.FC = () => {
                         />
                         <div className="subtitle">
                           {game.name}
-                        </div>
+                        </div>0
                       </div>
                     </Link>
                   </div>

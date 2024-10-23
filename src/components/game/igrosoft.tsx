@@ -49,7 +49,7 @@ const Igrosoft: React.FC = () => {
 
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get("idMachine");
-        setIdMachineFromURL(idMachine);
+        setIdMachineFromURL(idMachineFromURL);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
 
         if (idMachineFromURL) {
@@ -183,7 +183,7 @@ const Igrosoft: React.FC = () => {
       setTimeout(() => {
         setSelectedGame(null);
         // Restablecer la URL original sin recargar la página
-        router.replace(`/games?idMachine=${idMachineFromURL}&provider=bgaming`, undefined, { shallow: true });
+        router.replace(`/games?idMachine=${idMachineFromURL}&provider=igrosoft`, undefined, { shallow: true });
         setLoading(false);
       }, 2000);
     }
