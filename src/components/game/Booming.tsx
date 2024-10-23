@@ -8,6 +8,8 @@ import { useSocket } from "@/app/api/socket/socketContext";
 import Swal from "sweetalert2";
 import { signOut } from "next-auth/react";
 import Loader from "../common/Loader";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Game {
   id: number;
@@ -28,6 +30,12 @@ const Belatra: React.FC = () => {
   const swiperRef = useRef<any>(null);
   const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
   const { socket } = useSocket();
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(()=> {
+    setIsMounted(true);
+  },[]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,15 +167,21 @@ const Belatra: React.FC = () => {
 
   const handleGameClick = (game: Game) => {
     setSelectedGame(game);
+    // Actualiza la URL con el juego seleccionado
+    router.push(`?idMachine=${idMachineFromURL}&gameId=${game.id}`, undefined, { shallow: true });
   };
-
   const closeGameUrl = () => {
-    setLoading(true); 
-    setTimeout(() => {
-      setSelectedGame(null); 
-      setLoading(false); 
-    }, 2000); 
+    if (isMounted) {
+      setLoading(true);
+      setTimeout(() => {
+        setSelectedGame(null);
+        // Restablecer la URL original sin recargar la página
+        router.replace(`/games?idMachine=${idMachineFromURL}&provider=bgaming`, undefined, { shallow: true });
+        setLoading(false);
+      }, 2000);
+    }
   };
+  
   
   const filteredGames = games.filter((game) => game.status === 1);
 
@@ -192,23 +206,26 @@ const Belatra: React.FC = () => {
               (_, pageIndex) => (
                 <SwiperSlide key={pageIndex}>
                   <div className="swiper-slide-content">
-                    {filteredGames
+                  {filteredGames
                       .slice(pageIndex * 8, (pageIndex + 1) * 8)
-                      .map((game, index) => (
-                        <div key={index} className="col-3 col-md-3">
-                          <div
-                            className="btn-game" 
+                      .map((game) => (
+                        <div key={game.id} className="col-3 col-md-3">
+                          <Link
+                            href={`?idMachine=${idMachineFromURL}&provider=booming&gameId=${game.id}`}
                             onClick={() => handleGameClick(game)}
+                            shallow
                           >
-                            <Image
-                              src={game.image}
-                              alt={game.name}
-                              style={{ width: "100%" }}
-                              width={500}
-                              height={500}
-                            />
-                            <div className="subtitle">{game.name}</div>
-                          </div>
+                            <div className="btn-game">
+                              <Image
+                                src={game.image}
+                                alt={game.name}
+                                style={{ width: "100%" }}
+                                width={500}
+                                height={500}
+                              />
+                              <div className="subtitle">{game.name}</div>
+                            </div>
+                          </Link>
                         </div>
                       ))}
                   </div>
@@ -217,13 +234,8 @@ const Belatra: React.FC = () => {
             )}
           </Swiper>
           {selectedGame && token && (
-            <GameUrl
-              game={selectedGame}
-              token={token}
-              idMachine={idMachineFromURL}
-              onClose={closeGameUrl}
-            />
-          )}
+          <GameUrl game={selectedGame} token={token} onClose={closeGameUrl} />
+        )}
         </>
       )}
     </div>

@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import { signOut } from 'next-auth/react';
 import { useSocket } from "@/app/api/socket/socketContext";
 import Loader from "@/components/common/Loader";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Game {
   id: number;
@@ -26,8 +28,15 @@ const Belatra: React.FC = () => {
   const [machineStatus, setMachineStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const swiperRef = useRef<any>(null);
+  const [idMachineFromURL, setIdMachineFromURL] = useState<string | null>(null);
   const { socket } = useSocket();
-  
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+
+
+    useEffect(() => {
+    setIsMounted(true); // El componente está montado
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +51,7 @@ const Belatra: React.FC = () => {
 
         const params = new URLSearchParams(window.location.search);
         const idMachineFromURL = params.get('idMachine');
-        setIdMachine(idMachineFromURL);
+        setIdMachineFromURL(idMachineFromURL);
         console.log("ID de máquina desde la URL:", idMachineFromURL);
 
         if (idMachineFromURL) {
@@ -150,17 +159,24 @@ const Belatra: React.FC = () => {
     }
   };
 
-  const handleGameClick = async (game: Game) => {
+  const handleGameClick = (game: Game) => {
     setSelectedGame(game);
-  };
+    // Actualiza la URL con el juego seleccionado
+    router.push(`?idMachine=${idMachineFromURL}&gameId=${game.id}`, undefined, { shallow: true });
+  }
   
   const closeGameUrl = () => {
-    setLoading(true); 
-    setTimeout(() => {
-      setSelectedGame(null);
-      setLoading(false); 
-    }, 2000); 
+    if (isMounted) {
+      setLoading(true);
+      setTimeout(() => {
+        setSelectedGame(null);
+        // Restablecer la URL original sin recargar la página
+        router.replace(`/games?idMachine=${idMachineFromURL}&provider=bgaming`, undefined, { shallow: true });
+        setLoading(false);
+      }, 2000);
+    }
   };
+  
 
   const filteredGames = games.filter(game => game.status === 1);
 
@@ -178,9 +194,10 @@ const Belatra: React.FC = () => {
             {[...Array(Math.ceil(filteredGames.length / 8))].map((_, pageIndex) => (
               <SwiperSlide key={pageIndex}>
                 <div className="swiper-slide-content">
-                  {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game) => (
-                    <div key={game.id} className="col-3 col-md-3">
-                      <div className="btn-game" onClick={() => handleGameClick(game)}>
+                {filteredGames.slice(pageIndex * 8, (pageIndex + 1) * 8).map((game) => (
+                  <div key={game.id} className="col-3 col-md-3">
+                    <Link href={`?idMachine=${idMachineFromURL}&provider=belatra&gameId=${game.id}`} onClick={() => handleGameClick(game)} shallow>
+                      <div className="btn-game">
                         <Image
                           src={game.image}
                           alt={game.name}
@@ -188,10 +205,13 @@ const Belatra: React.FC = () => {
                           width={500}
                           height={500}
                         />
-                        <div className="subtitle">{game.name}</div>
+                        <div className="subtitle">
+                          {game.name}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    </Link>
+                  </div>
+                ))}
                 </div>
               </SwiperSlide>
             ))}

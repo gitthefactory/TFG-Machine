@@ -28,6 +28,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
   const [idMachine, setIdMachine] = useState<string | null>(null);
   const [country, setCountry] = useState<string>('');
   const [currency, setCurrency] = useState<string>('');
+ /*  const [originalUrl, setOriginalUrl] = useState<string>(window.location.href); */
 
   useEffect(() => {
     // Extraer idMachine de la URL
@@ -36,6 +37,15 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
     setIdMachine(idMachineParam);
 
     const fetchRoomData = async (idMachine: string) => {
+      const cachedRoomData = sessionStorage.getItem(`roomData_${idMachine}`);
+
+      if (cachedRoomData) {
+        // Usar los datos en caché
+        const room = JSON.parse(cachedRoomData);
+        setCountry(getCountryCode(room.pais[0] || 'Chile'));
+        setCurrency(room.currency[0] || 'CLP');
+        return;
+      }
       try {
         console.log("Fetching room data for idMachine:", idMachine); // Depuración
 
@@ -50,6 +60,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
             console.log("Room found:", room); // Depuración
 
             if (room) {
+              sessionStorage.setItem(`roomData_${idMachine}`, JSON.stringify(room));
               const countryName = room.pais[0] || 'Chile'; // Valor por defecto si no hay datos
               const currencyCode = room.currency[0] || 'CLP'; // Valor por defecto si no hay datos
               console.log("Asignando country y currency:", countryName, currencyCode); // Depuración
@@ -84,6 +95,9 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
         const url = `https://aggregator.casinoenruta.com/api/game?SessionToken=${token}&client_secret=9ffcfd63-e809-451c-9651-955c0622709d&user=${idMachine}&username=${idMachine}&balance=0&country=${country}&currency=${currency}&game=${game.id}&return_url=https://casinoenruta.com/games?idMachine=${idMachine}&language=es_ES&mobile=false`;
         console.log("AQUI game URL:", url);
 
+        /* const newUrl = `/games?idMachine=${idMachine}&country=${country}&currency=${currency}&game=${game.id}`;
+        window.history.replaceState(null, '', newUrl); */
+
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -109,6 +123,7 @@ const GameUrl: React.FC<GameUrlProps> = ({ game, token, onClose }) => {
   const closeGame = () => {
     onClose();
     setShowVideo(false);
+   /*  window.history.replaceState(null, '', originalUrl); */
   };
 
   return (
