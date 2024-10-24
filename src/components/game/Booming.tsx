@@ -222,6 +222,7 @@ const Belatra: React.FC = () => {
                                 style={{ width: "100%" }}
                                 width={500}
                                 height={500}
+                                priority
                               />
                               <div className="subtitle">{game.name}</div>
                             </div>
